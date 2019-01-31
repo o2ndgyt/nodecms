@@ -1,0 +1,160 @@
+@layout('admin')
+
+@section('content')
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script lang="javascript">
+  $(document).ready( function() {
+		setTimeout( function(){ 	$('#success').hide(); } , 2000);
+      });
+			
+
+    		function isNumberKey(evt)
+			{
+				var charCode = (evt.which) ? evt.which : evt.keyCode;
+				if (charCode != 46 && charCode > 31 
+				&& (charCode < 48 || charCode > 57))
+				return false;
+				return true;
+			}  
+						
+</script>
+ @if(noMessages)
+<div class="row">
+	<div class="col-sm-6 col md-4 col-md-offset-4 col-sm-offset-3">
+	  <div id="success" class="alert alert-success">
+	 	 {{ successmsg }}	 	
+	  </div>
+	</div>
+</div>
+@endif
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Settings</h1>              
+  </div>
+
+  <form id="formid" method="POST" action="/admin/Settings">
+			<div class="form-group">
+			<div class="container">
+					<div class="row">
+														
+						<div class="col">
+								<label for="Applicationport">Application port:</label>
+								
+						</div>
+						<div class="col">
+								<INPUT class="form-control" value="{{ config.Appport }}" id="Appport" placeholder="4 numbers only" onkeypress="return isNumberKey(event)"   type="text" name="Appport" maxlength="4">
+						</div>
+					</div>
+					<br/>
+					<div class="row">
+							<div class="col">
+									<label for="compression">Compression (Gzip):</label>
+									
+							</div>
+							<div class="col">
+					
+									<select class="form-control" id="compress" name="compress">
+										<option value="-1" 
+										@if(config.compress === "-1")
+										selected
+										@endif
+										>-1 Default compression level</option>
+										<option value="0"
+										@if(config.compress === "0")
+										selected
+										@endif
+										>0 No compression</option>
+										<option value="1"
+										@if(config.compress === "1")
+										selected
+										@endif
+										>1 Fastest compression</option>
+										<option value="2"
+										@if(config.compress === "2")
+										selected
+										@endif
+										>2</option>
+										<option value="3"
+										@if(config.compress === "3")
+										selected
+										@endif
+										>3</option>
+										<option value="4"
+										@if(config.compress === "4")
+										selected
+										@endif
+										>4</option>
+										<option value="5"
+										@if(config.compress === "5")
+										selected
+										@endif
+										>5</option>
+										<option value="6"
+										@if(config.compress === "6")
+										selected
+										@endif
+										>6</option>
+										<option value="7"
+										@if(config.compress === "7")
+										selected
+										@endif
+										>7</option>
+										<option value="8"
+										@if(config.compress === "8")
+										selected
+										@endif
+										>8</option>
+										<option value="9"
+										@if(config.compress === "9")
+										selected
+										@endif
+										>9 Best compression</option>
+									</select>
+							</div>
+						</div>
+
+
+					
+					<br/>
+					<div class="row">
+														
+						<div class="col">
+								<label for="Applicationport">X-Powered by:</label>
+								
+						</div>
+						<div class="col">
+								<INPUT class="form-control" value="{{ config.XPowerBy }}" id="XPowerBy"  type="text" name="XPowerBy" >
+						</div>
+					</div>
+					<br/>
+					<div class="row">
+														
+						<div class="col">
+								<label for="Applicationport">Admin User:</label>
+								
+						</div>
+						<div class="col">
+								<INPUT class="form-control" value="{{ config.AdminUser }}" id="AdminUser"  type="text" name="AdminUser" >
+						</div>
+					</div>
+					<br/>
+					<div class="row">
+														
+						<div class="col">
+								<label for="Applicationport">Admin password:</label>
+								
+						</div>
+						<div class="col">
+								<INPUT class="form-control" value="{{ config.AdminPWD }}" id="AdminPWD"  type="text" name="AdminPWD" >
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+<hr/>
+    <button type="submit" class="btn btn-primary" >Save</button>
+  </form>
+
+
+@endsection
