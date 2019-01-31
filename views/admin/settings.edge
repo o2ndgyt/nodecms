@@ -1,58 +1,55 @@
 @layout('admin')
-
 @section('content')
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="/admin/jquery-1.9.1.js"></script>
 <script lang="javascript">
-  $(document).ready( function() {
-		setTimeout( function(){ 	$('#success').hide(); } , 2000);
-      });
-			
-
-    		function isNumberKey(evt)
-			{
-				var charCode = (evt.which) ? evt.which : evt.keyCode;
-				if (charCode != 46 && charCode > 31 
-				&& (charCode < 48 || charCode > 57))
-				return false;
-				return true;
-			}  
-						
+    $(document).ready( function() {
+    		setTimeout( function(){ 	$('#success').hide(); } , 2000);
+		  });
+		  
+	function isNumberKey(evt)
+	{
+		var charCode = (evt.which) ? evt.which : evt.keyCode;
+		if (charCode != 46 && charCode > 31 
+		&& (charCode < 48 || charCode > 57))
+		return false;
+		return true;
+	}
 </script>
- @if(noMessages)
+@if(noMessages)
 <div class="row">
-	<div class="col-sm-6 col md-4 col-md-offset-4 col-sm-offset-3">
-	  <div id="success" class="alert alert-success">
-	 	 {{ successmsg }}	 	
-	  </div>
-	</div>
+    <div class="col-sm-6 col md-4 col-md-offset-4 col-sm-offset-3">
+        <div id="success" class="alert alert-success">
+            {{ successmsg }}
+        </div>
+    </div>
 </div>
 @endif
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Settings</h1>              
-  </div>
+    <h1 class="h2">Settings</h1>
+</div>
 
-  <form id="formid" method="POST" action="/admin/Settings">
-			<div class="form-group">
-			<div class="container">
-					<div class="row">
-														
-						<div class="col">
-								<label for="Applicationport">Application port:</label>
-								
-						</div>
-						<div class="col">
-								<INPUT class="form-control" value="{{ config.Appport }}" id="Appport" placeholder="4 numbers only" onkeypress="return isNumberKey(event)"   type="text" name="Appport" maxlength="4">
-						</div>
-					</div>
-					<br/>
-					<div class="row">
-							<div class="col">
-									<label for="compression">Compression (Gzip):</label>
-									
-							</div>
-							<div class="col">
-					
-									<select class="form-control" id="compress" name="compress">
+<form id="formid" method="POST" action="/admin/Settings">
+    <div class="form-group">
+        <div class="container">
+            <div class="row">
+
+                <div class="col">
+                    <label for="Applicationport">Application port:</label>
+
+                </div>
+                <div class="col">
+                    <INPUT class="form-control" value="{{ config.Appport }}" id="Appport" placeholder="4 numbers only" onkeypress="return isNumberKey(event)" type="text" name="Appport" maxlength="4">
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    <label for="compression">Compression (Gzip):</label>
+
+                </div>
+                <div class="col">
+
+                    <select class="form-control" id="compress" name="compress">
 										<option value="-1" 
 										@if(config.compress === "-1")
 										selected
@@ -109,52 +106,44 @@
 										@endif
 										>9 Best compression</option>
 									</select>
-							</div>
-						</div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
 
+                <div class="col">
+                    <label for="Applicationport">X-Powered by:</label>
 
-					
-					<br/>
-					<div class="row">
-														
-						<div class="col">
-								<label for="Applicationport">X-Powered by:</label>
-								
-						</div>
-						<div class="col">
-								<INPUT class="form-control" value="{{ config.XPowerBy }}" id="XPowerBy"  type="text" name="XPowerBy" >
-						</div>
-					</div>
-					<br/>
-					<div class="row">
-														
-						<div class="col">
-								<label for="Applicationport">Admin User:</label>
-								
-						</div>
-						<div class="col">
-								<INPUT class="form-control" value="{{ config.AdminUser }}" id="AdminUser"  type="text" name="AdminUser" >
-						</div>
-					</div>
-					<br/>
-					<div class="row">
-														
-						<div class="col">
-								<label for="Applicationport">Admin password:</label>
-								
-						</div>
-						<div class="col">
-								<INPUT class="form-control" value="{{ config.AdminPWD }}" id="AdminPWD"  type="text" name="AdminPWD" >
-						</div>
-					</div>
-				</div>
-			</div>
+                </div>
+                <div class="col">
+                    <INPUT class="form-control" value="{{ config.XPowerBy }}" id="XPowerBy" type="text" name="XPowerBy">
+                </div>
+            </div>
+            <br/>
+            <div class="row">
 
+                <div class="col">
+                    <label for="Applicationport">Admin User:</label>
 
+                </div>
+                <div class="col">
+                    <INPUT class="form-control" value="{{ config.AdminUser }}" id="AdminUser" type="text" name="AdminUser">
+                </div>
+            </div>
+            <br/>
+            <div class="row">
 
-<hr/>
-    <button type="submit" class="btn btn-primary" >Save</button>
-  </form>
+                <div class="col">
+                    <label for="Applicationport">Admin password:</label>
 
-
+                </div>
+                <div class="col">
+                    <INPUT class="form-control" value="{{ config.AdminPWD }}" id="AdminPWD" type="text" name="AdminPWD">
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
 @endsection

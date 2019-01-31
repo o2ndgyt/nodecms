@@ -61,7 +61,7 @@ router.post('/Settings', function(req, res) {
 
 // Header
 router.get('/Headers', function(req, res) {
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Title}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/headers', {
         fo: fotter
     });
@@ -73,7 +73,7 @@ router.post('/Headers', function(req, res) {
     var adsdata = dbheaders.getData("/");
     dbheaders.push("/" + adsdata.length, req.body, false);
     res.json({
-        success: req.body.Title + " created successfully",
+        success: req.body.Alias + " created successfully",
         status: 200
     });
 });
@@ -98,7 +98,7 @@ router.post('/Headers/:id', function(req, res) {
     if (result > -1) {
         dbheaders.push("/" + result, req.body);
         res.json({
-            success: req.body.Title + " updated successfully",
+            success: req.body.Alias + " updated successfully",
             status: 200
         });
     } else {

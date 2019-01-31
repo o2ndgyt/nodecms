@@ -69,9 +69,9 @@
 		  //defining new 
 		  var user=Object();
 		  user['Id']='_' + Math.random().toString(36).substr(2, 9);
-		  user['Name']=$('#Name').val().trim();
-		  user['GroupID']=$('#GroupID').val().trim();
-		  user['AdvertJS']=window.btoa($('#AdvertJS').val().trim());
+		  user['Name']=$('#Name').val();
+		  user['GroupID']=$('#GroupID').val();
+		  user['AdvertJS']=window.btoa($('#AdvertJS').val());
 		  //appening to jput variable
 		  jPut.users.append(user);
 		  SendData(1,user,0);
@@ -81,10 +81,10 @@
 	   $('#update').click(function(){
 		  //defining new 
 		  var user=Object();
-		  user['Id']=$('#Id').val().trim();
-		  user['Name']=$('#Name').val().trim();
-		  user['GroupID']=$('#GroupID').val().trim();
-		  user['AdvertJS']=window.btoa($('#AdvertJS').val().trim());
+		  user['Id']=$('#Id').val();
+		  user['Name']=$('#Name').val();
+		  user['GroupID']=$('#GroupID').val();
+		  user['AdvertJS']=window.btoa($('#AdvertJS').val());
 
 		  //appening to jput variable
 		  /*

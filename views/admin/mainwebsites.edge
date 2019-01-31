@@ -1,9 +1,7 @@
 @layout('admin')
-
 @section('content')
-
-<script type="text/javascript" src="http://shabeer-ali-m.github.io/jPut/js/jquery.min.js"></script>
-<script type="text/javascript" src="http://shabeer-ali-m.github.io/jPut/js/jput-2.js"></script>
+<script type="text/javascript" src="/admin/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
 
 	function SendData(crud,data,index)
@@ -46,7 +44,7 @@
 	   $('#save').click(function(){
 		  //defining new 
 		  var user=Object();
-		  user['Name']=$('#Name').val();		
+		  user['Name']=$('#Name').val().trim();		
 		  SendData(1,user,0);
 	   });
 
