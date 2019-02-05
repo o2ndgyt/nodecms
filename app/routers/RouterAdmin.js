@@ -6,6 +6,7 @@ var JsonDB = require('node-json-db');
 var db = new JsonDB("./db/config", true, false);
 var dbads = new JsonDB("./db/cmsad", true, false);
 var dbheaders = new JsonDB("./db/cmsheaders", true, false);
+var dbcontents = new JsonDB("./db/cmscontents", true, false);
 var comfunc = require("../comfunc");
 var oAuth = {
     authorizer: myAuthorizer,
@@ -314,6 +315,62 @@ router.post('/Mainwebsites/d/:id', function(req, res) {
         }
     });
 });
+
+// Contents CRUD
+//**********************
+
+
+router.get('/Contents', function(req, res) {
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Alias}}</td><td>{{json.FileLayout}}</td><td><a href="Contents/e/{{json.Id}}">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
+    dbheaders.reload();
+    var headers = dbheaders.getData("/");
+    var tmp = [];
+    comfunc.FileList().forEach(function(value) {
+        tmp.push({
+            "Name": value.replace("./views/", "").replace(".edge", "")
+        });
+    });
+    res.render('admin/contents', {
+        fo: fotter,
+        headers:headers,
+        filelayouts:tmp
+    });
+});
+
+// Read
+router.get('/Contents/list', function(req, res) {
+    dbcontents.reload();
+    try {
+        var adsdata = dbcontents.getData("/");
+    } catch (error) {
+        console.error(error);
+    };
+    res.json(adsdata);
+});
+
+// Create
+router.post('/Contents', function(req, res) {
+
+});
+
+// Read
+router.get('/Contents/e/:id', function(req, res) {
+   
+
+});
+
+// Save file
+router.post('/Contents/e/:id', function(req, res) {
+   
+
+});
+
+
+// Delete
+router.post('/Mainwebsites/d/:id', function(req, res) {
+  
+});
+
 
 
 function myAuthorizer(username, password) {

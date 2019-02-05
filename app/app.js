@@ -12,7 +12,7 @@ var helmet = require('helmet');
 var JsonDB=require('node-json-db');
 var useragent = require('express-useragent');
 var validUrl = require('valid-url');
-
+var robots= require('express-robots-txt');
 //Read config
 var db = new JsonDB("./db/config", true, false);
 try {
@@ -28,6 +28,9 @@ var app = express();
 
 //User agent
 app.use(useragent.express());
+
+//Robots
+app.use(robots(path.join(__dirname, '../public/robots.txt')));
 
 // defense
 app.use(helmet());

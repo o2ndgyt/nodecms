@@ -16,6 +16,7 @@
     "express-basic-auth": "^1.1.6",
     "express-edge": "^1.0.0",
     "express-handlebars": "^3.0.0",
+    "express-robots-txt": "^0.4.0",
     "express-session": "^1.15.6",
     "express-useragent": "^1.0.12",
     "express-validator": "^5.3.0",
