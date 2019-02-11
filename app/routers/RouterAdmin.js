@@ -7,6 +7,7 @@ var db = new JsonDB("./db/config", true, false);
 var dbads = new JsonDB("./db/cmsad", true, false);
 var dbheaders = new JsonDB("./db/cmsheaders", true, false);
 var dbcontents = new JsonDB("./db/cmscontents", true, false);
+var dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
 var comfunc = require("../comfunc");
 var oAuth = {
     authorizer: myAuthorizer,
@@ -15,14 +16,14 @@ var oAuth = {
 };
 var fs = require("fs");
 
-router.use('/', basicAuth(oAuth), function(req, res, next) {
+router.use('/', basicAuth(oAuth), function (req, res, next) {
     next();
 });
 
 
 // Dashboard
 //**********************
-router.get('/Dashboard', function(req, res) {
+router.get('/Dashboard', function (req, res) {
 
     res.render('admin/dashboard', {
         osinfo: osinfo
@@ -31,7 +32,7 @@ router.get('/Dashboard', function(req, res) {
 
 // Settings
 //**********************
-router.get('/Settings', function(req, res) {
+router.get('/Settings', function (req, res) {
     db.reload();
     var configdata = db.getData("/");
     res.render('admin/settings', {
@@ -41,7 +42,7 @@ router.get('/Settings', function(req, res) {
     });
 });
 
-router.post('/Settings', function(req, res) {
+router.post('/Settings', function (req, res) {
     var configdata = db.getData("/");
     configdata.Appport = req.body.Appport;
     configdata.compress = req.body.compress;
@@ -61,7 +62,7 @@ router.post('/Settings', function(req, res) {
 //**********************
 
 // Header
-router.get('/Headers', function(req, res) {
+router.get('/Headers', function (req, res) {
     var fotter = '<th scope="row">{{index}}</th><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/headers', {
         fo: fotter
@@ -69,7 +70,7 @@ router.get('/Headers', function(req, res) {
 });
 
 // Create
-router.post('/Headers', function(req, res) {
+router.post('/Headers', function (req, res) {
     dbheaders.reload();
     var adsdata = dbheaders.getData("/");
     dbheaders.push("/" + adsdata.length, req.body, false);
@@ -80,7 +81,7 @@ router.post('/Headers', function(req, res) {
 });
 
 // Read
-router.get('/Headers/list', function(req, res) {
+router.get('/Headers/list', function (req, res) {
     dbheaders.reload();
     try {
         var adsdata = dbheaders.getData("/");
@@ -92,7 +93,7 @@ router.get('/Headers/list', function(req, res) {
 
 
 // Update
-router.post('/Headers/:id', function(req, res) {
+router.post('/Headers/:id', function (req, res) {
     dbheaders.reload();
     // find by id
     var result = dbheaders.getData("/").findIndex(item => item.Id === req.params.id);
@@ -112,7 +113,7 @@ router.post('/Headers/:id', function(req, res) {
 });
 
 // Delete
-router.post('/Headers/d/:id', function(req, res) {
+router.post('/Headers/d/:id', function (req, res) {
     dbheaders.reload();
     var addata = dbheaders.getData("/");
     // find by id
@@ -139,7 +140,7 @@ router.post('/Headers/d/:id', function(req, res) {
 //**********************
 
 // Ads
-router.get('/Ads', function(req, res) {
+router.get('/Ads', function (req, res) {
     var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td>{{json.GroupID}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/ads', {
         fo: fotter
@@ -147,7 +148,7 @@ router.get('/Ads', function(req, res) {
 });
 
 // Create
-router.post('/Ads', function(req, res) {
+router.post('/Ads', function (req, res) {
     dbads.reload();
     var adsdata = dbads.getData("/");
     dbads.push("/" + adsdata.length, req.body, false);
@@ -158,7 +159,7 @@ router.post('/Ads', function(req, res) {
 });
 
 // Read
-router.get('/Ads/list', function(req, res) {
+router.get('/Ads/list', function (req, res) {
     dbads.reload();
     try {
         var adsdata = dbads.getData("/");
@@ -170,7 +171,7 @@ router.get('/Ads/list', function(req, res) {
 
 
 // Update
-router.post('/Ads/:id', function(req, res) {
+router.post('/Ads/:id', function (req, res) {
     dbads.reload();
     // find by id
     var result = dbads.getData("/").findIndex(item => item.Id === req.params.id);
@@ -190,7 +191,7 @@ router.post('/Ads/:id', function(req, res) {
 });
 
 // Delete
-router.post('/Ads/d/:id', function(req, res) {
+router.post('/Ads/d/:id', function (req, res) {
     dbads.reload();
     var addata = dbads.getData("/");
     // find by id
@@ -214,7 +215,7 @@ router.post('/Ads/d/:id', function(req, res) {
 //**********************
 
 
-router.get('/Mainwebsites', function(req, res) {
+router.get('/Mainwebsites', function (req, res) {
     var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td><a href="Mainwebsites/e/{{json.Name}}">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Name}}\');">Delete</a></td>';
     res.render('admin/mainwebsites', {
         fo: fotter
@@ -222,9 +223,9 @@ router.get('/Mainwebsites', function(req, res) {
 });
 
 // Read
-router.get('/Mainwebsites/list', function(req, res) {
+router.get('/Mainwebsites/list', function (req, res) {
     var tmp = [];
-    comfunc.FileList().forEach(function(value) {
+    comfunc.FileList().forEach(function (value) {
         tmp.push({
             "Name": value.replace("./views/", "").replace(".edge", "")
         });
@@ -233,12 +234,12 @@ router.get('/Mainwebsites/list', function(req, res) {
 });
 
 // Create
-router.post('/Mainwebsites', function(req, res) {
+router.post('/Mainwebsites', function (req, res) {
 
     fs.access("./views/" + req.body.Name + ".edge", fs.constants.F_OK, (err) => {
         if (err) {
             var writeStream = fs.createWriteStream("./views/" + req.body.Name + ".edge");
-            writeStream.write("<html><head>@!section('HeaderScript')</head><body>@!section('BodyScript')<h1></h1>@!section('FooterScript')</body></html>");
+            writeStream.write("<html>\n<head>\n@!section('HeaderScript')\n</head>\n<body>\n@!section('BodyScript')\n<h1>\n@!section('ad_first')\n</h1>\n<h2>\n@!section('mod_first')\n</h2>\n@!section('FooterScript')\n</body>\n</html>");
             writeStream.end();
             res.json({
                 success: req.body.Name + " created successfully",
@@ -254,7 +255,7 @@ router.post('/Mainwebsites', function(req, res) {
 });
 
 // Read
-router.get('/Mainwebsites/e/:file', function(req, res) {
+router.get('/Mainwebsites/e/:file', function (req, res) {
     fs.access("./views/" + req.params.file + ".edge", fs.constants.F_OK | fs.constants.W_OK, (err) => {
         if (err) {
             // File in param does not exist
@@ -273,14 +274,14 @@ router.get('/Mainwebsites/e/:file', function(req, res) {
 });
 
 // Save file
-router.post('/Mainwebsites/e/:file', function(req, res) {
+router.post('/Mainwebsites/e/:file', function (req, res) {
     // save data to file
     var writeStream = fs.createWriteStream("./views/" + req.params.file + ".edge");
     writeStream.write(req.body.filecon);
     writeStream.end();
     //rename the file
     if (req.params.file != req.body.Name) {
-        fs.rename("./views/" + req.params.file + ".edge", "./views/" + req.body.Name + ".edge", function(err) {
+        fs.rename("./views/" + req.params.file + ".edge", "./views/" + req.body.Name + ".edge", function (err) {
             if (err) console.log('ERROR: ' + err);
         });
 
@@ -291,7 +292,7 @@ router.post('/Mainwebsites/e/:file', function(req, res) {
 
 
 // Delete
-router.post('/Mainwebsites/d/:id', function(req, res) {
+router.post('/Mainwebsites/d/:id', function (req, res) {
     fs.access("./views/" + req.params.id + ".edge", fs.constants.F_OK | fs.constants.W_OK, (err) => {
         if (err) {
             res.json({
@@ -320,25 +321,25 @@ router.post('/Mainwebsites/d/:id', function(req, res) {
 //**********************
 
 
-router.get('/Contents', function(req, res) {
+router.get('/Contents', function (req, res) {
     var fotter = '<th scope="row">{{index}}</th><td>{{json.Alias}}</td><td>{{json.FileLayout}}</td><td><a href="Contents/e/{{json.Id}}">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     dbheaders.reload();
     var headers = dbheaders.getData("/");
     var tmp = [];
-    comfunc.FileList().forEach(function(value) {
+    comfunc.FileList().forEach(function (value) {
         tmp.push({
             "Name": value.replace("./views/", "").replace(".edge", "")
         });
     });
     res.render('admin/contents', {
         fo: fotter,
-        headers:headers,
-        filelayouts:tmp
+        headers: headers,
+        filelayouts: tmp
     });
 });
 
 // Read
-router.get('/Contents/list', function(req, res) {
+router.get('/Contents/list', function (req, res) {
     dbcontents.reload();
     try {
         var adsdata = dbcontents.getData("/");
@@ -349,26 +350,81 @@ router.get('/Contents/list', function(req, res) {
 });
 
 // Create
-router.post('/Contents', function(req, res) {
+router.post('/Contents', function (req, res) {
+    try {
+        dbcontents.reload();
+        var adsdata = dbcontents.getData("/");
+        dbcontents.push("/" + adsdata.length, req.body, false);
+        // read main file
+        var adsections = comfunc.GetSections("./views/" + req.body.FileLayout + ".edge", req.body.Id);
+        
+        // add ads/moduls
+        dbcontentsad.reload();
+        var adsdataad = dbcontentsad.getData("/");
+        adsections.forEach(function(value){
+            dbcontentsad.push("/" + adsdataad.length,value, false);
+        });
+       
 
+        res.json({
+            success: req.body.Alias + " created successfully",
+            status: 200
+        });
+    } catch (error) {
+        res.json({
+            success: req.body.Alias + " - " + error.message,
+            status: 500
+        });
+        console.error(error);
+    };
 });
 
 // Read
-router.get('/Contents/e/:id', function(req, res) {
-   
+router.get('/Contents/e/:id', function (req, res) {
+
 
 });
 
 // Save file
-router.post('/Contents/e/:id', function(req, res) {
-   
+router.post('/Contents/e/:id', function (req, res) {
+
 
 });
 
 
 // Delete
-router.post('/Mainwebsites/d/:id', function(req, res) {
-  
+router.post('/Contents/d/:id', function (req, res) {
+    // delete head
+    dbcontents.reload();
+    var addata = dbcontents.getData("/");
+    // find by id
+    var result = addata.findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        addata.splice(result, 1);
+        dbcontents.push("/", addata);
+
+        // delete head ads      
+        dbcontentsad.reload();
+
+        var addataAds = dbcontentsad.getData("/");
+        var filtered = addataAds.filter(function (value) { return value.HeadId != req.params.id; });
+
+        dbcontentsad.push("/", filtered);
+
+        res.json({
+            success: "Deleted successfully",
+            status: 200
+        });
+    } else {
+        res.json({
+            success: "Delete error. Refresh page",
+            status: 500
+        });
+    }
+
+
+
+
 });
 
 

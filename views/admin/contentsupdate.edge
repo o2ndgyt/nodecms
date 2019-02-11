@@ -1,0 +1,89 @@
+@layout('admin')
+@section('content')
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+   <h1 class="h2">{{{title}}}</h1>
+</div>
+<br/>
+<form id="formid" method="POST" action="/admin/Contents/e/{{{id}}}">
+<div class="form-group">
+   <div class="container">
+      <div class="row">
+         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+               <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Basic</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Adverts</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Moduls</a>
+            </li>
+         </ul>
+         <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+               <div class="row">
+                  <div class="col"><label for="alias">Alias</label> </div>
+                  <div class="col"> <INPUT class="form-control"  id="Alias" type="text" name="Alias"/> </div>
+               </div>
+               <br/>
+               <div class="row">
+                  <div class="col"><label for="HeadID">Header:</label></div>
+                  <div class="col">
+                     <select class="form-control" id="HeadID" name="HeadID">
+                        @each(header in headers)
+                        <option value="{{ header.Id }}">{{ header.Alias }}</option>
+                        @else
+                        <option value="-1">no Header</option>
+                        @endeach								
+                     </select>
+                  </div>
+               </div>
+            </div>
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+
+@each(ad in ads)
+<div class="row">
+		<div class="col"><label for="{{ ad.Id }}">{{ ad.Section }}</label></div>
+		<div class="col">
+			 <select class="form-control" id="ad_{{ ad.Id }}" name="ad_{{ ad.Id }}">
+					@each(group in groupids)
+					<option value="{{ group.name }}">{{ group.name }}</option>
+					@endeach								
+			 </select>
+		</div>
+ </div>
+@else
+No advert position
+@endeach
+
+						</div>
+            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+								@each(pagemodul in pagemoduls)
+								<div class="row">
+										<div class="col"><label for="{{ modul.Id }}">{{ modul.Section }}</label></div>
+										<div class="col">
+											 <select class="form-control" id="ad_{{ modul.Id }}" name="ad_{{ modul.Id }}">
+													@each(modul in moduls)
+													<option value="{{ modul.name }}">{{ modul.name }}</option>
+													@endeach								
+											 </select>
+										</div>
+								 </div>
+								@else
+								No advert position
+								@endeach
+
+
+						</div>
+         </div>
+      </div>
+      <hr/>
+      <div class="row">
+         <div class="col"> <button type="submit" class="btn btn-primary" >Save</button></div>
+         <div class="col"> <a class="btn btn-primary" href="/admin/Contents">Cancel</a></div>
+      </div>
+   </div>
+</div>
+</form>
+
+@endsection

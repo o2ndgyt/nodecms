@@ -13,6 +13,7 @@ var JsonDB=require('node-json-db');
 var useragent = require('express-useragent');
 var validUrl = require('valid-url');
 var robots= require('express-robots-txt');
+
 //Read config
 var db = new JsonDB("./db/config", true, false);
 try {
@@ -26,29 +27,29 @@ var comfunc = require('../app/comfunc');
 
 var app = express();
 
-//User agent
+// User agent
 app.use(useragent.express());
 
-//Robots
+// Robots
 app.use(robots(path.join(__dirname, '../public/robots.txt')));
 
-// defense
+// Defense
 app.use(helmet());
 
-// compress
+// Compress
 app.use(compression({level:configdata.GZip}));
 
-//Template
+// Template engine
 app.use(expressedge);
 app.set('views', path.join(__dirname, '../views'));
 
-//Change X-Powered-By
+// Change X-Powered-By
 app.use(function (req, res, next) {
   res.setHeader('X-Powered-By', configdata.XPowerBy)
   next()
 })
 
-//Set public folder
+// Set public folder
 app.use(express.static('public'));
 
 
@@ -56,7 +57,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//Admins routers
+// Admin routers
 app.use('/admin', RouterAdmin); 
 
 
