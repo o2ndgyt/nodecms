@@ -386,12 +386,12 @@ router.post('/Contents', function (req, res) {
 router.get('/Contents/e/:id', function (req, res) {
     dbcontents.reload();
     var addata = dbcontents.getData("/");
-    var filterhead = addata.filter(function (value) { return value.HeadId != req.params.id; });
+    var filterhead = addata.filter(function (value) { return value.Id == req.params.id; });
 
     dbcontentsad.reload();
     var addataAds = dbcontentsad.getData("/");
-    var filteredA = addataAds.filter(function (value) { return value.HeadId != req.params.id && value.Mode=="A"; });
-    var filteredM = addataAds.filter(function (value) { return value.HeadId != req.params.id && value.Mode=="M"; });
+    var filteredA = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode=="A"; });
+    var filteredM = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode=="M"; });
   
     dbheaders.reload();
     var headers = dbheaders.getData("/");
@@ -401,8 +401,9 @@ router.get('/Contents/e/:id', function (req, res) {
     var grouped = _.groupBy(adsdata, ad => ad.GroupID);
 
     var tmp = [];
-    _.forEach(grouped,function (value) { tmp.push({ "Name": value.GroupID }); });
-
+    _.forEach(Object.keys(grouped),function (value) { 
+        tmp.push({ "Name": value }); });
+  
     var tmp1=_.functionsIn(cmsmodul);
     var tmp2 = [];
     _.forEach(tmp1,function (value) { tmp2.push({ "Name": value }); });
