@@ -381,6 +381,26 @@ router.post('/Contents', function (req, res) {
 
 // Read
 router.get('/Contents/e/:id', function (req, res) {
+    dbcontents.reload();
+    var addata = dbcontents.getData("/");
+    var filterhead = addata.filter(function (value) { return value.HeadId != req.params.id; });
+
+    dbcontentsad.reload();
+    var addataAds = dbcontentsad.getData("/");
+    var filtered = addataAds.filter(function (value) { return value.HeadId != req.params.id; });
+  
+    dbheaders.reload();
+    var headers = dbheaders.getData("/");
+  
+    res.render('admin/contentsupdate', {
+       title:filterhead[0].Alias,
+       id:req.params.id,
+       headers:headers,
+       ads:"",
+       groupids:"",
+       pagemoduls:"",
+       moduls:""
+    });
 
 
 });
@@ -421,9 +441,6 @@ router.post('/Contents/d/:id', function (req, res) {
             status: 500
         });
     }
-
-
-
 
 });
 
