@@ -47,7 +47,7 @@
 		<div class="col">
 			 <select class="form-control" id="ad_{{ ad.Id }}" name="ad_{{ ad.Id }}">
 					@each(group in groupids)
-					<option value="{{ group.name }}">{{ group.name }}</option>
+					<option value="{{ group.Name }}">{{ group.Name }}</option>
 					@endeach								
 			 </select>
 		</div>
@@ -64,7 +64,7 @@ No advert position
 										<div class="col">
 											 <select class="form-control" id="ad_{{ modul.Id }}" name="ad_{{ modul.Id }}">
 													@each(modul in moduls)
-													<option value="{{ modul.name }}">{{ modul.name }}</option>
+													<option value="{{ modul.Name }}">{{ modul.Name }}</option>
 													@endeach								
 											 </select>
 										</div>

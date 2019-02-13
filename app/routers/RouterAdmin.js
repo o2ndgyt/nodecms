@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var basicAuth = require('express-basic-auth');
-var osinfo = require('../models/osinfo')
+var osinfo = require('../modules/osinfo')
+var cmsmodul = require('../modules/cmsmodul.js')
 var JsonDB = require('node-json-db');
 var db = new JsonDB("./db/config", true, false);
 var dbads = new JsonDB("./db/cmsad", true, false);
@@ -9,6 +10,8 @@ var dbheaders = new JsonDB("./db/cmsheaders", true, false);
 var dbcontents = new JsonDB("./db/cmscontents", true, false);
 var dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
 var comfunc = require("../comfunc");
+var _ = require('lodash');
+
 var oAuth = {
     authorizer: myAuthorizer,
     challenge: true,
@@ -387,19 +390,32 @@ router.get('/Contents/e/:id', function (req, res) {
 
     dbcontentsad.reload();
     var addataAds = dbcontentsad.getData("/");
-    var filtered = addataAds.filter(function (value) { return value.HeadId != req.params.id; });
+    var filteredA = addataAds.filter(function (value) { return value.HeadId != req.params.id && value.Mode=="A"; });
+    var filteredM = addataAds.filter(function (value) { return value.HeadId != req.params.id && value.Mode=="M"; });
   
     dbheaders.reload();
     var headers = dbheaders.getData("/");
   
+    dbads.reload();
+    var adsdata = dbads.getData("/");
+    var grouped = _.groupBy(adsdata, ad => ad.GroupID);
+
+    var tmp = [];
+    _.forEach(grouped,function (value) { tmp.push({ "Name": value.GroupID }); });
+
+    var tmp1=_.functionsIn(cmsmodul);
+    var tmp2 = [];
+    _.forEach(tmp1,function (value) { tmp2.push({ "Name": value }); });
+
+
     res.render('admin/contentsupdate', {
        title:filterhead[0].Alias,
        id:req.params.id,
        headers:headers,
-       ads:"",
-       groupids:"",
-       pagemoduls:"",
-       moduls:""
+       ads:filteredA,
+       groupids:tmp,
+       pagemoduls:filteredM,
+       moduls:tmp2
     });
 
 
