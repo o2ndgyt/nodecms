@@ -21,13 +21,13 @@
                 <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
                   <div class="row">
                      <div class="col"><label for="alias">Alias</label> </div>
-                     <div class="col"> <INPUT class="form-control"  id="Alias" type="text" name="Alias"/> </div>
+                     <div class="col"> <INPUT class="form-control" value="{{{ title }}}"  id="Alias" type="text" name="Alias"/> </div>
                   </div>
                   <br/>
                   <div class="row">
                      <div class="col"><label for="HeadId">Header:</label></div>
                      <div class="col">
-                        <select class="form-control" id="HeadId" name="HeadId">
+                        <select class="form-control" id="HeadId" name="HeadId">                         
                            @each(header in headers)
                            <option value="{{ header.Id }}">{{ header.Alias }}</option>
                            @else
@@ -43,8 +43,17 @@
                      <div class="col"><label for="{{ ad.Id }}">{{ ad.Section }}</label></div>
                      <div class="col">
                         <select class="form-control" id="ad_{{ ad.Id }}" name="ad_{{ ad.Id }}">
+                           <option 
+                           @if(ad.GroupID === "-1")
+                           selected
+                           @endif  
+                           value="-1">None</option>
                            @each(group in groupids)
-                           <option value="{{ group.Name }}">{{ group.Name }}</option>
+                           <option
+                           @if(ad.GroupID === group.Name)
+										selected
+										@endif                          
+                           value="{{ group.Name }}">{{ group.Name }}</option>
                            @endeach								
                         </select>
                      </div>
@@ -61,8 +70,17 @@
                      <div class="col"><label for="{{ pagemodul.Id }}">{{ pagemodul.Section }}</label></div>
                      <div class="col">
                         <select class="form-control" id="ad_{{ pagemodul.Id }}" name="ad_{{ pagemodul.Id }}">
+                           <option 
+                           @if(pagemodul.GroupID === "-1")
+                           selected
+                           @endif  
+                           value="-1">None</option>
                            @each(modul in moduls)
-                           <option value="{{ modul.Name }}">{{ modul.Name }}</option>
+                           <option
+                           @if(pagemodul.GroupID === modul.Name)
+                           selected
+                           @endif  
+                            value="{{ modul.Name }}">{{ modul.Name }}</option>
                            @endeach								
                         </select>
                      </div>

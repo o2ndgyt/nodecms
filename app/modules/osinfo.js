@@ -1,24 +1,31 @@
-var osdata = require('node-os-utils');
-var osdatacpu = osdata.cpu;
-var osdataos = osdata.os;
+var si = require('systeminformation');
 
-var osName = require('os-name');
+async function cpuData() {
+    try {
+        const data = await si.cpu();
+        return data;
+    } catch (e) {
+        console.log(e);
+    }
+    return 'error';
+}
 
 var osinfo = {
-    osname: function () {
-        return osName();
+    osname: async function () {
+        let r = await cpuData();
+        return `manufacturer: ${r.manufacturer}, brand: ${r.brand}, cores: ${r.cores}, speed: ${r.speed} `;
     },
     oscpucount: function () {
-        return osdatacpu.count();
+        return '';//osdatacpu.count();
     },
     oscpumodel: function () {
-        return osdatacpu.model();
+        return '';//osdatacpu.model();
     },
     oshostname: function () {
-        return osdataos.hostname();
+        return '';//osdataos.hostname();
     },
     oshostip: function () {
-        return osdataos.ip();
+        return '';//osdataos.ip();
     },
     
 };
