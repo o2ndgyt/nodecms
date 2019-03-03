@@ -20,7 +20,7 @@
         "HeadId": "_m9w9j3g6f",
         "Mode": "M",
         "Section": "mod_feature_video",
-        "GroupID": "-1",
+        "GroupID": "SimpleHtml",
         "Data": ""
     },
     {
@@ -44,7 +44,7 @@
         "HeadId": "_q19dgoaop",
         "Mode": "M",
         "Section": "mod_feature_video",
-        "GroupID": "-1",
+        "GroupID": "SimpleHtml",
         "Data": ""
     }
 ]

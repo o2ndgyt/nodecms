@@ -1,5 +1,18 @@
 @layout('admin')
 @section('content')
+
+<script lang="javascript">
+$(function(){
+   @each(pagemodul in pagemoduls)
+   $("#ad_{{ pagemodul.Id }}").change(function(){
+       var status = this.value;
+       $("#ad_l_{{ pagemodul.Id }}").attr("href", "/admin/Contents/m/{{ pagemodul.Id }}/"+status)
+    //   alert(status);
+    });
+    @endeach
+  });
+</script>
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
    <h1 class="h2">{{{title}}}</h1>
 </div>
@@ -77,12 +90,24 @@
                            value="-1">None</option>
                            @each(modul in moduls)
                            <option
+                           {{ pagemodul.GroupID }}
+                           {{ modul.Name }}
                            @if(pagemodul.GroupID === modul.Name)
                            selected
                            @endif  
                             value="{{ modul.Name }}">{{ modul.Name }}</option>
                            @endeach								
                         </select>
+                        <a id="ad_l_{{ pagemodul.Id }}" href="/admin/Contents/m/{{ pagemodul.Id }}/
+                        @if(pagemodul.GroupID === "-1")
+-1
+                        @endif
+                        @each(modul in moduls)
+                        @if(pagemodul.GroupID === modul.Name)
+{{ modul.Name }}
+                        @endif 
+                        @endeach
+                        ">Config</a>
                      </div>
                   </div>
                   <br/>

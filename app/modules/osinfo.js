@@ -1,19 +1,8 @@
 var si = require('systeminformation');
 
-async function cpuData() {
-    try {
-        const data = await si.cpu();
-        return data;
-    } catch (e) {
-        console.log(e);
-    }
-    return 'error';
-}
-
 var osinfo = {
-    osname: async function () {
-        let r = await cpuData();
-        return `manufacturer: ${r.manufacturer}, brand: ${r.brand}, cores: ${r.cores}, speed: ${r.speed} `;
+    osname: function(){
+        return "N/A";
     },
     oscpucount: function () {
         return '';//osdatacpu.count();

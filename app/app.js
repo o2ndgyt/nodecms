@@ -11,8 +11,12 @@ var express = require('express');
 var helmet = require('helmet');
 var JsonDB=require('node-json-db');
 var useragent = require('express-useragent');
-var validUrl = require('valid-url');
 var robots= require('express-robots-txt');
+var cookieParser = require('cookie-parser');
+var validator = require('express-validator');
+var session=require('express-session');
+
+var validUrl = require('valid-url');
 
 //Read config
 var db = new JsonDB("./db/config", true, false);
@@ -23,7 +27,6 @@ try {
 };
 
 var RouterAdmin = require('../app/routers/RouterAdmin'); 
-var comfunc = require('../app/comfunc');
 
 var app = express();
 
@@ -56,6 +59,17 @@ app.use(express.static('public'));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(validator());
+app.use(cookieParser());
+app.use(session(
+  {secret:'Ku7VEtyc2B8mHFwrEpV6CAQtxGLySuLc',
+  resave:false, 
+  saveUninitialized:false,
+  // millisec expired
+  cookie: { maxAge: 180 *60*1000}
+}));
+
+
 
 // Admin routers
 app.use('/admin', RouterAdmin); 
@@ -67,16 +81,7 @@ app.get('/',function(req, res) {
  res.send('ok');
 });
 
-// default page
-app.get('/api/test',function(req, res) {
-
-  var dbads = new JsonDB("./db/cmsad", true, false);
-  
-  
-  res.send(result);
- });
  
-
 // Content
 app.get('/:url',function(req, res) {
   res.render('index', {url: req});

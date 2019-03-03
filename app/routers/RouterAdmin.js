@@ -398,15 +398,15 @@ router.get('/Contents/e/:id', function (req, res) {
   
     dbads.reload();
     var adsdata = dbads.getData("/");
-    var grouped = _.groupBy(adsdata, ad => ad.GroupID);
+    var grouped = _.groupBy(adsdata, ad => ad.GroupID.trim());
 
     var tmp = [];
     _.forEach(Object.keys(grouped),function (value) { 
-        tmp.push({ "Name": value }); });
+        tmp.push({ "Name": value.trim() }); });
   
     var tmp1=_.functionsIn(cmsmodul);
     var tmp2 = [];
-    _.forEach(tmp1,function (value) { tmp2.push({ "Name": value }); });
+    _.forEach(tmp1,function (value) { tmp2.push({ "Name": value.trim() }); });
 
 
     res.render('admin/contentsupdate', {

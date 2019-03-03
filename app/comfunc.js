@@ -54,7 +54,7 @@ var comfunc = {
   FileList: function () {
     return glob.sync("./views/*.edge");
   },
-  FullURl: function fullUrl(req) {
+  FullURL: function fullUrl(req) {
     return url.format({
       protocol: req.protocol,
       host: req.get('host'),
