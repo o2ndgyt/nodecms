@@ -41,9 +41,9 @@ var comfunc = {
       if (str3 != "HeaderScript" && str3 != "BodyScript" && str3 != "FooterScript") {
         var id = '_' + Math.random().toString(36).substr(2, 9);
         if (str3.substr(0, 3).toLowerCase() == "ad_")
-          indices.push({ "Id": id, "HeadId": HeadId, "Mode": "A", "Section": str3, "GroupID": "-1", "Data": "" });
+          indices.push({ "Id": id, "HeadId": HeadId, "Mode": "A", "Section": str3, "GroupID": "None", "Data": "" });
         if (str3.substr(0, 4).toLowerCase() == "mod_")
-          indices.push({ "Id": id, "HeadId": HeadId, "Mode": "M", "Section": str3, "GroupID": "-1", "Data": "" });
+          indices.push({ "Id": id, "HeadId": HeadId, "Mode": "M", "Section": str3, "GroupID": "None", "Data": "" });
       }
     });
 

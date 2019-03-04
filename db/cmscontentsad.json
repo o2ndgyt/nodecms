@@ -4,7 +4,7 @@
         "HeadId": "_m9w9j3g6f",
         "Mode": "A",
         "Section": "ad_top",
-        "GroupID": "-1",
+        "GroupID": "None",
         "Data": ""
     },
     {
@@ -12,7 +12,7 @@
         "HeadId": "_m9w9j3g6f",
         "Mode": "A",
         "Section": "ad_right_2col",
-        "GroupID": "-1",
+        "GroupID": "None",
         "Data": ""
     },
     {
@@ -20,7 +20,7 @@
         "HeadId": "_m9w9j3g6f",
         "Mode": "M",
         "Section": "mod_feature_video",
-        "GroupID": "SimpleHtml",
+        "GroupID": "None",
         "Data": ""
     },
     {
@@ -28,7 +28,7 @@
         "HeadId": "_q19dgoaop",
         "Mode": "A",
         "Section": "ad_top",
-        "GroupID": "-1",
+        "GroupID": "None",
         "Data": ""
     },
     {
@@ -36,7 +36,7 @@
         "HeadId": "_q19dgoaop",
         "Mode": "A",
         "Section": "ad_right_2col",
-        "GroupID": "-1",
+        "GroupID": "None",
         "Data": ""
     },
     {

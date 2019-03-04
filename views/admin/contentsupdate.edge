@@ -3,14 +3,36 @@
 
 <script lang="javascript">
 $(function(){
+
    @each(pagemodul in pagemoduls)
    $("#ad_{{ pagemodul.Id }}").change(function(){
-       var status = this.value;
-       $("#ad_l_{{ pagemodul.Id }}").attr("href", "/admin/Contents/m/{{ pagemodul.Id }}/"+status)
-    //   alert(status);
+       $("#ad_l_{{ pagemodul.Id }}").attr("href", "/admin/Contents/m/{{ pagemodul.Id }}/"+this.value)
     });
     @endeach
   });
+
+$(document).ready(function() {
+   
+   var myOptions = {
+   @each(modul in moduls)
+    "{{ modul.Name }}" : "{{ modul.Name }}",
+    @endeach
+    "None":"None"
+   };
+
+   var _select = $('<select>');
+   $.each(myOptions, function(val, text) {
+      _select.append($('<option></option>').val(val).html(text));
+   });
+   
+   @each(pagemodul in pagemoduls)
+   $("#ad_{{ pagemodul.Id }}").append(_select.html());
+   $("#ad_{{ pagemodul.Id }}").val("{{ pagemodul.GroupID }}").change();
+   @endeach
+
+
+});
+  
 </script>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -82,32 +104,12 @@ $(function(){
                   <div class="row">
                      <div class="col"><label for="{{ pagemodul.Id }}">{{ pagemodul.Section }}</label></div>
                      <div class="col">
-                        <select class="form-control" id="ad_{{ pagemodul.Id }}" name="ad_{{ pagemodul.Id }}">
-                           <option 
-                           @if(pagemodul.GroupID === "-1")
-                           selected
-                           @endif  
-                           value="-1">None</option>
-                           @each(modul in moduls)
-                           <option
-                           {{ pagemodul.GroupID }}
-                           {{ modul.Name }}
-                           @if(pagemodul.GroupID === modul.Name)
-                           selected
-                           @endif  
-                            value="{{ modul.Name }}">{{ modul.Name }}</option>
-                           @endeach								
+                        <select class="form-control" id="ad_{{ pagemodul.Id }}" name="ad_{{ pagemodul.Id }}">					
                         </select>
-                        <a id="ad_l_{{ pagemodul.Id }}" href="/admin/Contents/m/{{ pagemodul.Id }}/
-                        @if(pagemodul.GroupID === "-1")
--1
-                        @endif
-                        @each(modul in moduls)
-                        @if(pagemodul.GroupID === modul.Name)
-{{ modul.Name }}
-                        @endif 
-                        @endeach
-                        ">Config</a>
+                     </div>
+                        <div class="col">
+                        <a id="ad_l_{{ pagemodul.Id }}" href="/admin/Contents/m/{{ pagemodul.Id }}/{{ pagemodul.GroupID }}">Config modul</a>
+                     
                      </div>
                   </div>
                   <br/>
