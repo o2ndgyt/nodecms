@@ -409,7 +409,7 @@ router.get('/Contents/e/:id', function (req, res) {
     var tmp2 = [];
     _.forEach(tmp1, function (value) { tmp2.push({ "Name": value.trim() }); });
 
-
+    req.session.moduls=[];
     res.render('admin/contentsupdate', {
         title: filterhead[0].Alias,
         id: req.params.id,
@@ -432,10 +432,22 @@ router.post('/Contents/e/:id', function (req, res) {
 
 // Read moduls
 router.get('/Contents/m/:id/:modul', function (req, res) {
-    // no session create session fill it from db
-    // use session data
-
-    var adatmodul = cmsmodulread[req.params.modul]('proba');
+    var data='';
+    if (req.session.moduls)
+    {
+            // use session data
+            data=_.find(req.session.moduls, { 'Id': req.params.id }).Data;           
+    }
+    else
+    {
+        // no session create session fill it from db
+        dbcontentsad.reload();
+        var addataAds = dbcontentsad.getData("/");
+        data=_.find(addataAds, { 'Id': req.params.id }).Data;
+    }
+      
+    
+    var adatmodul = cmsmodulread[req.params.modul](data);
 
     res.render('admin/moduls/' + req.params.modul, {
         id: req.params.id,
@@ -447,9 +459,18 @@ router.get('/Contents/m/:id/:modul', function (req, res) {
 // Update moduls
 router.post('/Contents/m/:id/:modul', function (req, res) {
     // save to session
-    res.render('admin/moduls/' + req.params.modul, {
-        id: req.params.id
-    });
+    var adatmodul = cmsmodulupdate[req.params.modul](req.body);
+    if (req.session.moduls)
+    {
+        var index = _.findIndex(req.session.moduls, {'Id': req.params.id });
+        // Replace item at index using native splice
+        req.session.moduls.splice(index, 1, { "Id": req.params.id, "Data":adatmodul });   
+    }
+    else
+    {    
+        req.session.moduls.push({ "Id": req.params.id, "Data":adatmodul });
+    }
+    res.render('admin/moduls/None');
 });
 
 
