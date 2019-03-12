@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var basicAuth = require('express-basic-auth');
-var osinfo = require('../modules/osinfo')
-var cmsmodul = require('../modules/cmsmodul.js')
+var osinfo = require('../modules/osinfo');
+var cmsmodulread = require('../modules/cmsmodul.read.js');
 var JsonDB = require('node-json-db');
 var db = new JsonDB("./db/config", true, false);
 var dbads = new JsonDB("./db/cmsad", true, false);
@@ -360,14 +360,14 @@ router.post('/Contents', function (req, res) {
         dbcontents.push("/" + adsdata.length, req.body, false);
         // read main file
         var adsections = comfunc.GetSections("./views/" + req.body.FileLayout + ".edge", req.body.Id);
-        
+
         // add ads/moduls
         dbcontentsad.reload();
         var adsdataad = dbcontentsad.getData("/");
-        adsections.forEach(function(value){
-            dbcontentsad.push("/" + adsdataad.length,value, false);
+        adsections.forEach(function (value) {
+            dbcontentsad.push("/" + adsdataad.length, value, false);
         });
-       
+
 
         res.json({
             success: req.body.Alias + " created successfully",
@@ -390,42 +390,66 @@ router.get('/Contents/e/:id', function (req, res) {
 
     dbcontentsad.reload();
     var addataAds = dbcontentsad.getData("/");
-    var filteredA = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode=="A"; });
-    var filteredM = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode=="M"; });
-  
+    var filteredA = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode == "A"; });
+    var filteredM = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode == "M"; });
+
     dbheaders.reload();
     var headers = dbheaders.getData("/");
-  
+
     dbads.reload();
     var adsdata = dbads.getData("/");
     var grouped = _.groupBy(adsdata, ad => ad.GroupID.trim());
 
     var tmp = [];
-    _.forEach(Object.keys(grouped),function (value) { 
-        tmp.push({ "Name": value.trim() }); });
-  
-    var tmp1=_.functionsIn(cmsmodul);
+    _.forEach(Object.keys(grouped), function (value) {
+        tmp.push({ "Name": value.trim() });
+    });
+
+    var tmp1 = _.functionsIn(cmsmodulread);
     var tmp2 = [];
-    _.forEach(tmp1,function (value) { tmp2.push({ "Name": value.trim() }); });
+    _.forEach(tmp1, function (value) { tmp2.push({ "Name": value.trim() }); });
 
 
     res.render('admin/contentsupdate', {
-       title:filterhead[0].Alias,
-       id:req.params.id,
-       headers:headers,
-       ads:filteredA,
-       groupids:tmp,
-       pagemoduls:filteredM,
-       moduls:tmp2
+        title: filterhead[0].Alias,
+        id: req.params.id,
+        headers: headers,
+        ads: filteredA,
+        groupids: tmp,
+        pagemoduls: filteredM,
+        moduls: tmp2
     });
 
 
 });
 
-// Save file
+// Update file
 router.post('/Contents/e/:id', function (req, res) {
+    // if no session then moduls don't changed
+    // session available then save session to db
 
+});
 
+// Read moduls
+router.get('/Contents/m/:id/:modul', function (req, res) {
+    // no session create session fill it from db
+    // use session data
+
+    var adatmodul = cmsmodulread[req.params.modul]('proba');
+
+    res.render('admin/moduls/' + req.params.modul, {
+        id: req.params.id,
+        data: adatmodul,
+        modul:req.params.modul
+    });
+});
+
+// Update moduls
+router.post('/Contents/m/:id/:modul', function (req, res) {
+    // save to session
+    res.render('admin/moduls/' + req.params.modul, {
+        id: req.params.id
+    });
 });
 
 

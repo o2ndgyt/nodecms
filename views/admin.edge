@@ -6,17 +6,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="/admin/bootstrap.min.css">
 <link href="/admin/dashboard.css" rel="stylesheet">
+<link rel="shortcut icon" href="/admin/favicon.ico" />  
 </head>
 <body>
     <script src="/admin/jquery-3.3.1.slim.min.js"></script>
     <script src="/admin/popper.min.js"></script>
     <script src="/admin/bootstrap.min.js"></script>
-   <!-- JavaScript -->
-<script src="/admin/alertify.min.js"></script>
-<link rel="stylesheet" href="/admin/alertify.min.css"/>
-<link rel="stylesheet" href="/admin/default.min.css"/>
-<link rel="stylesheet" href="/admin/semantic.min.css"/>
-<link rel="stylesheet" href="/admin/bootstrap.min.css"/>
+    <script src="/admin/alertify.min.js"></script>
+    <link rel="stylesheet" href="/admin/alertify.min.css"/>
+    <link rel="stylesheet" href="/admin/default.min.css"/>
+    <link rel="stylesheet" href="/admin/semantic.min.css"/>
+    <link rel="stylesheet" href="/admin/bootstrap.min.css"/>
         
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
         <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Admin panel</a>
@@ -85,13 +85,11 @@
   
           <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           
-            @!section('content')
-  
-            <!-- Icons -->
-            <script src="/admin/feather.min.js"></script>
-            <script>
-              feather.replace()
-            </script>
+          @!section('content')
+          <script src="/admin/feather.min.js"></script>
+          <script>
+            feather.replace()
+          </script>
           
 </body>
 </html>
