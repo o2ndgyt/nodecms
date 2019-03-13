@@ -3,6 +3,7 @@ var router = express.Router();
 var basicAuth = require('express-basic-auth');
 var osinfo = require('../modules/osinfo');
 var cmsmodulread = require('../modules/cmsmodul.read.js');
+var cmsmodulupdate=require('../modules/cmsmodul.update.js');
 var JsonDB = require('node-json-db');
 var db = new JsonDB("./db/config", true, false);
 var dbads = new JsonDB("./db/cmsad", true, false);
@@ -427,13 +428,13 @@ router.get('/Contents/e/:id', function (req, res) {
 router.post('/Contents/e/:id', function (req, res) {
     // if no session then moduls don't changed
     // session available then save session to db
-
+ console.log(req.session.moduls);
 });
 
 // Read moduls
 router.get('/Contents/m/:id/:modul', function (req, res) {
     var data='';
-    if (req.session.moduls)
+    if (req.session.moduls.length>0)
     {
             // use session data
             data=_.find(req.session.moduls, { 'Id': req.params.id }).Data;           
@@ -459,8 +460,8 @@ router.get('/Contents/m/:id/:modul', function (req, res) {
 // Update moduls
 router.post('/Contents/m/:id/:modul', function (req, res) {
     // save to session
-    var adatmodul = cmsmodulupdate[req.params.modul](req.body);
-    if (req.session.moduls)
+    var adatmodul = cmsmodulupdate[req.params.modul](req.body.filecon);
+    if (req.session.moduls.length>0)
     {
         var index = _.findIndex(req.session.moduls, {'Id': req.params.id });
         // Replace item at index using native splice
