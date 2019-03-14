@@ -3,6 +3,7 @@ var router = express.Router();
 var basicAuth = require('express-basic-auth');
 var osinfo = require('../modules/osinfo');
 var cmsmodulread = require('../modules/cmsmodul.read.js');
+var cmsmodulupdate=require('../modules/cmsmodul.update.js');
 var JsonDB = require('node-json-db');
 var db = new JsonDB("./db/config", true, false);
 var dbads = new JsonDB("./db/cmsad", true, false);
@@ -435,7 +436,7 @@ router.post('/Contents/e/:id', function (req, res) {
 // Read moduls
 router.get('/Contents/m/:id/:modul', function (req, res) {
     var data='';
-    if (req.session.moduls)
+    if (req.session.moduls.length>0)
     {
             // use session data
             data=_.find(req.session.moduls, { 'Id': req.params.id }).Data;           
