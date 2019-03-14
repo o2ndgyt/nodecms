@@ -427,7 +427,9 @@ router.get('/Contents/e/:id', function (req, res) {
 router.post('/Contents/e/:id', function (req, res) {
     // if no session then moduls don't changed
     // session available then save session to db
-
+    console.log(req.body);
+    console.log(req.session.moduls);
+    res.send("OK");
 });
 
 // Read moduls
@@ -446,7 +448,7 @@ router.get('/Contents/m/:id/:modul', function (req, res) {
         data=_.find(addataAds, { 'Id': req.params.id }).Data;
     }
       
-    
+    // call read fn to convert data
     var adatmodul = cmsmodulread[req.params.modul](data);
 
     res.render('admin/moduls/' + req.params.modul, {
@@ -458,8 +460,9 @@ router.get('/Contents/m/:id/:modul', function (req, res) {
 
 // Update moduls
 router.post('/Contents/m/:id/:modul', function (req, res) {
-    // save to session
+    // call update fn to convert data
     var adatmodul = cmsmodulupdate[req.params.modul](req.body);
+    // save to session
     if (req.session.moduls)
     {
         var index = _.findIndex(req.session.moduls, {'Id': req.params.id });
