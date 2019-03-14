@@ -23,11 +23,28 @@ $(document).ready(function() {
     "None":"None"
    };
 
+ var myAds = {
+    @each(group in groupids)
+  "{{ group.Name }}" : "{{ group.Name }}",
+    @endeach	
+    "None":"None"
+   };
+
    var _select = $('<select>');
    $.each(myOptions, function(val, text) {
       _select.append($('<option></option>').val(val).html(text));
    });
    
+   var _select1 = $('<select>');
+   $.each(myAds, function(val, text) {
+      _select1.append($('<option></option>').val(val).html(text));
+   });
+
+   @each(ad in ads)
+   $("#ad_{{ ad.Id }}").append(_select1.html());
+   $("#ad_{{ ad.Id }}").val("{{ ad.GroupID }}").change();  
+   @endeach
+
    @each(pagemodul in pagemoduls)
    $("#ad_{{ pagemodul.Id }}").append(_select.html());
    $("#ad_{{ pagemodul.Id }}").val("{{ pagemodul.GroupID }}").change();
@@ -97,19 +114,7 @@ $(document).ready(function() {
                   <div class="row">
                      <div class="col"><label for="{{ ad.Id }}">{{ ad.Section }}</label></div>
                      <div class="col">
-                        <select class="form-control" id="ad_{{ ad.Id }}" name="ad_{{ ad.Id }}">
-                           <option 
-                           @if(ad.GroupID === "-1")
-                           selected
-                           @endif  
-                           value="-1">None</option>
-                           @each(group in groupids)
-                           <option
-                           @if(ad.GroupID === group.Name)
-										selected
-										@endif                          
-                           value="{{ group.Name }}">{{ group.Name }}</option>
-                           @endeach								
+                        <select class="form-control" id="ad_{{ ad.Id }}" name="ad_{{ ad.Id }}">     							
                         </select>
                      </div>
                   </div>

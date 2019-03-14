@@ -40,13 +40,14 @@
    $(document).ready(function(){
    	document.title = '@Admin Page - Contents';
       //on new 
-      $('#save').click(function(){ if ($('#Alias').val().trim().length>0)
+      $('#save').click(function(){ 
+          if ($('#Alias').val().trim().length>0)
    		   {
    	  //defining new 
    	  var user=Object();
    	  user['Id']='_' + Math.random().toString(36).substr(2, 9);
    	  user['Alias']=$('#Alias').val().trim();	
-   	  user['HeadID']=$('#HeadID').val().trim();
+   	  user['HeadId']=$('#HeadId').val().trim();
    	  user['FileLayout']=$('#FileLayout').val().trim();					
    	  SendData(1,user,0); }
    		   else

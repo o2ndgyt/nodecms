@@ -426,11 +426,51 @@ router.get('/Contents/e/:id', function (req, res) {
 
 // Update file
 router.post('/Contents/e/:id', function (req, res) {
-    // if no session then moduls don't changed
-    // session available then save session to db
-    console.log(req.body);
-    console.log(req.session.moduls);
-    res.send("OK");
+ 
+    // update content
+    dbcontents.reload();
+    var addata = dbcontents.getData("/");
+    var result =  _.find(addata, { 'Id': req.params.id });
+    var index = addata.findIndex(item => item.Id === req.params.id );
+    if (index > -1) {
+        result.Alias=req.body.Alias;
+        result.HeadId=req.body.HeadId;
+        dbcontents.push("/" + index, result);
+    }
+
+    // update ads
+    dbcontentsad.reload();
+    var addataAds = dbcontentsad.getData("/");
+
+    // collect all modul ads
+    var filteredA = addataAds.filter(function (value) { return value.HeadId == req.params.id});
+    filteredA.forEach( function (value) {
+        var resultads = _.find(addataAds, { 'Id': value.Id });
+        var indexads = addataAds.findIndex(item => item.Id === value.Id);
+        if (indexads > -1) {
+            resultads.GroupID=req.body["ad_"+value.Id];
+            dbcontentsad.push("/" + indexads, resultads);
+        }
+
+    });
+
+
+
+     // session available then save session to db
+    if (req.session.moduls.length>0)
+    {    
+        req.session.moduls.forEach( function (value) 
+        {        
+            var resultad = _.find(addataAds, { 'Id': value.Id });
+            var indexad = addataAds.findIndex(item => item.Id === value.Id);
+            if (indexad > -1) {
+                resultad.Data=value.Data;
+                dbcontentsad.push("/" + indexad, resultad);
+            }
+        }
+        );
+    }
+    res.redirect('/admin/Contents');
 });
 
 // Read moduls
@@ -462,7 +502,7 @@ router.get('/Contents/m/:id/:modul', function (req, res) {
 // Update moduls
 router.post('/Contents/m/:id/:modul', function (req, res) {
     // call update fn to convert data
-    var adatmodul = cmsmodulupdate[req.params.modul](req.body);
+    var adatmodul = cmsmodulupdate[req.params.modul](req.body.filecon);
     // save to session
     if (req.session.moduls)
     {
