@@ -3,6 +3,14 @@
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
+
+   function ChangeText()
+   {     
+      var text=$("#linktext").text() === "Create" ? "Close":"Create";
+      $("#linktext").text(text); 
+
+   }
+
    function SendData(crud,data,index)
    {
    	switch(crud) {
@@ -38,11 +46,19 @@
    }
       
    $(document).ready(function(){
-   	document.title = '@Admin Page - Contents';
+      document.title = '@Admin Page - Contents';
+      
+    
+      $("#link").click(function() {
+            $("#editupdate").toggle();
+            ChangeText();
+        });
+
       //on new 
       $('#save').click(function(){ 
+       
           if ($('#Alias').val().trim().length>0)
-   		   {
+   		   {  $("#editupdate").toggle();
    	  //defining new 
    	  var user=Object();
    	  user['Id']='_' + Math.random().toString(36).substr(2, 9);
@@ -61,8 +77,10 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
    <h1 class="h2">Contents</h1>
 </div>
-<br/>
 <INPUT class="form-control" id="Id" type="hidden" name="Id" readonly/>
+<div id="link"><a id="linktext" class="btn btn-primary" href="#">Create</a></div>
+<div id="editupdate" style="display: none;">
+<hr/>
 <div class="form-group">
    <div class="container">
       <div class="row">
@@ -96,8 +114,9 @@
          </div>
       </div>
       <br/>
-      <a class="btn btn-primary" href="#" id="save">Save</a>
+      <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="save">Save</a>
    </div>
+</div>
 </div>
 <hr/>
 <table class="table table-dark">
