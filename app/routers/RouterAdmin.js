@@ -10,6 +10,9 @@ var dbads = new JsonDB("./db/cmsad", true, false);
 var dbheaders = new JsonDB("./db/cmsheaders", true, false);
 var dbcontents = new JsonDB("./db/cmscontents", true, false);
 var dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
+var dburls = new JsonDB("./db/cmsurls", true, false);
+var slug=require("slug");
+
 var comfunc = require("../comfunc");
 var _ = require('lodash');
 
@@ -136,8 +139,6 @@ router.post('/Headers/d/:id', function (req, res) {
         });
     }
 });
-
-
 
 
 // Ads CRUD
@@ -550,6 +551,81 @@ router.post('/Contents/d/:id', function (req, res) {
 
 });
 
+// Urls CRUD
+//**********************
+
+// Urls
+router.get('/Urls', function (req, res) {
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Alias}}</td><td>{{json.lang}}</td><td>{{PageUrl}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
+    res.render('admin/urls', {
+        fo: fotter
+    });
+});
+
+// Create
+router.post('/Urls', function (req, res) {
+    dburls.reload();
+    var adsdata = dburls.getData("/");
+    req.body.PageUrl=slug(req.body.PageFullUrl);
+    dburls.push("/" + adsdata.length, req.body, false);
+    res.json({
+        success: req.body.Alias + " created successfully",
+        status: 200
+    });
+});
+
+// Read
+router.get('/Urls/list', function (req, res) {
+    dburls.reload();
+    try {
+        var adsdata = dburls.getData("/");
+    } catch (error) {
+        console.error(error);
+    };
+    res.json(adsdata);
+});
+
+
+// Update
+router.post('/Urls/:id', function (req, res) {
+    dburls.reload();
+    // find by id
+    var result = dburls.getData("/").findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        dburls.push("/" + result, req.body);
+        res.json({
+            success: req.body.Alias + " updated successfully",
+            status: 200
+        });
+    } else {
+        res.json({
+            success: "Update Error. Refresh page",
+            status: 500
+        });
+    }
+
+});
+
+// Delete
+router.post('/Urls/d/:id', function (req, res) {
+    dburls.reload();
+    var addata = dburls.getData("/");
+    // find by id
+    var result = addata.findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        addata.splice(result, 1);
+        dburls.push("/", addata);
+        res.json({
+            success: "Deleted successfully",
+            status: 200
+        });
+    } else {
+        res.json({
+            success: "Delete error. Refresh page",
+            status: 500
+        });
+    }
+});
 
 
 function myAuthorizer(username, password) {

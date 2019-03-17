@@ -3,13 +3,18 @@
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
-  function ChangeText()
+   function ChangeText()
    {     
-      var text=$("#linktext").text() === "Create" ? "Close":"Create";
-      $("#linktext").text(text); 
+  		var text="Create";
+		if ( $('#update').is(':visible') )
+			{text="Update";}
+		if ($('#editupdate').is(':visible'))
+			{text="Close";}
+
+		$("#linktext").text(text);
 
    }
-
+  
 	function SendData(crud,data,index)
 		{
 			switch(crud) {
@@ -71,7 +76,9 @@
 		   $('#BodyScript').val(window.atob(jPut.users.data[index].BodyScript));
 		   $('#FooterScript').val(window.atob(jPut.users.data[index].FooterScript));
 		   $('#update').attr('data-id',index);
-	
+			 $("#editupdate").toggle();
+      ChangeText();
+   
 		}
 		$(document).ready(function(){
 
@@ -83,11 +90,10 @@
 	document.title = '@Admin Page - Headers';
 		   //on new 
 		   $('#save').click(function(){
-			$("#editupdate").toggle();
 	//validate data
 	if (ValidateData())
 		{
-	
+		
 	 	  //defining new 
 			  var user=Object();
 	       user['Id']='_' + Math.random().toString(36).substr(2, 9);
@@ -100,13 +106,15 @@
 			  //appening to jput variable
 			  jPut.users.append(user);
 			  SendData(1,user,0);
-	 }
+				$("#editupdate").toggle();
+			ChangeText();
+
+			}
 	
 		   });
 	
 		   //on update 
 		   $('#update').click(function(){
-			$("#editupdate").toggle();
 		//validate data
 	 if (ValidateData())
 	 	{
@@ -135,7 +143,10 @@
 			  $('#HeaderScript').val('');
 			  $('#BodyScript').val('');
 			  $('#FooterScript').val('');
-	}
+				$("#editupdate").toggle();
+			ChangeText();
+
+			}
 		   });
 	
 		});

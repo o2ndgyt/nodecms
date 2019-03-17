@@ -54,5 +54,5 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    console.log('Listening on ' + bind);
+    console.log('NodeCms on ' + bind+' Have a nice day :)');
 }

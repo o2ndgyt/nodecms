@@ -7,12 +7,12 @@
 
 
 var cmsurl = {
-    UrlId:"001",
+    Id:"001",
+    Alias:"",
+    PageFullUrl:"",
     PageUrl: "/",
     BodyID: "001",
     changefreq:"",
-    priority:"1",
-    lastmod:"",
     lang:""
   };
 

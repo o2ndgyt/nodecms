@@ -1,7 +1,6 @@
 //var createError = require('http-errors');
 //var validator = require('express-validator');
 //var expressHsb = require('express-handlebars');
-//var session=require('express-session');
 
 var path = require('path');
 var logger = require('morgan');
