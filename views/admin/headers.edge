@@ -59,7 +59,8 @@
 				}
 	
 		}
-	 function ValidateData(){
+
+		function ValidateData(){
 	if ($('#Alias').val().trim().length==0)
 	{  alertify.notify('Please choose an alias','error', 2, function(){ }); return false;  }
 	return true;
@@ -200,8 +201,8 @@
 				</div>
 			</div>
 		</div>
-		<a class="btn btn-primary" href="#" id="save">Save</a>
-		<a class="btn btn-primary" href="#" id="update" data-id="0" style="display:none;">Update</a>
+		<a class="btn btn-outline-primary btn-lg btn-block" href="#" id="save">Save</a>
+		<a class="btn btn-outline-primary btn-lg btn-block" href="#" id="update" data-id="0" style="display:none;">Update</a>
 		<hr/>
 	</div>
 </div>

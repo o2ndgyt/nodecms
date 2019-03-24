@@ -7,6 +7,7 @@ var cmsmodulupdate=require('../modules/cmsmodul.update.js');
 var JsonDB = require('node-json-db');
 var db = new JsonDB("./db/config", true, false);
 var dbads = new JsonDB("./db/cmsad", true, false);
+var dblangs = new JsonDB("./db/cmslangs", true, false);
 var dbheaders = new JsonDB("./db/cmsheaders", true, false);
 var dbcontents = new JsonDB("./db/cmscontents", true, false);
 var dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
@@ -42,15 +43,18 @@ router.get('/Dashboard', function (req, res) {
 router.get('/Settings', function (req, res) {
     db.reload();
     var configdata = db.getData("/");
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Code}}\');">Delete</a></td>';
     res.render('admin/settings', {
         config: configdata,
         successmsg: '',
-        noMessages: false
+        noMessages: false,
+        fo: fotter
     });
 });
 
 router.post('/Settings', function (req, res) {
     var configdata = db.getData("/");
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Code}}\');">Delete</a></td>';
     configdata.Appport = req.body.Appport;
     configdata.compress = req.body.compress;
     configdata.XPowerBy = req.body.XPowerBy;
@@ -61,9 +65,80 @@ router.post('/Settings', function (req, res) {
     res.render('admin/settings', {
         config: configdata,
         successmsg: 'All settings saved.',
-        noMessages: true
+        noMessages: true,
+        fo: fotter
     });
 });
+
+// Langs CRUD
+//**********************
+
+// Create
+router.post('/Langs', function (req, res) {
+    dblangs.reload();
+    var adsdata = dblangs.getData("/");
+    dblangs.push("/" + adsdata.length, req.body, false);
+    res.json({
+        success: req.body.Alias + " ("+req.body.Code+") created successfully",
+        status: 200
+    });
+});
+
+// Read
+router.get('/Langs/list', function (req, res) {
+    dblangs.reload();
+    try {
+        var adsdata = dblangs.getData("/");
+    } catch (error) {
+        console.error(error);
+    };
+    res.json(adsdata);
+});
+
+
+// Update
+router.post('/Langs/:id', function (req, res) {
+    dblangs.reload();
+    var result = dblangs.getData("/").findIndex(item => item.Code === req.params.id);
+    if (result > -1) {
+        dblangs.push("/" + result, req.body);
+        res.json({
+            success: req.body.Alias + " updated successfully",
+            status: 200
+        });
+    } else {
+        res.json({
+            success: "Update Error. Refresh page",
+            status: 500
+        });
+    }
+
+});
+
+// Delete
+router.post('/Langs/d/:id', function (req, res) {
+    dblangs.reload();
+    var addata = dblangs.getData("/");
+    var result = addata.findIndex(item => item.Code === req.params.id);
+    if (result > -1) {
+        addata.splice(result, 1);
+        dblangs.push("/", addata);
+        res.json({
+            success: "Deleted successfully",
+            status: 200
+        });
+    } else {
+        res.json({
+            success: "Delete error. Refresh page",
+            status: 500
+        });
+    }
+});
+
+
+
+
+
 
 // Headers CRUD
 //**********************

@@ -1,150 +1,278 @@
 @layout('admin')
 @section('content')
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
-    $(document).ready( function() {
-		document.title = '@Admin Page - Settings';
-    		setTimeout( function(){ 	$('#success').hide(); } , 2000);
-		  });
-		  
-	function isNumberKey(evt)
-	{
-		var charCode = (evt.which) ? evt.which : evt.keyCode;
-		if (charCode != 46 && charCode > 31 
-		&& (charCode < 48 || charCode > 57))
-		return false;
-		return true;
+ function ChangeText() {
+	var text = "Create";
+	if ($('#update').is(':visible')) {
+		text = "Update";
 	}
+	if ($('#editupdate').is(':visible')) {
+		text = "Close";
+	}
+	$("#linktext").text(text);
+}
+
+function ValidateData() {
+	if ($('#Alias').val().trim().length == 0) {
+		alertify.notify('Alias is empty', 'error', 2, function () {});
+		return false;
+	}
+
+	if ($('#Code').val().trim().length == 0) {
+		alertify.notify('Code is empty', 'error', 2, function () {});
+		return false;
+	}
+	return true;
+}
+
+function SendData(crud, data, index) {
+	switch (crud) {
+		case 1:
+			$.ajax({
+				type: "POST",
+				url: "Langs",
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+				}
+			});
+			break;
+		case 2:
+			$.ajax({
+				type: "POST",
+				url: "Langs/" + index,
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+				}
+			});
+			break;
+		case 3:
+			$.ajax({
+				type: "POST",
+				url: "Langs/d/" + index,
+				data: '',
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+					if (msg.status == 200) {
+						jPut.users.remove(data);
+					}
+				}
+			});
+			break;
+	}
+
+}
+
+function edit(index) {
+	$('#save,#update').toggle();
+	$('#Code').val(jPut.users.data[index].Code);
+	$('#Alias').val(jPut.users.data[index].Alias);
+	$('#update').attr('data-id', index);
+	$("#editupdate").toggle();
+	ChangeText();
+}
+
+
+function isNumberKey(evt) {
+	var charCode = (evt.which) ? evt.which : evt.keyCode;
+	if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+		return false;
+	return true;
+}
+
+
+$(document).ready(function () {
+	document.title = '@Admin Page - Settings';
+
+	$("#link").click(function () {
+		$("#editupdate").toggle();
+		ChangeText();
+	});
+
+
+	var myOptions = {
+		"-1": "-1 Default compression level",
+		"0": "0 No compression",
+		"1": "1",
+		"2": "2",
+		"3": "3",
+		"4": "4",
+		"5": "5",
+		"6": "6",
+		"7": "7",
+		"8": "8",
+		"9": "9 Best compression",
+	};
+
+	var _select = $('<select>');
+	$.each(myOptions, function (val, text) {
+		_select.append($('<option></option>').val(val).html(text));
+	});
+
+	$("#compress").append(_select.html());
+	$("#compress").val("{{ config.compress }}").change();
+
+	setTimeout(function () {
+		$('#success').hide();
+	}, 2000);
+
+	$('#save').click(function () {
+		if (ValidateData()) {
+			var user = Object();
+			user['Code'] = $('#Code').val().trim();
+			user['Alias'] = $('#Alias').val().trim();
+			jPut.users.append(user);
+			SendData(1, user, 0);
+			$("#editupdate").toggle();
+			ChangeText();
+		}
+
+	});
+
+	$('#update').click(function () {
+		if (ValidateData()) {
+			var user = Object();
+			user['Code'] = $('#Code').val().trim();
+			user['Alias'] = $('#Alias').val().trim();
+			jPut.users.update($('#update').attr('data-id'), user);
+			$('#save,#update').toggle();
+			SendData(2, user, user['Id']);
+			$('#Code').val('');
+			$('#Alias').val('');
+			$("#editupdate").toggle();
+			ChangeText();
+
+		}
+	});
+});  
 </script>
 @if(noMessages)
 <div class="row">
-    <div class="col-sm-6 col md-4 col-md-offset-4 col-sm-offset-3">
-        <div id="success" class="alert alert-success">
-            {{ successmsg }}
-        </div>
-    </div>
+   <div class="col-sm-6 col md-4 col-md-offset-4 col-sm-offset-3">
+      <div id="success" class="alert alert-success">
+         {{ successmsg }}
+      </div>
+   </div>
 </div>
 @endif
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Settings</h1>
+<nav>
+   <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Settings</a>
+      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Languages</a>
+   </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+   <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <br/> 
+      <form id="formid" method="POST" action="/admin/Settings">
+         <div class="form-group">
+            <div class="container">
+               <div class="row">
+                  <div class="col">
+                     <label for="Applicationport">Application port:</label>	
+                  </div>
+                  <div class="col">
+                     <INPUT class="form-control" value="{{ config.Appport }}" id="Appport" placeholder="4 numbers only" onkeypress="return isNumberKey(event)" type="text" name="Appport" maxlength="4">
+                  </div>
+               </div>
+               <br/>
+               <div class="row">
+                  <div class="col">
+                     <label for="compression">Compression (Gzip):</label>				
+                  </div>
+                  <div class="col">				
+                     <select class="form-control" id="compress" name="compress">
+                     </select>
+                  </div>
+               </div>
+               <br/>
+               <div class="row">
+                  <div class="col">
+                     <label for="Applicationport">X-Powered by:</label>
+                  </div>
+                  <div class="col">
+                     <INPUT class="form-control" value="{{ config.XPowerBy }}" id="XPowerBy" type="text" name="XPowerBy">
+                  </div>
+               </div>
+               <br/>
+               <div class="row">
+                  <div class="col">
+                     <label for="Applicationport">Admin User:</label>
+                  </div>
+                  <div class="col">
+                     <INPUT class="form-control" value="{{ config.AdminUser }}" id="AdminUser" type="text" name="AdminUser">
+                  </div>
+               </div>
+               <br/>
+               <div class="row">
+                  <div class="col">
+                     <label for="Applicationport">Admin password:</label>
+                  </div>
+                  <div class="col">
+                     <INPUT class="form-control" value="{{ config.AdminPWD }}" id="AdminPWD" type="text" name="AdminPWD">
+                  </div>
+               </div>
+            </div>
+         </div>
+         <hr/>
+         <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Save</button>
+      </form>
+   </div>
+   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+  <br/>
+		<div id="link"><a id="linktext" class="btn btn-primary" href="#">Create</a></div>
+		<hr/>
+		<div id="editupdate" style="display: none;">
+		<div class="form-group">
+			<div class="container">
+				<div class="row">
+					<div class="col"> <label for="Code">Code:</label> </div>
+					<div class="col">
+						<INPUT class="form-control" id="Code" type="text" name="Code" required />
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col"> <label for="Title">Title:</label> </div>
+					<div class="col">
+						<INPUT class="form-control" id="Alias" type="text" name="Alias" /> 
+					</div>
+				</div>
+				<br/>
+			
+			<a class="btn btn-outline-primary btn-lg btn-block" href="#" id="save">Save</a>
+			<a class="btn btn-outline-primary btn-lg btn-block" href="#" id="update" data-id="0" style="display:none;">Update</a>
+			<hr/>
+		</div>
+		</div>
+		</div>
+
+		<table class="table table-dark">
+				<thead>
+					<tr>
+					 	<th scope="col">Index</th>
+						<th scope="col">Code</th>
+						<th scope="col">Alias</th>
+						<th scope="col">Edit</th>
+						<th scope="col">Delete</th>
+					</tr>
+				</thead>
+				<tbody jput="users" jput-ajax_url="Langs/list">
+					<tr>
+						{{{fo}}}
+					</tr>
+				</tbody>
+			</table>
+			
+	</div>
 </div>
-
-<form id="formid" method="POST" action="/admin/Settings">
-    <div class="form-group">
-        <div class="container">
-            <div class="row">
-
-                <div class="col">
-                    <label for="Applicationport">Application port:</label>
-
-                </div>
-                <div class="col">
-                    <INPUT class="form-control" value="{{ config.Appport }}" id="Appport" placeholder="4 numbers only" onkeypress="return isNumberKey(event)" type="text" name="Appport" maxlength="4">
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-                <div class="col">
-                    <label for="compression">Compression (Gzip):</label>
-
-                </div>
-                <div class="col">
-
-                    <select class="form-control" id="compress" name="compress">
-										<option value="-1" 
-										@if(config.compress === "-1")
-										selected
-										@endif
-										>-1 Default compression level</option>
-										<option value="0"
-										@if(config.compress === "0")
-										selected
-										@endif
-										>0 No compression</option>
-										<option value="1"
-										@if(config.compress === "1")
-										selected
-										@endif
-										>1 Fastest compression</option>
-										<option value="2"
-										@if(config.compress === "2")
-										selected
-										@endif
-										>2</option>
-										<option value="3"
-										@if(config.compress === "3")
-										selected
-										@endif
-										>3</option>
-										<option value="4"
-										@if(config.compress === "4")
-										selected
-										@endif
-										>4</option>
-										<option value="5"
-										@if(config.compress === "5")
-										selected
-										@endif
-										>5</option>
-										<option value="6"
-										@if(config.compress === "6")
-										selected
-										@endif
-										>6</option>
-										<option value="7"
-										@if(config.compress === "7")
-										selected
-										@endif
-										>7</option>
-										<option value="8"
-										@if(config.compress === "8")
-										selected
-										@endif
-										>8</option>
-										<option value="9"
-										@if(config.compress === "9")
-										selected
-										@endif
-										>9 Best compression</option>
-									</select>
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-
-                <div class="col">
-                    <label for="Applicationport">X-Powered by:</label>
-
-                </div>
-                <div class="col">
-                    <INPUT class="form-control" value="{{ config.XPowerBy }}" id="XPowerBy" type="text" name="XPowerBy">
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-
-                <div class="col">
-                    <label for="Applicationport">Admin User:</label>
-
-                </div>
-                <div class="col">
-                    <INPUT class="form-control" value="{{ config.AdminUser }}" id="AdminUser" type="text" name="AdminUser">
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-
-                <div class="col">
-                    <label for="Applicationport">Admin password:</label>
-
-                </div>
-                <div class="col">
-                    <INPUT class="form-control" value="{{ config.AdminPWD }}" id="AdminPWD" type="text" name="AdminPWD">
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr/>
-    <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Save</button>
-</form>
 @endsection
