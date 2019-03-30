@@ -3,15 +3,32 @@
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
- function ChangeText() {
-	var text = "Create";
-	if ($('#update').is(':visible')) {
-		text = "Update";
-	}
-	if ($('#editupdate').is(':visible')) {
-		text = "Close";
-	}
-	$("#linktext").text(text);
+ 
+ function ChangeText(button) {
+
+	if ($('#editupdate').is(':visible'))
+		{
+			switch (button)
+			{
+				// cancel button
+				case 1:
+				break;
+				// save or update 
+				case 2:
+				case 3:
+				break;
+				//edit
+				case 4:
+				break;
+			}
+			$("#editupdate").toggle();
+			$("#linktext").text("Create");
+		}
+		else
+		{
+			$("#editupdate").toggle();
+			$("#linktext").text("Cancel");
+		}
 }
 
 function ValidateData() {
@@ -73,12 +90,12 @@ function SendData(crud, data, index) {
 }
 
 function edit(index) {
-	$('#save,#update').toggle();
+	$('#Id').val(jPut.users.data[index].Id);
 	$('#Code').val(jPut.users.data[index].Code);
 	$('#Alias').val(jPut.users.data[index].Alias);
 	$('#update').attr('data-id', index);
-	$("#editupdate").toggle();
-	ChangeText();
+	$('#save,#update').toggle();
+	ChangeText(4);
 }
 
 
@@ -94,8 +111,7 @@ $(document).ready(function () {
 	document.title = '@Admin Page - Settings';
 
 	$("#link").click(function () {
-		$("#editupdate").toggle();
-		ChangeText();
+		ChangeText(1);
 	});
 
 
@@ -128,12 +144,12 @@ $(document).ready(function () {
 	$('#save').click(function () {
 		if (ValidateData()) {
 			var user = Object();
+			user['Id']='_' + Math.random().toString(36).substr(2, 9);	
 			user['Code'] = $('#Code').val().trim();
 			user['Alias'] = $('#Alias').val().trim();
 			jPut.users.append(user);
 			SendData(1, user, 0);
-			$("#editupdate").toggle();
-			ChangeText();
+			ChangeText(2);
 		}
 
 	});
@@ -141,16 +157,14 @@ $(document).ready(function () {
 	$('#update').click(function () {
 		if (ValidateData()) {
 			var user = Object();
+			user['Id']=$('#Id').val();
 			user['Code'] = $('#Code').val().trim();
 			user['Alias'] = $('#Alias').val().trim();
 			jPut.users.update($('#update').attr('data-id'), user);
-			$('#save,#update').toggle();
 			SendData(2, user, user['Id']);
-			$('#Code').val('');
-			$('#Alias').val('');
-			$("#editupdate").toggle();
-			ChangeText();
+			$('#save,#update').toggle();
 
+			ChangeText(3);
 		}
 	});
 });  
@@ -231,6 +245,8 @@ $(document).ready(function () {
   <br/>
 		<div id="link"><a id="linktext" class="btn btn-primary" href="#">Create</a></div>
 		<hr/>
+		<INPUT class="form-control" id="Id" type="hidden" name="Id" readonly/>
+
 		<div id="editupdate" style="display: none;">
 		<div class="form-group">
 			<div class="container">

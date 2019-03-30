@@ -43,7 +43,7 @@ router.get('/Dashboard', function (req, res) {
 router.get('/Settings', function (req, res) {
     db.reload();
     var configdata = db.getData("/");
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Code}}\');">Delete</a></td>';
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/settings', {
         config: configdata,
         successmsg: '',
@@ -54,7 +54,7 @@ router.get('/Settings', function (req, res) {
 
 router.post('/Settings', function (req, res) {
     var configdata = db.getData("/");
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Code}}\');">Delete</a></td>';
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     configdata.Appport = req.body.Appport;
     configdata.compress = req.body.compress;
     configdata.XPowerBy = req.body.XPowerBy;
@@ -99,7 +99,7 @@ router.get('/Langs/list', function (req, res) {
 // Update
 router.post('/Langs/:id', function (req, res) {
     dblangs.reload();
-    var result = dblangs.getData("/").findIndex(item => item.Code === req.params.id);
+    var result = dblangs.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         dblangs.push("/" + result, req.body);
         res.json({
@@ -119,7 +119,7 @@ router.post('/Langs/:id', function (req, res) {
 router.post('/Langs/d/:id', function (req, res) {
     dblangs.reload();
     var addata = dblangs.getData("/");
-    var result = addata.findIndex(item => item.Code === req.params.id);
+    var result = addata.findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         addata.splice(result, 1);
         dblangs.push("/", addata);
@@ -134,10 +134,6 @@ router.post('/Langs/d/:id', function (req, res) {
         });
     }
 });
-
-
-
-
 
 
 // Headers CRUD
