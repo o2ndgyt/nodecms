@@ -12,22 +12,47 @@
 			{
 				// cancel button
 				case 1:
-				break;
-				// save or update 
+				$("#editupdate").toggle();
+			   $("#linktext").text("Create");
+				$('#Id').val('');
+	         $('#Alias').val('');
+			  	$('#Code').val('');
+			  	if ($('#save').css('display') == 'none')
+				  { $('#save,#update').toggle(); }
+ 				break;
+				// save 
 				case 2:
+				$("#editupdate").toggle();
+			   $("#linktext").text("Create");
+				$('#Id').val('');
+	         $('#Alias').val('');
+			  	$('#Code').val('');
+			
+				break;
+				// update
 				case 3:
+				$("#editupdate").toggle();
+			   $("#linktext").text("Create");
+				$('#Id').val('');
+	         $('#Alias').val('');
+			  	$('#Code').val('');
+				  $('#save,#update').toggle();
+
 				break;
 				//edit
 				case 4:
+				if ($('#save').css('display') == 'block')			
+				  { $('#save,#update').toggle();  }				
 				break;
 			}
-			$("#editupdate").toggle();
-			$("#linktext").text("Create");
 		}
 		else
 		{
 			$("#editupdate").toggle();
 			$("#linktext").text("Cancel");
+			if ($('#save').css('display') == 'block' && button == 4)			
+				  { $('#save,#update').toggle();  }				
+			
 		}
 }
 
@@ -93,8 +118,7 @@ function edit(index) {
 	$('#Id').val(jPut.users.data[index].Id);
 	$('#Code').val(jPut.users.data[index].Code);
 	$('#Alias').val(jPut.users.data[index].Alias);
-	$('#update').attr('data-id', index);
-	$('#save,#update').toggle();
+	$('#update').attr('data-id', index);	
 	ChangeText(4);
 }
 
@@ -162,8 +186,6 @@ $(document).ready(function () {
 			user['Alias'] = $('#Alias').val().trim();
 			jPut.users.update($('#update').attr('data-id'), user);
 			SendData(2, user, user['Id']);
-			$('#save,#update').toggle();
-
 			ChangeText(3);
 		}
 	});
