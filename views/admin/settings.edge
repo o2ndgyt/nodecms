@@ -3,57 +3,42 @@
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
- 
- function ChangeText(button) {
+ function ClearForm() {
+	$('#Id').val('');
+	$('#Alias').val('');
+	$('#Code').val('');
+}
 
-	if ($('#editupdate').is(':visible'))
-		{
-			switch (button)
-			{
-				// cancel button
-				case 1:
-				$("#editupdate").toggle();
-			   $("#linktext").text("Create");
-				$('#Id').val('');
-	         $('#Alias').val('');
-			  	$('#Code').val('');
-			  	if ($('#save').css('display') == 'none')
-				  { $('#save,#update').toggle(); }
- 				break;
-				// save 
-				case 2:
-				$("#editupdate").toggle();
-			   $("#linktext").text("Create");
-				$('#Id').val('');
-	         $('#Alias').val('');
-			  	$('#Code').val('');
-			
-				break;
-				// update
-				case 3:
-				$("#editupdate").toggle();
-			   $("#linktext").text("Create");
-				$('#Id').val('');
-	         $('#Alias').val('');
-			  	$('#Code').val('');
-				  $('#save,#update').toggle();
+function ChangeText(button) {
 
-				break;
-				//edit
-				case 4:
-				if ($('#save').css('display') == 'block')			
-				  { $('#save,#update').toggle();  }				
-				break;
-			}
-		}
-		else
-		{
+	if ($('#editupdate').is(':visible')) {
+		if (button > 0 && button < 4) {
+
+			ClearForm();
 			$("#editupdate").toggle();
-			$("#linktext").text("Cancel");
-			if ($('#save').css('display') == 'block' && button == 4)			
-				  { $('#save,#update').toggle();  }				
-			
+			$("#linktext").text("Create");
+
+			if ($('#save').css('display') == 'none' && button == 1) {
+				$('#save,#update').toggle();
+			}
+			if (button == 3) {
+				$('#save,#update').toggle();
+			}
+		} else {
+			if ($('#save').css('display') == 'block') {
+				$('#save,#update').toggle();
+			}
+
 		}
+
+	} else {
+		$("#editupdate").toggle();
+		$("#linktext").text("Cancel");
+		if ($('#save').css('display') == 'block' && button == 4) {
+			$('#save,#update').toggle();
+		}
+
+	}
 }
 
 function ValidateData() {
@@ -118,7 +103,7 @@ function edit(index) {
 	$('#Id').val(jPut.users.data[index].Id);
 	$('#Code').val(jPut.users.data[index].Code);
 	$('#Alias').val(jPut.users.data[index].Alias);
-	$('#update').attr('data-id', index);	
+	$('#update').attr('data-id', index);
 	ChangeText(4);
 }
 
@@ -168,7 +153,7 @@ $(document).ready(function () {
 	$('#save').click(function () {
 		if (ValidateData()) {
 			var user = Object();
-			user['Id']='_' + Math.random().toString(36).substr(2, 9);	
+			user['Id'] = Math.random().toString(36);
 			user['Code'] = $('#Code').val().trim();
 			user['Alias'] = $('#Alias').val().trim();
 			jPut.users.append(user);
@@ -181,7 +166,7 @@ $(document).ready(function () {
 	$('#update').click(function () {
 		if (ValidateData()) {
 			var user = Object();
-			user['Id']=$('#Id').val();
+			user['Id'] = $('#Id').val();
 			user['Code'] = $('#Code').val().trim();
 			user['Alias'] = $('#Alias').val().trim();
 			jPut.users.update($('#update').attr('data-id'), user);
@@ -189,7 +174,7 @@ $(document).ready(function () {
 			ChangeText(3);
 		}
 	});
-});  
+});
 </script>
 @if(noMessages)
 <div class="row">
