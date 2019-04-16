@@ -3,12 +3,13 @@
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
+
 function ClearForm() {
 	$('#Id').val('');
 	$('#Name').val('');
 	$('#GroupID').val('');
 	$('#AdvertJS').val('');
-}
+	$('#lang').val('*');
 }
 
 function ChangeText(button) {
@@ -94,6 +95,7 @@ function edit(index) {
 	$('#Id').val(jPut.users.data[index].Id);
 	$('#Name').val(jPut.users.data[index].Name);
 	$('#GroupID').val(jPut.users.data[index].GroupID);
+	$('#lang').val(jPut.users.data[index].lang);
 	$('#AdvertJS').val(window.atob(jPut.users.data[index].AdvertJS));
 	$('#update').attr('data-id', index);
 	ChangeText(4);
@@ -113,6 +115,7 @@ function ValidateData() {
 }
 
 $(document).ready(function () {
+
 			document.title = '@Admin Page - Ads';
 
 			$("#link").click(function () {
@@ -127,6 +130,7 @@ $(document).ready(function () {
 					user['Id'] = Math.random().toString(36);
 					user['Name'] = $('#Name').val().trim();
 					user['GroupID'] = $('#GroupID').val().trim();
+					user['lang'] = $('#lang').val().trim();
 					user['AdvertJS'] = window.btoa($('#AdvertJS').val().trim());
 					jPut.users.append(user);
 					SendData(1, user, 0);
@@ -141,6 +145,7 @@ $(document).ready(function () {
 						user['Id'] = $('#Id').val().trim();
 						user['Name'] = $('#Name').val().trim();
 						user['GroupID'] = $('#GroupID').val().trim();
+						user['lang'] = $('#lang').val().trim();
 						user['AdvertJS'] = window.btoa($('#AdvertJS').val().trim());
 						jPut.users.update($('#update').attr('data-id'), user);
 						SendData(2, user, user['Id']);
@@ -170,6 +175,17 @@ $(document).ready(function () {
          <div class="col"> <INPUT class="form-control"  id="GroupID" type="text" name="GroupID"/> </div>
       </div>
       <br/>
+		<div class="row">
+				 <div class="col"><label for="lang">Language</label></div>
+				 <div class="col">
+					<select class="form-control" id="lang" name="lang">
+					   <option value="*">All</option>
+					   @each(lang in langs)
+					   <option value="{{ lang.Id }}">{{ lang.Alias }} ({{ lang.Code }})</option>
+					   @endeach										  
+					</select>
+				 </div>
+			  </div>
       <div class="row">
          <div class="col">	<label for="AdvertJS">Advert script:</label> </div>
          <div class="col">

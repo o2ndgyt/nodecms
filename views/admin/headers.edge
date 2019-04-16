@@ -3,154 +3,158 @@
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
 <script lang="javascript">
-   function ChangeText()
-   {     
-  		var text="Create";
-		if ( $('#update').is(':visible') )
-			{text="Update";}
-		if ($('#editupdate').is(':visible'))
-			{text="Close";}
+function ClearForm() {
+	$('#Id').val('');
+	$('#Alias').val('');
+	$('#Title').val('');
+	$('#MetaDesc').val('');
+	$('#HeaderScript').val('');
+	$('#BodyScript').val('');
+	$('#FooterScript').val('');
+}
 
-		$("#linktext").text(text);
+function ChangeText(button) {
 
-   }
-  
-	function SendData(crud,data,index)
-		{
-			switch(crud) {
-				case 1:
-					$.ajax({
-						type: "POST",
-						url: "Headers",
-						data: JSON.stringify(data),
-						contentType: "application/json; charset=utf-8",
-						dataType: "json",
-						success: function(msg) {
-							alertify.notify(msg.success,msg.status == 200? 'success':'error', 2, function(){ });
-						 }
-						});
-					break;
-				case 2:
-					$.ajax({
-						type: "POST",
-						url: "Headers/"+index,
-						data: JSON.stringify(data),
-						contentType: "application/json; charset=utf-8",
-						dataType: "json",
-						success: function(msg) {
-							alertify.notify(msg.success,msg.status == 200? 'success':'error', 2, function(){ });
-						 }
-						});
-					break;
-				case 3:
-					$.ajax({
-						type: "POST",
-						url: "Headers/d/"+index,
-						data: '',
-						contentType: "application/json; charset=utf-8",
-						dataType: "json",
-						success: function(msg) {
-							alertify.notify(msg.success,msg.status == 200? 'success':'error', 2, function(){ });
-							if (msg.status == 200)
-							{ jPut.users.remove(data); }
-						 }
-						});
-					break;
+	if ($('#editupdate').is(':visible')) {
+		if (button > 0 && button < 4) {
+
+			ClearForm();
+			$("#editupdate").toggle();
+			$("#linktext").text("Create");
+
+			if ($('#save').css('display') == 'none' && button == 1) {
+				$('#save,#update').toggle();
+			}
+			if (button == 3) {
+				$('#save,#update').toggle();
+			}
+		} else {
+			if ($('#save').css('display') == 'block') {
+				$('#save,#update').toggle();
+			}
+
+		}
+
+	} else {
+		$("#editupdate").toggle();
+		$("#linktext").text("Cancel");
+		if ($('#save').css('display') == 'block' && button == 4) {
+			$('#save,#update').toggle();
+		}
+
+	}
+}
+
+
+function SendData(crud, data, index) {
+	switch (crud) {
+		case 1:
+			$.ajax({
+				type: "POST",
+				url: "Headers",
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
 				}
-	
-		}
+			});
+			break;
+		case 2:
+			$.ajax({
+				type: "POST",
+				url: "Headers/" + index,
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+				}
+			});
+			break;
+		case 3:
+			$.ajax({
+				type: "POST",
+				url: "Headers/d/" + index,
+				data: '',
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+					if (msg.status == 200) {
+						jPut.users.remove(data);
+					}
+				}
+			});
+			break;
+	}
 
-		function ValidateData(){
-	if ($('#Alias').val().trim().length==0)
-	{  alertify.notify('Please choose an alias','error', 2, function(){ }); return false;  }
+}
+
+function ValidateData() {
+	if ($('#Alias').val().trim().length == 0) {
+		alertify.notify('Please choose an alias', 'error', 2, function () {});
+		return false;
+	}
 	return true;
-	 }
-	
-		function edit(index)
-		{
-		   $('#save,#update').toggle();
-	    $('#Id').val(jPut.users.data[index].Id);
-	    $('#Alias').val(jPut.users.data[index].Alias);
-		   $('#Title').val(jPut.users.data[index].Title);
-		   $('#MetaDesc').val(jPut.users.data[index].MetaDesc);
-		   $('#HeaderScript').val(window.atob(jPut.users.data[index].HeaderScript));
-		   $('#BodyScript').val(window.atob(jPut.users.data[index].BodyScript));
-		   $('#FooterScript').val(window.atob(jPut.users.data[index].FooterScript));
-		   $('#update').attr('data-id',index);
-			 $("#editupdate").toggle();
-      ChangeText();
-   
-		}
-		$(document).ready(function(){
+}
 
-			$("#link").click(function() {
-            $("#editupdate").toggle();
-            ChangeText();
-        });
+function edit(index) {
+	$('#save,#update').toggle();
+	$('#Id').val(jPut.users.data[index].Id);
+	$('#Alias').val(jPut.users.data[index].Alias);
+	$('#Title').val(jPut.users.data[index].Title);
+	$('#MetaDesc').val(jPut.users.data[index].MetaDesc);
+	$('#HeaderScript').val(window.atob(jPut.users.data[index].HeaderScript));
+	$('#BodyScript').val(window.atob(jPut.users.data[index].BodyScript));
+	$('#FooterScript').val(window.atob(jPut.users.data[index].FooterScript));
+	$('#update').attr('data-id', index);
+	ChangeText(4);
+}
+
+$(document).ready(function () {
+
+	$("#link").click(function () {
+		ChangeText(1);
+	});
 
 	document.title = '@Admin Page - Headers';
-		   //on new 
-		   $('#save').click(function(){
-	//validate data
-	if (ValidateData())
-		{
-		
-	 	  //defining new 
-			  var user=Object();
-	       user['Id']='_' + Math.random().toString(36).substr(2, 9);
-	       user['Alias']=$('#Alias').val().trim();
-			  user['Title']=$('#Title').val().trim();
-			  user['MetaDesc']=$('#MetaDesc').val().trim();
-			  user['HeaderScript']=window.btoa($('#HeaderScript').val().trim());
-			  user['BodyScript']=window.btoa($('#BodyScript').val().trim());
-			  user['FooterScript']=window.btoa($('#FooterScript').val().trim());
-			  //appening to jput variable
-			  jPut.users.append(user);
-			  SendData(1,user,0);
-				$("#editupdate").toggle();
-			ChangeText();
 
-			}
-	
-		   });
-	
-		   //on update 
-		   $('#update').click(function(){
-		//validate data
-	 if (ValidateData())
-	 	{
-			  //defining new 
-			  var user=Object();
-			  user['Id']=$('#Id').val();
-	 	  user['Title']=$('#Title').val().trim();
-	       user['Alias']=$('#Alias').val().trim();
-			  user['MetaDesc']=$('#MetaDesc').val().trim();
-			  user['HeaderScript']=window.btoa($('#HeaderScript').val().trim());
-			  user['BodyScript']=window.btoa($('#BodyScript').val().trim());
-			  user['FooterScript']=window.btoa($('#FooterScript').val().trim());
-	
-			  //appening to jput variable
-			  /*
-				 update(index,newdata)
-			  */
-			  jPut.users.update($('#update').attr('data-id'),user);
-	
-			  $('#save,#update').toggle();
-			  SendData(2,user,user['Id']);
-	 	  $('#Id').val('');
-	       $('#Alias').val('');
-			  $('#Title').val('');
-			  $('#MetaDesc').val('');
-			  $('#HeaderScript').val('');
-			  $('#BodyScript').val('');
-			  $('#FooterScript').val('');
-				$("#editupdate").toggle();
-			ChangeText();
+	$('#save').click(function () {
+		if (ValidateData()) {
+			var user = Object();
+			user['Id'] = Math.random().toString(36);
+			user['Alias'] = $('#Alias').val().trim();
+			user['Title'] = $('#Title').val().trim();
+			user['MetaDesc'] = $('#MetaDesc').val().trim();
+			user['HeaderScript'] = window.btoa($('#HeaderScript').val().trim());
+			user['BodyScript'] = window.btoa($('#BodyScript').val().trim());
+			user['FooterScript'] = window.btoa($('#FooterScript').val().trim());
+			jPut.users.append(user);
+			SendData(1, user, 0);
+			ChangeText(2);
+		}
+	});
 
-			}
-		   });
-	
-		});
+
+	$('#update').click(function () {
+		if (ValidateData()) {
+			var user = Object();
+			user['Id'] = $('#Id').val();
+			user['Title'] = $('#Title').val().trim();
+			user['Alias'] = $('#Alias').val().trim();
+			user['MetaDesc'] = $('#MetaDesc').val().trim();
+			user['HeaderScript'] = window.btoa($('#HeaderScript').val().trim());
+			user['BodyScript'] = window.btoa($('#BodyScript').val().trim());
+			user['FooterScript'] = window.btoa($('#FooterScript').val().trim());
+			jPut.users.update($('#update').attr('data-id'), user);
+			SendData(2, user, user['Id']);
+			ChangeText(3);
+		}
+	});
+
+});
+
 </script>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 	<h1 class="h2">Headers</h1>

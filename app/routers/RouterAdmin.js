@@ -217,9 +217,12 @@ router.post('/Headers/d/:id', function (req, res) {
 
 // Ads
 router.get('/Ads', function (req, res) {
+    addata.reload();
+    var addata = dblangs.getData("/");
     var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td>{{json.GroupID}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/ads', {
-        fo: fotter
+        fo: fotter,
+        langs:addata
     });
 });
 
@@ -270,7 +273,6 @@ router.post('/Ads/:id', function (req, res) {
 router.post('/Ads/d/:id', function (req, res) {
     dbads.reload();
     var addata = dbads.getData("/");
-    // find by id
     var result = addata.findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         addata.splice(result, 1);
@@ -627,9 +629,12 @@ router.post('/Contents/d/:id', function (req, res) {
 
 // Urls
 router.get('/Urls', function (req, res) {
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Alias}}</td><td>{{json.lang}}</td><td>{{PageUrl}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.PageFullUrl}}</td> <td>{{json.Alias}}</td> <td>{{json.Type}}</td> <td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
+    addata.reload();
+    var addata = dblangs.getData("/");
     res.render('admin/urls', {
-        fo: fotter
+        fo: fotter,
+        langs:addata
     });
 });
 
@@ -637,7 +642,6 @@ router.get('/Urls', function (req, res) {
 router.post('/Urls', function (req, res) {
     dburls.reload();
     var adsdata = dburls.getData("/");
-    req.body.PageUrl=slug(req.body.PageFullUrl);
     dburls.push("/" + adsdata.length, req.body, false);
     res.json({
         success: req.body.Alias + " created successfully",
@@ -660,7 +664,6 @@ router.get('/Urls/list', function (req, res) {
 // Update
 router.post('/Urls/:id', function (req, res) {
     dburls.reload();
-    // find by id
     var result = dburls.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         dburls.push("/" + result, req.body);
