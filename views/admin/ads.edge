@@ -151,18 +151,19 @@ $(document).ready(function () {
 						SendData(2, user, user['Id']);
 						ChangeText(3);
 
-					});
+					};
 
 			});
+		
+		});
 </script>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
    <h1 class="h2">Ads</h1>
 </div>
 <INPUT class="form-control"  id="Id" type="hidden" name="Id" readonly/>
 <div id="link"><a id="linktext" class="btn btn-primary" href="#">Create</a></div>
-<div id="editupdate" style="display: none;">
 <hr/>
-
+<div id="editupdate" style="display: none;">
 <div class="form-group">
    <div class="container">
       <div class="row">
@@ -196,9 +197,9 @@ $(document).ready(function () {
       <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="save">Save</a>
       <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="update" data-id="0" style="display:none;">Update</a>
    </div>
+</hr>
+   </div>
 </div>
-</div>
-<hr/>
 <table class="table table-dark">
    <thead>
       <tr>

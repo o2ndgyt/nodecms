@@ -155,11 +155,11 @@ $(document).ready(function () {
 				user['Id'] = Math.random().toString(36);
 				user['Alias'] = $('#Alias').val().trim();
 				user['PageFullUrl'] = $('#PageFullUrl').val().trim();
-				user['PageUrl'] = $('#PageUrl').val().trim());
+				user['PageUrl'] = $('#PageUrl').val().trim();
 				user['BodyID'] = $('#BodyID').val().trim();
 				user['Changefreq'] = $('#Changefreq').val().trim();
 				user['Type'] = $('#Type').val().trim();
-				user['Lang'] = $('#Lang').val().trim());
+				user['Lang'] = $('#Lang').val().trim();
 				jPut.users.append(user); 
 				SendData(1, user, 0); 
 				ChangeText(2);
@@ -174,11 +174,11 @@ $(document).ready(function () {
 			user['Id'] = $('#Id').val().trim();
 			user['Alias'] = $('#Alias').val().trim();
 			user['PageFullUrl'] = $('#PageFullUrl').val().trim();
-			user['PageUrl'] = $('#PageUrl').val().trim());
+			user['PageUrl'] = $('#PageUrl').val().trim();
 			user['BodyID'] = $('#BodyID').val().trim();
 			user['Changefreq'] = $('#Changefreq').val().trim();
 			user['Type'] = $('#Type').val().trim();
-			user['Lang'] = $('#Lang').val().trim());
+			user['Lang'] = $('#Lang').val().trim();
 			jPut.users.update($('#update').attr('data-id'), user);
 			SendData(2, user, user['Id']); 
 			ChangeText(3);

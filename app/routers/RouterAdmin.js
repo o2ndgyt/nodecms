@@ -11,9 +11,11 @@ var dbheaders = new JsonDB("./db/cmsheaders", true, false);
 var dbcontents = new JsonDB("./db/cmscontents", true, false);
 var dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
 var dburls = new JsonDB("./db/cmsurls", true, false);
-
 var comfunc = require("../comfunc");
 var _ = require('lodash');
+
+//TODO
+//add express-brute nodemodul
 
 var oAuth = {
     authorizer: myAuthorizer,
@@ -209,7 +211,7 @@ router.post('/Headers/d/:id', function (req, res) {
 
 // Ads
 router.get('/Ads', function (req, res) {
-    addata.reload();
+    dbads.reload();
     var addata = dblangs.getData("/");
     var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td>{{json.GroupID}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/ads', {
@@ -625,7 +627,7 @@ router.post('/Contents/d/:id', function (req, res) {
 // Urls
 router.get('/Urls', function (req, res) {
     var fotter = '<th scope="row">{{index}}</th><td>{{json.PageFullUrl}}</td> <td>{{json.Alias}}</td> <td>{{json.Type}}</td> <td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
-    addata.reload();
+    dburls.reload();
     var addata = dblangs.getData("/");
     res.render('admin/urls', {
         fo: fotter,
