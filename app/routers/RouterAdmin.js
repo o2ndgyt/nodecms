@@ -49,7 +49,6 @@ router.get('/Settings', function (req, res) {
 
 router.post('/Settings', function (req, res) {
     var configdata = db.getData("/");
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     configdata.Appport = req.body.Appport;
     configdata.compress = req.body.compress;
     configdata.XPowerBy = req.body.XPowerBy;
@@ -57,11 +56,9 @@ router.post('/Settings', function (req, res) {
     configdata.AdminUser = req.body.AdminUser;
     db.push("/", configdata);
     db.reload();
-    res.render('admin/settings', {
-        config: configdata,
-        successmsg: 'All settings saved.',
-        noMessages: true,
-        fo: fotter
+    res.json({
+        success: "Settings saved",
+        status: 200
     });
 });
 
@@ -333,12 +330,13 @@ router.get('/Mainwebsites/e/:file', function (req, res) {
         if (err) {
             // File in param does not exist
             //  res.redirect('/admin/Mainwebsites');
+            // todo
             res.send(err);
         } else {
             var data = fs.readFileSync("./views/" + req.params.file + ".edge", 'utf8');
             res.render('admin/mainwebsitesupdate', {
                 title: req.params.file,
-                filecon: data
+                filecon: data.trimLeft()
             });
 
         }
@@ -349,9 +347,11 @@ router.get('/Mainwebsites/e/:file', function (req, res) {
 // Save file
 router.post('/Mainwebsites/e/:file', function (req, res) {
     // save data to file
-    var writeStream = fs.createWriteStream("./views/" + req.params.file + ".edge");
-    writeStream.write(req.body.filecon);
-    writeStream.end();
+    //var writeStream = fs.createWriteStream("./views/" + req.params.file + ".edge");
+   
+    //writeStream.write(req.body.filecon.trimLeft());
+    //writeStream.end();
+    fs.writeFile("./views/" + req.params.file + ".edge",req.body.filecon.trimLeft());
     //rename the file
     if (req.params.file != req.body.Name) {
         fs.rename("./views/" + req.params.file + ".edge", "./views/" + req.body.Name + ".edge", function (err) {

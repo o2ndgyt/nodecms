@@ -56,6 +56,18 @@ function ValidateData() {
 
 function SendData(crud, data, index) {
 	switch (crud) {
+		case 0:
+		$.ajax({
+				type: "POST",
+				url: "Settings",
+				data: JSON.stringify( {Appport:$('#Appport').val(), compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val(),AdminPWD:$('#AdminPWD').val(),AdminUser:$('#AdminUser').val() }),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+				}
+			});
+		break;
 		case 1:
 			$.ajax({
 				type: "POST",
@@ -163,6 +175,11 @@ $(document).ready(function () {
 
 	});
 
+	$('#saveset').click(function () {
+			SendData(0, '','');
+		
+	});
+
 	$('#update').click(function () {
 		if (ValidateData()) {
 			var user = Object();
@@ -245,7 +262,7 @@ $(document).ready(function () {
             </div>
          </div>
          <hr/>
-         <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Save</button>
+		 <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="saveset">Save</a>
       </form>
    </div>
    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
