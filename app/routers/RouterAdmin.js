@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var basicAuth = require('express-basic-auth');
-var osinfo = require('../modules/osinfo');
 var cmsmodulread = require('../modules/cmsmodul.read.js');
 var cmsmodulupdate=require('../modules/cmsmodul.update.js');
 var JsonDB = require('node-json-db');
@@ -12,7 +11,6 @@ var dbheaders = new JsonDB("./db/cmsheaders", true, false);
 var dbcontents = new JsonDB("./db/cmscontents", true, false);
 var dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
 var dburls = new JsonDB("./db/cmsurls", true, false);
-var slug=require("slug");
 
 var comfunc = require("../comfunc");
 var _ = require('lodash');
@@ -32,10 +30,7 @@ router.use('/', basicAuth(oAuth), function (req, res, next) {
 // Dashboard
 //**********************
 router.get('/Dashboard', function (req, res) {
-
-    res.render('admin/dashboard', {
-        osinfo: osinfo
-    });
+    res.render('admin/dashboard');
 });
 
 // Settings
