@@ -213,7 +213,7 @@ router.post('/Headers/d/:id', function (req, res) {
 router.get('/Ads', function (req, res) {
     dbads.reload();
     var addata = dblangs.getData("/");
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td>{{json.GroupID}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td>{{json.GroupID}}</td><td>{{LongLang(json.lang)}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/ads', {
         fo: fotter,
         langs:addata

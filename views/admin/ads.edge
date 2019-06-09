@@ -102,6 +102,11 @@ function edit(index) {
 
 }
 
+function LongLang(lang)
+{
+	return $("#lang option[value='"+lang+"']").text();
+}
+
 function ValidateData() {
 	if ($('#Name').val().trim().length == 0) {
 		alertify.notify('Please choose a Name', 'error', 2, function () {});
@@ -115,7 +120,6 @@ function ValidateData() {
 }
 
 $(document).ready(function () {
-
 			document.title = '@Admin Page - Ads';
 
 			$("#link").click(function () {
@@ -196,8 +200,9 @@ $(document).ready(function () {
       <br/>
       <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="save">Save</a>
       <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="update" data-id="0" style="display:none;">Update</a>
-   </div>
-</hr>
+	<hr/>
+	</div>
+
    </div>
 </div>
 <table class="table table-dark">
@@ -205,7 +210,8 @@ $(document).ready(function () {
       <tr>
          <th scope="col">Index </th>
          <th scope="col">Name</th>
-         <th scope="col">Group ID</th>
+		 <th scope="col">Group ID</th>
+		 <th scope="col">Lang</th>
          <th scope="col">Edit</th>
          <th scope="col">Delete</th>
       </tr>
