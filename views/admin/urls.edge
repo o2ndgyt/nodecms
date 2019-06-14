@@ -1,8 +1,9 @@
 @layout('admin')
 @section('content')
+<script type="text/javascript" src="/admin/slugify.en.min.js"></script>
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
-<script type="text/javascript" src="/admin/slugify.en.min.js"></script>
+
 <script lang="javascript">
 function ClearForm() {
 	$('#Id').val('');
@@ -118,11 +119,21 @@ function ValidateData() {
 	return true;
 }
 
+function LongLang(lang)
+{
+	return $("#Lang option[value='"+lang+"']").text();
+}
+
+function LongBodyID(lang)
+{
+	return $("#BodyID option[value='"+lang+"']").text();
+}
+
 $(document).ready(function () {
 
-	$('#PageFullUrl').keyup(function(){
-		$slug = Slugify.parse($(this).val());
-		$('#PageUrl').val($slug);
+	$('#PageUrl').keyup(function(){
+		var slug = Slugify.parse($(this).val());
+		$('#PageFullUrl').val(slug);
 	});
 
 	var myOptions = {
@@ -203,7 +214,7 @@ $(document).ready(function () {
 			  </div>
 			  <br/>
 			  <div class="row">
-				 <div class="col">	<label for="PageUrl">Page Url:</label> </div>
+				 <div class="col">	<label for="PageUrl">Page Url (only Type=Page):</label> </div>
 				 <div class="col"> <INPUT class="form-control"  id="PageUrl" type="text" name="PageUrl"/> 
 					<INPUT class="form-control"  id="PageFullUrl" type="text" name="PageFullUrl" readonly/>
 				</div>
@@ -264,6 +275,7 @@ $(document).ready(function () {
 	 <table class="table table-dark">
 		<thead>
 		   <tr>
+			  <th scope="col">Index</th>
 			  <th scope="col">Url</th>
 			  <th scope="col">Alias</th>
 			  <th scope="col">Content</th>

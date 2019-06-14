@@ -349,15 +349,13 @@ router.get('/Mainwebsites/e/:file', function (req, res) {
 // Save file
 router.post('/Mainwebsites/e/:file', function (req, res) {
     // save data to file
-    //var writeStream = fs.createWriteStream("./views/" + req.params.file + ".edge");
-   
-    //writeStream.write(req.body.filecon.trimLeft());
-    //writeStream.end();
     fs.writeFile("./views/" + req.params.file + ".edge",req.body.filecon.trimLeft());
     //rename the file
     if (req.params.file != req.body.Name) {
         fs.rename("./views/" + req.params.file + ".edge", "./views/" + req.body.Name + ".edge", function (err) {
             if (err) console.log('ERROR: ' + err);
+        //todo rename all content
+        
         });
 
     }
@@ -382,6 +380,45 @@ router.post('/Mainwebsites/d/:id', function (req, res) {
                         status: 500
                     });
                 } else {
+                    //delete all content
+                    dbcontents.reload();
+                    dburls.reload();
+                    var addata = dbcontents.getData("/");
+                    var addata1 = dbcontents.getData("/");
+                    var addata2 =  dburls.getData("/");
+                    addata1.forEach(function(item) {
+                    
+                    var result = addata.findIndex(item => item.FileLayout === req.params.id);
+                    if (result > -1) {
+                        //delete all urls with this content
+                        var data=dbcontents.getData("/"+result);
+                        addata2.forEach(function(item) {
+                                dburls.reload();
+                                var addata3 = dburls.getData("/");
+                                // find by id
+                                var result2 = addata3.findIndex(item => item.BodyID === data.Id);
+                                if (result2 > -1) {
+                                    addata3.splice(result, 1);
+                                    dburls.push("/", addata3);
+                                }
+                        });
+
+
+                        addata.splice(result, 1);
+                        dbcontents.push("/", addata);
+                
+                        // delete head ads      
+                        dbcontentsad.reload();
+                
+                        var addataAds = dbcontentsad.getData("/");
+                        var filtered = addataAds.filter(function (value) { return value.HeadId != data.Id; });
+                
+                        dbcontentsad.push("/", filtered);
+                
+                    } 
+                });
+
+
                     res.json({
                         success: req.params.id + " deleted successfully",
                         status: 200
@@ -626,12 +663,17 @@ router.post('/Contents/d/:id', function (req, res) {
 
 // Urls
 router.get('/Urls', function (req, res) {
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.PageFullUrl}}</td> <td>{{json.Alias}}</td> <td>{{json.Type}}</td> <td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
+    var fotter = '<th scope="row">{{index}}</th><td>{{json.PageFullUrl}}</td><td>{{json.Alias}}</td><td>{{LongBodyID(json.BodyID)}}</td><td>{{LongLang(json.Lang)}}</td><td>{{json.Type}}</td> <td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     dburls.reload();
+    dblangs.reload();
+    dbcontents.reload();
     var addata = dblangs.getData("/");
+    var addata1 = dbcontents.getData("/");
     res.render('admin/urls', {
         fo: fotter,
-        langs:addata
+        langs:addata,
+        contents:addata1
+
     });
 });
 
