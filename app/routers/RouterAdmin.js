@@ -1,18 +1,19 @@
-var express = require('express');
-var router = express.Router();
-var basicAuth = require('express-basic-auth');
-var cmsmodulread = require('../modules/cmsmodul.read.js');
-var cmsmodulupdate=require('../modules/cmsmodul.update.js');
-var JsonDB = require('node-json-db');
-var db = new JsonDB("./db/config", true, false);
-var dbads = new JsonDB("./db/cmsad", true, false);
-var dblangs = new JsonDB("./db/cmslangs", true, false);
-var dbheaders = new JsonDB("./db/cmsheaders", true, false);
-var dbcontents = new JsonDB("./db/cmscontents", true, false);
-var dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
-var dburls = new JsonDB("./db/cmsurls", true, false);
-var comfunc = require("../comfunc");
-var _ = require('lodash');
+var express = require('express'),
+router = express.Router(),
+basicAuth = require('express-basic-auth'),
+cmsmodulread = require('../modules/cmsmodul.read.js'),
+cmsmodulupdate=require('../modules/cmsmodul.update.js'),
+JsonDB = require('node-json-db'),
+db = new JsonDB("./db/config", true, false),
+dbads = new JsonDB("./db/cmsad", true, false),
+dblangs = new JsonDB("./db/cmslangs", true, false),
+dbheaders = new JsonDB("./db/cmsheaders", true, false),
+dbcontents = new JsonDB("./db/cmscontents", true, false),
+dbcontentsad = new JsonDB("./db/cmscontentsad", true, false),
+dburls = new JsonDB("./db/cmsurls", true, false),
+comfunc = require("../comfunc"),
+_ = require('lodash'),
+fs = require("fs");
 
 //TODO
 //add express-brute nodemodul
@@ -22,7 +23,6 @@ var oAuth = {
     challenge: true,
     realm: 'Ku7VEtyc2B8mHFwrEpV6CAQtxGLySuLc'
 };
-var fs = require("fs");
 
 router.use('/', basicAuth(oAuth), function (req, res, next) {
     next();

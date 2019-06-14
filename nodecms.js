@@ -1,8 +1,8 @@
-var JsonDB=require('node-json-db');
-var app = require('./app/app.js');
-var http = require('http');
+var JsonDB=require('node-json-db'),
+app = require('./app/app.js'),
+http = require('http'),
+db = new JsonDB("./db/config", true, false);
 
-var db = new JsonDB("./db/config", true, false);
 try {
     var data = db.getData("/");
 } catch(error) {

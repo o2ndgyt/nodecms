@@ -2,20 +2,19 @@
 //var validator = require('express-validator');
 //var expressHsb = require('express-handlebars');
 
-var path = require('path');
-var logger = require('morgan');
-var expressedge=require('express-edge');
-var compression = require('compression')
-var express = require('express');
-var helmet = require('helmet');
-var JsonDB=require('node-json-db');
-var useragent = require('express-useragent');
-var robots= require('express-robots-txt');
-var cookieParser = require('cookie-parser');
-var validator = require('express-validator');
-var session=require('express-session');
-
-var validUrl = require('valid-url');
+var path = require('path'),
+logger = require('morgan'),
+expressedge=require('express-edge'),
+compression = require('compression'),
+express = require('express'),
+helmet = require('helmet'),
+JsonDB=require('node-json-db'),
+useragent = require('express-useragent'),
+robots= require('express-robots-txt'),
+cookieParser = require('cookie-parser'),
+validator = require('express-validator'),
+session=require('express-session'),
+simpleLanguage = require('simple-accept-language');
 
 //Read config
 var db = new JsonDB("./db/config", true, false);
@@ -74,10 +73,12 @@ app.use(session(
 app.use('/admin', RouterAdmin); 
 
 
+// URL ENGINE
+
 // default page
 app.get('/',function(req, res) {
  // res.render('index');
- res.send('ok');
+ res.send("You asked for: " + simpleLanguage(req));
 });
 
  
