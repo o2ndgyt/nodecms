@@ -14,17 +14,21 @@ robots= require('express-robots-txt'),
 cookieParser = require('cookie-parser'),
 validator = require('express-validator'),
 session=require('express-session'),
-simpleLanguage = require('simple-accept-language');
+simpleLanguage = require('simple-accept-language'),
+dburls = new JsonDB("./db/cmsurls", true, false),
+db = new JsonDB("./db/config", true, false),
+dblangs = new JsonDB("./db/cmslangs", true, false),
+dburls = new JsonDB("./db/cmsurls", true, false),
+comfunc = require("../app/comfunc"),
+RouterAdmin = require('../app/routers/RouterAdmin'); 
 
-//Read config
-var db = new JsonDB("./db/config", true, false);
+
 try {
     var configdata = db.getData("/");
 } catch(error) {
     console.error(error);
 };
 
-var RouterAdmin = require('../app/routers/RouterAdmin'); 
 
 var app = express();
 
@@ -68,28 +72,70 @@ app.use(session(
 }));
 
 
-
 // Admin routers
 app.use('/admin', RouterAdmin); 
 
-
-// URL ENGINE
-
-// default page
-app.get('/',function(req, res) {
- // res.render('index');
- res.send("You asked for: " + simpleLanguage(req));
-});
-
- 
-// Content
-app.get('/:url',function(req, res) {
-  res.render('index', {url: req});
-});
-
-// catch 404 and forward to error handler
+// URLs ENGINE with multi lang
 app.use(function(req, res, next) {
+  
+var blnOk=false;
+dburls.reload();
+dblangs.reload();
+var strLang="*";
+
+// search langid
+var result = dblangs.getData("/").findIndex(item => item.Code === simpleLanguage(req) );
+    if (result > -1) {
+      strLang=dblangs.getData("/"+result).Id;
+    }    
+
+    // home page
+  if (req.originalUrl === '/')
+  {
+    // home page with lang
+    var result = dburls.getData("/").findIndex(item => item.Type === "Home" && item.Lang === strLang);
+    if (result > -1) {
+      // home page with lang
+      res.renderString(comfunc.UrlEngine(dburls.getData("/"+result).BodyID,strLang));
+    }
+    else
+    {
+        if (strLang !="*")
+        {
+          // home page without lang
+          var result = dburls.getData("/").findIndex(item => item.Type === "Home" && item.Lang === "*");
+          if (result > -1) {
+            res.renderString(comfunc.UrlEngine(dburls.getData("/"+result).BodyID,strLang));
+          }
+          else
+          {
+            // no homepage -> error
+            blnOk=true;
+          }
+      }
+      else
+      {
+        // no homepage -> error
+        blnOk=true;
+      }
+      
+    }
+  }
+  else
+  {
+     // sub page
+
+  }
+
+  // error page
+  if (blnOk)
+  {
+    //search 404 page 
   res.render('404', {url: req.originalUrl});
+
+  // no error page
+  }
+
 });
 
 // error handler

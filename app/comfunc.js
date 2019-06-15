@@ -1,8 +1,59 @@
-var fs = require('fs');
-var glob = require('glob');
-var url = require('url');
+var fs = require('fs'),
+glob = require('glob'),
+cmsmodulread = require('./app/modules/cmsmodul.read.js'),
+JsonDB=require('node-json-db'),
+dbads = new JsonDB("./db/cmsad", true, false),
+dbheaders = new JsonDB("./db/cmsheaders", true, false),
+dbcontents = new JsonDB("./db/cmscontents", true, false),
+dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
 
 var comfunc = {
+  UrlEngine: function (id,langid)
+  {
+    dbcontents.reload();
+    dbheaders.reload();
+    dbads.reload();
+    dbcontentsad.reload();
+
+   var strHtml="UrlEngine - BodyID error :"+id;
+ 
+   var result = dbcontents.getData("/").findIndex(item => item.Id === id );
+    if (result > -1) {
+      var objContent=dbcontents.getData("/"+result);
+      // read html
+      strHtml = fs.readFileSync("./views/" +objContent.FileLayout + ".edge", 'utf8');
+      // read header
+      var result = dbheaders.getData("/").findIndex(item => item.Id === objContent.HeadId );
+      if (result > -1) {
+        var objHeader=dbheaders.getData("/"+result);
+        strHtml=strHtml.replace("@!Title",objHeader.Title).replace("@!Desc",objHeader.MetaDesc).replace("@!section('HeaderScript')",window.atob(objHeader.HeaderScript)).replace("@!section('BodyScript')",window.atob(objHeader.BodyScript)).replace("@!section('FooterScript')",window.atob(objHeader.FooterScript));        
+      }  
+       
+      // ads
+      var filteredCAd = dbcontentsad.getData("/").filter(function (value) { return value.HeadId === objContent.id && value.Mode === "A" ; });
+      filteredCAd.forEach(function(item){
+          // search one ad
+          var adHtml="";
+          var filterads = dbads.getData("/").filter(function (value) { return value.GroupID === item.GroupID && value.lang === langid ; });
+          if (filterads.length>1)
+          {
+            var adelement=0;
+            if (filterads.length>2)
+              adelement=Math.floor(Math.random() * filterads.length-1);
+            adHtml=window.atob(filterads[adelement].AdvertJS);
+          }
+          strHtml=strHtml.replace("@!section('"+item.Section+"')",adHtml);
+      });
+                
+      // moduls
+      var filteredCAd = dbcontentsad.getData("/").filter(function (value) { return value.HeadId === objContent.id && value.Mode === "M" ; });
+      filteredCAd.forEach(function(item){
+
+      });
+    }    
+
+   return strHtml;
+  },
   SearchTextinFile: function (searchStr, file, caseSensitive) {
 
     var str = fs.readFileSync(file, 'utf8');
@@ -39,7 +90,7 @@ var comfunc = {
 
       //except head,body,footer js script
       if (str3 != "HeaderScript" && str3 != "BodyScript" && str3 != "FooterScript") {
-        var id = '_' + Math.random().toString(36).substr(2, 9);
+        var id = Math.random().toString(36);
         if (str3.substr(0, 3).toLowerCase() == "ad_")
           indices.push({ "Id": id, "HeadId": HeadId, "Mode": "A", "Section": str3, "GroupID": "None", "Data": "" });
         if (str3.substr(0, 4).toLowerCase() == "mod_")
@@ -47,21 +98,12 @@ var comfunc = {
       }
     });
 
-
     return indices;
 
   },
   FileList: function () {
     return glob.sync("./views/*.edge");
-  },
-  FullURL: function fullUrl(req) {
-    return url.format({
-      protocol: req.protocol,
-      host: req.get('host'),
-      pathname: req.originalUrl
-    });
   }
-
 };
 
 module.exports = comfunc;

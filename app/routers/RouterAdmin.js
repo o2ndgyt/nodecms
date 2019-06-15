@@ -43,8 +43,6 @@ router.get('/Settings', function (req, res) {
     var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
     res.render('admin/settings', {
         config: configdata,
-        successmsg: '',
-        noMessages: false,
         fo: fotter
     });
 });
@@ -311,7 +309,7 @@ router.post('/Mainwebsites', function (req, res) {
     fs.access("./views/" + req.body.Name + ".edge", fs.constants.F_OK, (err) => {
         if (err) {
             var writeStream = fs.createWriteStream("./views/" + req.body.Name + ".edge");
-            writeStream.write("<html>\n<head>\n@!section('HeaderScript')\n</head>\n<body>\n@!section('BodyScript')\n<h1>\n@!section('ad_first')\n</h1>\n<h2>\n@!section('mod_first')\n</h2>\n@!section('FooterScript')\n</body>\n</html>");
+            writeStream.write("<html><title>@!Title</title><meta name=\"Description\" content=\"@!Desc\">\n<head>\n@!section('HeaderScript')\n</head>\n<body>\n@!section('BodyScript')\n<h1>\n@!section('ad_first')\n</h1>\n<h2>\n@!section('mod_first')\n</h2>\n@!section('FooterScript')\n</body>\n</html>");
             writeStream.end();
             res.json({
                 success: req.body.Name + " created successfully",
@@ -409,9 +407,7 @@ router.post('/Mainwebsites/d/:id', function (req, res) {
                 
                         // delete head ads      
                         dbcontentsad.reload();
-                
-                        var addataAds = dbcontentsad.getData("/");
-                        var filtered = addataAds.filter(function (value) { return value.HeadId != data.Id; });
+                        var filtered = dbcontentsad.getData("/").filter(function (value) { return value.HeadId != data.Id; });
                 
                         dbcontentsad.push("/", filtered);
                 
