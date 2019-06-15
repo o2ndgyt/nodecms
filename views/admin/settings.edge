@@ -2,6 +2,7 @@
 @section('content')
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
+<script type="text/javascript" src="/admin/guid.js"></script>
 <script lang="javascript">
  function ClearForm() {
 	$('#Id').val('');
@@ -165,7 +166,7 @@ $(document).ready(function () {
 	$('#save').click(function () {
 		if (ValidateData()) {
 			var user = Object();
-			user['Id'] = Math.random().toString(36);
+			user['Id'] = GUID.create();
 			user['Code'] = $('#Code').val().trim();
 			user['Alias'] = $('#Alias').val().trim();
 			jPut.users.append(user);
@@ -197,7 +198,8 @@ $(document).ready(function () {
    <div class="nav nav-tabs" id="nav-tab" role="tablist">
       <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Settings</a>
       <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Languages</a>
-   </div>
+      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-reset" role="tab" aria-controls="nav-reset" aria-selected="false">Reset</a>
+	</div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
@@ -304,6 +306,9 @@ $(document).ready(function () {
 				</tbody>
 			</table>
 			
+	</div>
+	<div class="tab-pane fade show active" id="nav-reset" role="tabpanel" aria-labelledby="nav-reset-tab">
+		TODO reset button
 	</div>
 </div>
 @endsection

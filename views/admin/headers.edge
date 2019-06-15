@@ -2,6 +2,7 @@
 @section('content')
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
+<script type="text/javascript" src="/admin/guid.js"></script>
 <script lang="javascript">
 function ClearForm() {
 	$('#Id').val('');
@@ -123,7 +124,7 @@ $(document).ready(function () {
 	$('#save').click(function () {
 		if (ValidateData()) {
 			var user = Object();
-			user['Id'] = Math.random().toString(36);
+			user['Id'] =GUID.create();
 			user['Alias'] = $('#Alias').val().trim();
 			user['Title'] = $('#Title').val().trim();
 			user['MetaDesc'] = $('#MetaDesc').val().trim();

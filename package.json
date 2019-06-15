@@ -9,7 +9,6 @@
   "author": "o2 by ndg",
   "license": "ISC",
   "dependencies": {
-    "alertifyjs": "^1.11.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.4",
     "csurf": "^1.10.0",
@@ -17,6 +16,7 @@
     "express-basic-auth": "^1.2.0",
     "express-edge": "^1.0.0",
     "express-handlebars": "^3.1.0",
+    "express-rate-limit": "^5.0.0",
     "express-robots-txt": "^0.4.0",
     "express-session": "^1.16.1",
     "express-useragent": "^1.0.12",
@@ -30,10 +30,8 @@
     "morgan": "^1.9.1",
     "node-json-db": "^0.10.0",
     "nodemailer": "^5.1.1",
-    "os-name": "^3.1.0",
     "path": "^0.12.7",
     "simple-accept-language": "^0.4.0",
-    "systeminformation": "^4.9.0",
-    "valid-url": "^1.0.9"
+    "uuid": "^3.3.2"
   }
 }

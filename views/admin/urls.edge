@@ -3,6 +3,7 @@
 <script type="text/javascript" src="/admin/slugify.en.min.js"></script>
 <script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/admin/jput-2.js"></script>
+<script type="text/javascript" src="/admin/guid.js"></script>
 
 <script lang="javascript">
 function ClearForm() {
@@ -163,7 +164,7 @@ $(document).ready(function () {
 
 			if (ValidateData()) {
 				var user = Object();
-				user['Id'] = Math.random().toString(36);
+				user['Id'] = GUID.create();
 				user['Alias'] = $('#Alias').val().trim();
 				user['PageFullUrl'] = $('#PageFullUrl').val().trim();
 				user['PageUrl'] = $('#PageUrl').val().trim();

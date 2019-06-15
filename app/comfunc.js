@@ -1,13 +1,20 @@
 var fs = require('fs'),
 glob = require('glob'),
-cmsmodulread = require('./app/modules/cmsmodul.read.js'),
+cmsmodulread = require('./modules/cmsmodul.read.js'),
 JsonDB=require('node-json-db'),
 dbads = new JsonDB("./db/cmsad", true, false),
 dbheaders = new JsonDB("./db/cmsheaders", true, false),
 dbcontents = new JsonDB("./db/cmscontents", true, false),
 dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
 
+const uuidv4 = require('uuid/v4');
+
 var comfunc = {
+  B2A: function (data){
+    if (data != "")
+      return Buffer.from(data, 'base64').toString('ascii');
+    return "";
+  },
   UrlEngine: function (id,langid)
   {
     dbcontents.reload();
@@ -15,7 +22,7 @@ var comfunc = {
     dbads.reload();
     dbcontentsad.reload();
 
-   var strHtml="UrlEngine - BodyID error :"+id;
+   var strHtml=`UrlEngine BodyID error:${id} lang id:${langid} `;
  
    var result = dbcontents.getData("/").findIndex(item => item.Id === id );
     if (result > -1) {
@@ -26,30 +33,35 @@ var comfunc = {
       var result = dbheaders.getData("/").findIndex(item => item.Id === objContent.HeadId );
       if (result > -1) {
         var objHeader=dbheaders.getData("/"+result);
-        strHtml=strHtml.replace("@!Title",objHeader.Title).replace("@!Desc",objHeader.MetaDesc).replace("@!section('HeaderScript')",window.atob(objHeader.HeaderScript)).replace("@!section('BodyScript')",window.atob(objHeader.BodyScript)).replace("@!section('FooterScript')",window.atob(objHeader.FooterScript));        
+        strHtml=strHtml.replace("@!Title",objHeader.Title).replace("@!Desc",objHeader.MetaDesc).replace("@!section('HeaderScript')",comfunc.B2A(objHeader.HeaderScript)).replace("@!section('BodyScript')",comfunc.B2A(objHeader.BodyScript)).replace("@!section('FooterScript')",comfunc.B2A(objHeader.FooterScript));        
       }  
        
       // ads
-      var filteredCAd = dbcontentsad.getData("/").filter(function (value) { return value.HeadId === objContent.id && value.Mode === "A" ; });
+      var filteredCAd =dbcontentsad.getData("/").filter(function (value) { return value.HeadId === objContent.Id && value.Mode === "A" ; });
       filteredCAd.forEach(function(item){
           // search one ad
           var adHtml="";
-          var filterads = dbads.getData("/").filter(function (value) { return value.GroupID === item.GroupID && value.lang === langid ; });
-          if (filterads.length>1)
+          var filterads = dbads.getData("/").filter(function (value) { return value.GroupID === item.GroupID && (value.lang === langid || value.lang === "*"); });
+          if (filterads.length>0)
           {
             var adelement=0;
-            if (filterads.length>2)
+            if (filterads.length>1)
               adelement=Math.floor(Math.random() * filterads.length-1);
-            adHtml=window.atob(filterads[adelement].AdvertJS);
+            adHtml=comfunc.B2A(filterads[adelement].AdvertJS);
           }
           strHtml=strHtml.replace("@!section('"+item.Section+"')",adHtml);
       });
                 
       // moduls
-      var filteredCAd = dbcontentsad.getData("/").filter(function (value) { return value.HeadId === objContent.id && value.Mode === "M" ; });
-      filteredCAd.forEach(function(item){
-
-      });
+      var filteredCMo = dbcontentsad.getData("/").filter(function (value) { return value.HeadId === objContent.Id && value.Mode === "M" ; });
+      filteredCMo.forEach(function(item){
+          // call read fn to convert data
+          if (item.GroupID != "None")
+          {
+          var strModul = cmsmodulread[item.GroupID](item.Data);
+          strHtml=strHtml.replace("@!section('"+item.Section+"')",strModul);
+          }
+        });
     }    
 
    return strHtml;
@@ -90,7 +102,7 @@ var comfunc = {
 
       //except head,body,footer js script
       if (str3 != "HeaderScript" && str3 != "BodyScript" && str3 != "FooterScript") {
-        var id = Math.random().toString(36);
+        var id = uuidv4();
         if (str3.substr(0, 3).toLowerCase() == "ad_")
           indices.push({ "Id": id, "HeadId": HeadId, "Mode": "A", "Section": str3, "GroupID": "None", "Data": "" });
         if (str3.substr(0, 4).toLowerCase() == "mod_")

@@ -16,7 +16,7 @@ _ = require('lodash'),
 fs = require("fs");
 
 //TODO
-//add express-brute nodemodul
+//setup express-rate-limit
 
 var oAuth = {
     authorizer: myAuthorizer,
@@ -336,7 +336,7 @@ router.get('/Mainwebsites/e/:file', function (req, res) {
             var data = fs.readFileSync("./views/" + req.params.file + ".edge", 'utf8');
             res.render('admin/mainwebsitesupdate', {
                 title: req.params.file,
-                filecon: data.trimLeft()
+                filecon: data
             });
 
         }
@@ -346,12 +346,13 @@ router.get('/Mainwebsites/e/:file', function (req, res) {
 
 // Save file
 router.post('/Mainwebsites/e/:file', function (req, res) {
-    // save data to file
-    fs.writeFile("./views/" + req.params.file + ".edge",req.body.filecon.trimLeft());
-    //rename the file
+    
+    fs.writeFile("./views/" + req.params.file + ".edge",req.body.filecon,function (err) {
+    // todo err
+    });
     if (req.params.file != req.body.Name) {
         fs.rename("./views/" + req.params.file + ".edge", "./views/" + req.body.Name + ".edge", function (err) {
-            if (err) console.log('ERROR: ' + err);
+        // todo err
         //todo rename all content
         
         });
