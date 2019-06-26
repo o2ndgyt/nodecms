@@ -1,4 +1,4 @@
-var fs = require('fs'),
+var fs = require('fs-extra'),
 glob = require('glob'),
 cmsmodulread = require('./modules/cmsmodul.read.js'),
 JsonDB=require('node-json-db'),

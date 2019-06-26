@@ -56,3 +56,4 @@ function onListening() {
         : 'port ' + addr.port;
     console.log('NodeCms on ' + bind+' Have a nice day :)');
 }
+

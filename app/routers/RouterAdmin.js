@@ -15,8 +15,7 @@ comfunc = require("../comfunc"),
 _ = require('lodash'),
 fs = require("fs");
 
-//TODO
-//setup express-rate-limit
+
 
 var oAuth = {
     authorizer: myAuthorizer,
@@ -26,6 +25,19 @@ var oAuth = {
 
 router.use('/', basicAuth(oAuth), function (req, res, next) {
     next();
+});
+
+// test
+//**********************
+router.get('/test', function (req, res) {
+    res.render('admin/test');
+});
+
+router.post('/test', function (req, res) {
+    res.json({
+        success: req.body.preselected,
+        status: 200
+    });
 });
 
 

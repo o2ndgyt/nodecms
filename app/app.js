@@ -1,6 +1,4 @@
 //var createError = require('http-errors');
-//var validator = require('express-validator');
-//var expressHsb = require('express-handlebars');
 
 var path = require('path'),
   logger = require('morgan'),
@@ -20,8 +18,9 @@ var path = require('path'),
   dblangs = new JsonDB("./db/cmslangs", true, false),
   dburls = new JsonDB("./db/cmsurls", true, false),
   comfunc = require("../app/comfunc"),
-  RouterAdmin = require('../app/routers/RouterAdmin');
-
+  RouterAdmin = require('../app/routers/RouterAdmin'),
+  rateLimit = require("express-rate-limit"),
+  ipgeoblock = require("node-ipgeoblock");
 
 try {
   var configdata = db.getData("/");
@@ -72,9 +71,36 @@ app.use(session(
     cookie: { maxAge: 180 * 60 * 1000 }
   }));
 
+const apiLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 50
+  });
+
+// defender
+app.use(apiLimiter);
+
+
+// ip/country defense
+app.use(ipgeoblock({
+  geolite2: "./geoip/geoip.mmdb",
+  blocked: configdata.WebBIPS,
+  blockedCountries: configdata.WebBCo
+}, function (req, res) {	
+ res.statusCode = 401;
+  res.end("Your ip on blacklist. Access Denied");
+}));
 
 // Admin routers
-app.use('/admin', RouterAdmin);
+app.use('/admin',ipgeoblock({
+  geolite2: "./geoip/geoip.mmdb",
+  allowed:  configdata.AdminAIPS,
+  allowedCountries: configdata.AdminACo
+}, function (req, res) {
+  res.statusCode = 401;
+  res.end("Your ip on blacklist. Access Denied");
+}), RouterAdmin);
+
+
 
 // URLs ENGINE with multi lang
 app.use(function (req, res, next) {
@@ -194,6 +220,7 @@ app.use(function (err, req, res, next) {
 
   res.json({
     msg: err.message,
+    stack:err.stack,
     status: 500
 });
 
