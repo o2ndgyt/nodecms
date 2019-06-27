@@ -23,21 +23,31 @@ var oAuth = {
     realm: 'Ku7VEtyc2B8mHFwrEpV6CAQtxGLySuLc'
 };
 
+router.use(function (req, res, next) {
+    if (!req.session.authStatus || 'loggedOut' === req.session.authStatus) {
+      req.session.authStatus = 'loggingIn';
+  
+      // cause Express to issue 401 status so browser asks for authentication
+      req.user = false;
+      req.remoteUser = false;
+      if (req.headers && req.headers.authorization) { delete req.headers.authorization; }
+    }
+    next();
+  });
+
+
 router.use('/', basicAuth(oAuth), function (req, res, next) {
+    req.session.authStatus = 'loggedIn';
     next();
 });
 
-// test
-//**********************
-router.get('/test', function (req, res) {
-    res.render('admin/test');
-});
 
-router.post('/test', function (req, res) {
-    res.json({
-        success: req.body.preselected,
-        status: 200
-    });
+// Logout
+//******************* */
+
+router.get('/Logout', function (req, res) {
+    delete req.session.authStatus;
+    res.redirect("/");
 });
 
 
@@ -52,10 +62,8 @@ router.get('/Dashboard', function (req, res) {
 router.get('/Settings', function (req, res) {
     db.reload();
     var configdata = db.getData("/");
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Code}}</td><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
-    res.render('admin/settings', {
-        config: configdata,
-        fo: fotter
+     res.render('admin/settings', {
+        config: configdata
     });
 });
 
