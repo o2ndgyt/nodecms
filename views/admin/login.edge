@@ -20,17 +20,24 @@
                    
                     <p class="text-center">Please login to Access your Admin</p>
                     <div class="row">
-                        <form action="index.html" class="form-inline">
+                        <form action="/admin/Login" method="POST" class="form-inline">
                             <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                    @if(hasErrors)
+                                    <div class="alert alert-danger">
+                                            @each(message in messages)
+                                       {{message}}
+                                       @endeach
+                                    </div>
+                                    @endif
                                 <div class="text-left">
                                     <label class="text-muted">User name</label>
-                                    <input id="signupInputEmail1" type="email" placeholder="Enter user name" class="form-control" required />
+                                    <input id="emaillogin" name="emaillogin" type="email" placeholder="Enter user name" class="form-control" required />
                                 </div>
                                 <div class="text-left">
                                     <label for="signupInputPassword" class="text-muted">Password</label>
-                                    <input id="signupInputPassword" type="password" placeholder="Password" class="form-control lock-input" required />
+                                    <input id="passwordlogin" name="passwordlogin" type="password" placeholder="Password" class="form-control lock-input" required />
                                 </div>
-                               
+                                <input type="hidden" name="_csrf" value="{{ csrfToken }}" >
                                 <button type="submit" class="btn btn-block btn-primary">
                                 Sign In
                                 </button>

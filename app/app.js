@@ -20,7 +20,9 @@ var path = require('path'),
   comfunc = require("../app/comfunc"),
   RouterAdmin = require('../app/routers/RouterAdmin'),
   rateLimit = require("express-rate-limit"),
-  ipgeoblock = require("node-ipgeoblock");
+  ipgeoblock = require("node-ipgeoblock"),
+  flash=require('connect-flash'),
+  passport=require('passport');
 
 try {
   var configdata = db.getData("/");
@@ -78,6 +80,18 @@ const apiLimiter = rateLimit({
 
 // defender
 app.use(apiLimiter);
+
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+//global variables
+app.use( function (req,res,next){
+  res.locals.login=req.isAuthenticated();
+  res.locals.session=req.session;
+  next();
+});
 
 
 // ip/country defense

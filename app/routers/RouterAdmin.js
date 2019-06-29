@@ -1,6 +1,5 @@
 var express = require('express'),
 router = express.Router(),
-basicAuth = require('express-basic-auth'),
 cmsmodulread = require('../modules/cmsmodul.read.js'),
 cmsmodulupdate=require('../modules/cmsmodul.update.js'),
 JsonDB = require('node-json-db'),
@@ -13,31 +12,62 @@ dbcontentsad = new JsonDB("./db/cmscontentsad", true, false),
 dburls = new JsonDB("./db/cmsurls", true, false),
 comfunc = require("../comfunc"),
 _ = require('lodash'),
-fs = require("fs");
+fs = require("fs"),
+csrf = require('csurf'),
+passport=require('passport');
 
+var csrfProtecion=csrf();
+router.use(csrfProtecion);
 
+require('../passportlogin');
 
-var oAuth = {
-    authorizer: myAuthorizer,
-    challenge: true,
-    realm: 'Ku7VEtyc2B8mHFwrEpV6CAQtxGLySuLc'
-};
-
-
-router.use(function (req, res, next) {
-    if (!req.session.authStatus || 'loggedOut' === req.session.authStatus) {
-      req.session.authStatus = 'loggingIn';
-  
-      // cause Express to issue 401 status so browser asks for authentication
-      req.user = false;
-      req.remoteUser = false;
-      if (req.headers && req.headers.authorization) { delete req.headers.authorization; }
+// Is user login ?
+function isLoggedIn(req,res,next)
+{
+    if (req.isAuthenticated())
+    {
+        return next();
     }
-    next();
-  });
+    res.redirect('/');
+}
 
-  router.use('/', basicAuth(oAuth), function (req, res, next) {
-    req.session.authStatus = 'loggedIn';
+function notLoggedIn(req,res,next)
+{
+    if (!req.isAuthenticated())
+    {
+        return next();
+    }
+    res.redirect('/admin/Login');
+}
+
+
+router.get('/Login',function(req,res,next){
+   if (!req.isAuthenticated())
+  {  var messages=req.flash('error');
+    res.render('admin/login',{csrfToken:req.csrfToken(), messages: messages, hasErrors: messages.length>0}  );
+  }
+  else
+  { res.redirect('/admin/Dashboard'); }
+});
+
+router.post('/Login',notLoggedIn,passport.authenticate('local.signin',{
+    failureRedirect: '/admin/Login',
+    failureFlash:true
+}), function (req,res,next) {
+if (req.session.oldUrl)
+{
+    var oldUrl=req.session.oldUrl;
+    req.session.oldUrl=null;
+    res.redirect(oldUrl);
+}
+else{
+    res.redirect('/admin/Dashboard');
+}
+});
+
+
+
+router.use('/',isLoggedIn,function(req,res,next){
     next();
 });
 
@@ -46,8 +76,8 @@ router.use(function (req, res, next) {
 //******************* */
 
 router.get('/Logout',function (req, res) {
-    delete req.session.authStatus;
-    res.redirect("/");
+    req.logout();
+    res.redirect('/');
 });
 
 
