@@ -23,6 +23,7 @@ var oAuth = {
     realm: 'Ku7VEtyc2B8mHFwrEpV6CAQtxGLySuLc'
 };
 
+
 router.use(function (req, res, next) {
     if (!req.session.authStatus || 'loggedOut' === req.session.authStatus) {
       req.session.authStatus = 'loggingIn';
@@ -35,8 +36,7 @@ router.use(function (req, res, next) {
     next();
   });
 
-
-router.use('/', basicAuth(oAuth), function (req, res, next) {
+  router.use('/', basicAuth(oAuth), function (req, res, next) {
     req.session.authStatus = 'loggedIn';
     next();
 });
@@ -45,7 +45,7 @@ router.use('/', basicAuth(oAuth), function (req, res, next) {
 // Logout
 //******************* */
 
-router.get('/Logout', function (req, res) {
+router.get('/Logout',function (req, res) {
     delete req.session.authStatus;
     res.redirect("/");
 });

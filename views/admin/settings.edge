@@ -1,56 +1,12 @@
 @layout('admin')
 @section('content')
-<script lang="javascript">  
-       function SendData() { 
-               $.ajax({
-                       type: "POST",
-                       url: "Settings",
-                       data: JSON.stringify( {Appport:$('#Appport').val(), compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val(),AdminPWD:$('#AdminPWD').val(),AdminUser:$('#AdminUser').val() }),
-                       contentType: "application/json; charset=utf-8",
-                       dataType: "json",
-                       success: function (msg) {
-                           alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
-                       }
-                   });  
-       }
-           
-       function isNumberKey(evt) {
-           var charCode = (evt.which) ? evt.which : evt.keyCode;
-           if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
-               return false;
-           return true;
-       }
-       
-       
-       $(document).ready(function () {
-           document.title = '#NodeCms - Admin Panel - Settings';
-       
-           var myOptions = {
-               "-1": "-1 Default compression level",
-               "0": "0 No compression",
-               "1": "1",
-               "2": "2",
-               "3": "3",
-               "4": "4",
-               "5": "5",
-               "6": "6",
-               "7": "7",
-               "8": "8",
-               "9": "9 Best compression",
-           };
-       
-           var _select = $('<select>');
-           $.each(myOptions, function (val, text) {
-               _select.append($('<option></option>').val(val).html(text));
-           });
-       
-           $("#compress").append(_select.html());
-           $("#compress").val("{{ config.compress }}").change();
-       
-       });
-       </script>
-       
-
+<script lang="javascript"> 
+  $(document).ready(function () {
+    Settings(); 
+    $("#compress").val("{{ config.compress }}").change();
+});
+</script>
+    
 <div class="boxed">
                
   <div id="content-container">
@@ -67,28 +23,30 @@
                         <form class="form-horizontal">
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label" for="demo-hor-inputemail">Application port:</label>
+                                        <label class="col-sm-3 control-label" for="appport">Application port:</label>
                                         <div class="col-sm-9">
                                                 <INPUT class="form-control" value="{{ config.Appport }}" id="Appport" placeholder="4 numbers only" onkeypress="return isNumberKey(event)" type="text" name="Appport" maxlength="4">
                                           
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label" for="demo-hor-inputpass">Compression (Gzip):</label>
+                                        <label class="col-sm-3 control-label" for="compress">Compression (Gzip):</label>
                                         <div class="col-sm-9">
-                                            <input type="password" placeholder="Password" id="demo-hor-inputpass" class="form-control">
+                                            <select class="form-control selectpicker" id="compress" name="compress">
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="col-sm-offset-3 col-sm-9">
-                                            <label class="form-checkbox form-normal form-primary">
-                                            <input type="checkbox"> Remember me
-                                            </label>
+                                        <label class="col-sm-3 control-label" for="xpowerby">X-Powered by:</label>
+                                        <div class="col-sm-9">
+                                            <INPUT class="form-control" value="{{ config.XPowerBy }}" id="XPowerBy" type="text" name="XPowerBy">
+                  
                                         </div>
                                     </div>
+                                   
                                 </div>
                                 <div class="panel-footer text-right">
-                                    <button class="btn btn-info" type="submit">Sign in</button>
+                                    <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o" id="saveset" ></a>
                                 </div>
                             </form>
                 </div>
