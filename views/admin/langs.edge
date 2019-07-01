@@ -1,0 +1,129 @@
+@layout('admin')
+@section('content')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/19.1.4/css/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/19.1.4/css/dx.light.css" />
+<script src="https://cdn3.devexpress.com/jslib/19.1.4/js/dx.all.js"></script>
+
+<script lang="javascript">
+ function sendRequest(url, method, data) {
+        var d = $.Deferred();
+    
+        method = method || "GET";
+
+        logRequest(method, url, data);
+    
+        $.ajax(url, {
+            method: method || "GET",
+            data: data,
+            cache: false  
+        }).done(function(result) {
+            d.resolve(method === "GET" ? result.data : result);
+        }).fail(function(xhr) {
+            d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+        });
+    
+        return d.promise();
+    }
+
+
+
+
+$(function(){
+    var orders = new DevExpress.data.CustomStore({
+        key: "Id",
+        load: function (loadOptions) {
+            var deferred = $.Deferred(),
+                args = {};
+    
+            if (loadOptions.sort) {
+                args.orderby = loadOptions.sort[0].selector;
+                if (loadOptions.sort[0].desc)
+                    args.orderby += " desc";
+            }
+    
+            args.skip = loadOptions.skip;
+            args.take = loadOptions.take;
+    
+            $.ajax({
+                url: "/admin/Langs/list",
+                dataType: "json", 
+                data: args,
+                success: function(result) {
+                    deferred.resolve(result.items, { totalCount: result.totalCount });
+                },
+                error: function() {
+                    deferred.reject("Data Loading Error");
+                },
+                timeout: 5000
+            });
+    
+            return deferred.promise();
+        },
+        insert: function(values) {
+            return sendRequest( "/admin/Langs/", "POST", {
+                values: JSON.stringify(values)
+            });
+        },
+
+    });
+    
+    $("#gridContainer").dxDataGrid({
+        dataSource: {
+            store: orders
+        },
+        keyExpr: "Id",
+        editing: {
+            mode: "form",
+            allowAdding: true,
+            allowUpdating: true,
+            allowDeleting: true
+        },
+        showBorders: true,
+        remoteOperations: {
+            sorting: true,
+            paging: true
+        },
+        paging: {
+            pageSize: 24
+        },
+        columns: [
+            "Id", "Code", "Alias"
+        ]
+    }).dxDataGrid("instance");
+});
+</script>
+
+
+<div class="boxed">
+               
+  <div id="content-container">
+     
+      <div class="pageheader">
+          <h3> <i class="fa fa-language"></i> Languages </h3>        
+      </div>
+    
+      <div id="page-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel">
+                    
+                                <div class="panel-body">
+                                    <div class="demo-container">
+                                        <div id="gridContainer"></div>
+                                    </div>
+                                </div>
+                              
+                                <div class="panel-footer text-right">
+                                </div>
+                           
+                </div>
+            </div>
+        </div>
+      </div>
+    
+  </div>
+
+</div>
+
+@endsection

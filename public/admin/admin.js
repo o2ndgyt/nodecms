@@ -5,6 +5,9 @@ function SendData(url,data) {
             data: data,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+    headers:  {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
             success: function (msg) {
                 alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
             }

@@ -87,14 +87,22 @@ router.get('/Dashboard', function (req, res) {
     res.render('admin/dashboard');
 });
 
+// Database
+//**********************
+router.get('/DB', function (req, res) {
+    db.reload();
+    var configdata = db.getData("/");
+     res.render('admin/database', { config: configdata,csrfToken:req.csrfToken() });
+});
+
+
+
 // Settings
 //**********************
 router.get('/Settings', function (req, res) {
     db.reload();
     var configdata = db.getData("/");
-     res.render('admin/settings', {
-        config: configdata
-    });
+     res.render('admin/settings', { config: configdata,csrfToken:req.csrfToken() });
 });
 
 router.post('/Settings', function (req, res) {
@@ -102,10 +110,7 @@ router.post('/Settings', function (req, res) {
     configdata.Appport = req.body.Appport;
     configdata.compress = req.body.compress;
     configdata.XPowerBy = req.body.XPowerBy;
-    configdata.AdminPWD = req.body.AdminPWD;
-    configdata.AdminUser = req.body.AdminUser;
     db.push("/", configdata);
-    db.reload();
     res.json({
         success: "Settings saved",
         status: 200
@@ -114,6 +119,10 @@ router.post('/Settings', function (req, res) {
 
 // Langs CRUD
 //**********************
+router.get('/Langs', function (req, res) {
+     res.render('admin/langs', { csrfToken:req.csrfToken() });
+});
+
 
 // Create
 router.post('/Langs', function (req, res) {
@@ -134,7 +143,7 @@ router.get('/Langs/list', function (req, res) {
     } catch (error) {
         console.error(error);
     };
-    res.json(adsdata);
+    res.json({ "totalCount":adsdata.length, "items": adsdata});
 });
 
 
