@@ -14,6 +14,55 @@ function SendData(url,data) {
         });  
 }
 
+function ReadData(url,loadOptions)
+{
+    var deferred = $.Deferred(),
+    args = {};
+
+if (loadOptions.sort) {
+    args.orderby = loadOptions.sort[0].selector;
+    if (loadOptions.sort[0].desc)
+        args.orderby += " desc";
+}
+
+args.skip = loadOptions.skip;
+args.take = loadOptions.take;
+
+$.ajax({
+    url: url,
+    dataType: "json", 
+    data: args,
+    success: function(result) {
+        deferred.resolve(result.items, { totalCount: result.totalCount });
+    },
+    error: function() {
+        deferred.reject("Data Loading Error");
+    },
+    timeout: 5000
+});
+
+return deferred.promise();  
+
+}
+
+function SendDataTable(url, data,key){ 
+    var d = $.Deferred();
+    $.ajax({
+            type: "POST",
+            url: key===null ? url: url+key,
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            cache: false  
+            }).done(function(result) {
+               d.resolve(result);
+            }).fail(function(xhr) {
+               d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+    return d.promise();
+}
+
 function isNumberKey(evt) {
     var charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))

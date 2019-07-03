@@ -14,7 +14,8 @@ comfunc = require("../comfunc"),
 _ = require('lodash'),
 fs = require("fs"),
 csrf = require('csurf'),
-passport=require('passport');
+passport=require('passport'),
+uuidv4 = require('uuid/v4');
 
 var csrfProtecion=csrf();
 router.use(csrfProtecion);
@@ -128,11 +129,9 @@ router.get('/Langs', function (req, res) {
 router.post('/Langs', function (req, res) {
     dblangs.reload();
     var adsdata = dblangs.getData("/");
+    req.body.Id=uuidv4();
     dblangs.push("/" + adsdata.length, req.body, false);
-    res.json({
-        success: req.body.Alias + " ("+req.body.Code+") created successfully",
-        status: 200
-    });
+    res.json({values: req.body});
 });
 
 // Read
@@ -152,11 +151,9 @@ router.post('/Langs/:id', function (req, res) {
     dblangs.reload();
     var result = dblangs.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
+        req.body.Id=req.params.id;
         dblangs.push("/" + result, req.body);
-        res.json({
-            success: req.body.Alias + " updated successfully",
-            status: 200
-        });
+        res.json({values: req.body});
     } else {
         res.json({
             success: "Update Error. Refresh page",
@@ -174,10 +171,7 @@ router.post('/Langs/d/:id', function (req, res) {
     if (result > -1) {
         addata.splice(result, 1);
         dblangs.push("/", addata);
-        res.json({
-            success: "Deleted successfully",
-            status: 200
-        });
+        res.json({values: req.params.id});
     } else {
         res.json({
             success: "Delete error. Refresh page",

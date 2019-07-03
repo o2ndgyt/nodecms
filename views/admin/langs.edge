@@ -6,65 +6,22 @@
 <script src="https://cdn3.devexpress.com/jslib/19.1.4/js/dx.all.js"></script>
 
 <script lang="javascript">
- function sendRequest(url, method, data) {
-        var d = $.Deferred();
-    
-        method = method || "GET";
-
-        logRequest(method, url, data);
-    
-        $.ajax(url, {
-            method: method || "GET",
-            data: data,
-            cache: false  
-        }).done(function(result) {
-            d.resolve(method === "GET" ? result.data : result);
-        }).fail(function(xhr) {
-            d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
-        });
-    
-        return d.promise();
-    }
-
-
-
 
 $(function(){
     var orders = new DevExpress.data.CustomStore({
         key: "Id",
         load: function (loadOptions) {
-            var deferred = $.Deferred(),
-                args = {};
-    
-            if (loadOptions.sort) {
-                args.orderby = loadOptions.sort[0].selector;
-                if (loadOptions.sort[0].desc)
-                    args.orderby += " desc";
-            }
-    
-            args.skip = loadOptions.skip;
-            args.take = loadOptions.take;
-    
-            $.ajax({
-                url: "/admin/Langs/list",
-                dataType: "json", 
-                data: args,
-                success: function(result) {
-                    deferred.resolve(result.items, { totalCount: result.totalCount });
-                },
-                error: function() {
-                    deferred.reject("Data Loading Error");
-                },
-                timeout: 5000
-            });
-    
-            return deferred.promise();
+            return ReadData("/admin/Langs/list",loadOptions);           
         },
         insert: function(values) {
-            return sendRequest( "/admin/Langs/", "POST", {
-                values: JSON.stringify(values)
-            });
+            return SendDataTable( "/admin/Langs/", JSON.stringify(values),null);
         },
+        update: function(key, values) {
+            return SendDataTable( "/admin/Langs/", JSON.stringify(values),key);
+        },
+        remove: function(key) {
+            return SendDataTable( "/admin/Langs/d/", JSON.stringify({key:key}),key);
+        }
 
     });
     
@@ -72,13 +29,13 @@ $(function(){
         dataSource: {
             store: orders
         },
-        keyExpr: "Id",
         editing: {
             mode: "form",
             allowAdding: true,
             allowUpdating: true,
             allowDeleting: true
         },
+        columnAutoWidth: true,
         showBorders: true,
         remoteOperations: {
             sorting: true,
@@ -88,7 +45,22 @@ $(function(){
             pageSize: 24
         },
         columns: [
-            "Id", "Code", "Alias"
+            {
+            dataField: "Id",
+            dataType: "string",
+            visible:false, formItem: { visible:false }
+        },
+        {
+            dataField: "Code",
+            dataType: "string",
+                validationRules: [{ type: "required" }]
+        },
+        {
+            dataField: "Alias",
+            dataType: "string",
+                validationRules: [{ type: "required" }]
+        }
+          
         ]
     }).dxDataGrid("instance");
 });
