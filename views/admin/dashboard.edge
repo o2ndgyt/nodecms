@@ -16,9 +16,23 @@
                   <div class="panel">
                       <div class="panel-body">
                           <div class="row">
-                              <div class="col-md-9 col-sm-9 col-xs-10">
-                                  <h3 class="mar-no"> <span class="counter">50.5 GB</span></h3>
-                                  <p class="mar-ver-5"> File DB size </p>
+                              <div class="col-md-9 col-sm-9 col-xs-10">           
+                                  <p class="mar-ver-5">
+                                      <table>
+
+                                  @each(filex in filedb)
+                                  <tr>
+                                      <td>
+                                            {{ filex.file }}
+                                      </td>
+                                      <td>
+                                            {{ filex.size }}
+                                        </td>
+                                    </tr>
+                             
+                                  @endeach
+                                      </table>
+                                </p>
                               </div>
                               <div class="col-md-3 col-sm-3 col-xs-2"> <i class="fa fa-database fa-3x text-info"></i> </div>
                           </div>

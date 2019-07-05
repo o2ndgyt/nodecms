@@ -1,6 +1,18 @@
 @layout('admin')
 @section('content')
-    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/19.1.4/css/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/19.1.4/css/dx.light.css" />
+<script src="https://cdn3.devexpress.com/jslib/19.1.4/js/dx.all.js"></script>
+<script lang="javascript">
+var priorities = ["File", "MongoDb"];
+$(function(){
+    $("#radio-group-simple").dxRadioGroup({
+        items: priorities,
+        value: priorities[0]
+    });
+});
+</script>
 <div class="boxed">
                
   <div id="content-container">
@@ -15,11 +27,25 @@
                 <div class="panel">
                     
                                 <div class="panel-body">
-                                File Databases
-                                Mongo Databases   
+                                  
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label" for="appport">Database:</label>
+                                        <div class="col-sm-9">
+                                            <div id="radio-group-simple"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label" for="xpowerby">MongoDB connection string</label>
+                                        <div class="col-sm-9">
+                                            <INPUT class="form-control" value="{{ config.MongoConn }}" id="MongoConn" type="text" name="MongoConn">
+                  
+                                        </div>
+                                    </div>
                                 </div>
                               
                                 <div class="panel-footer text-right">
+                                    <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o" id="saveset" ></a>
+                            
                                 </div>
                            
                 </div>

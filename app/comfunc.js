@@ -5,7 +5,9 @@ JsonDB=require('node-json-db'),
 dbads = new JsonDB("./db/cmsad", true, false),
 dbheaders = new JsonDB("./db/cmsheaders", true, false),
 dbcontents = new JsonDB("./db/cmscontents", true, false),
-dbcontentsad = new JsonDB("./db/cmscontentsad", true, false);
+dbcontentsad = new JsonDB("./db/cmscontentsad", true, false),
+fileBytes = require('file-bytes'),
+prettyBytes = require('pretty-bytes');
 
 const uuidv4 = require('uuid/v4');
 
@@ -115,6 +117,15 @@ var comfunc = {
   },
   FileList: function () {
     return glob.sync("./views/*.edge");
+  },
+  GetDbSize: function (){
+    var filesize=[];
+    filesize.push( {file:"AD", size:prettyBytes(fileBytes.sync('./db/cmsad.json')) });
+    filesize.push( {file:"Content" ,size:prettyBytes(fileBytes.sync('./db/cmscontents.json'))});
+    filesize.push( {file:"Content Ads",size:prettyBytes(fileBytes.sync('./db/cmscontentsad.json'))});
+    filesize.push( {file:"Headers",size: prettyBytes(fileBytes.sync('./db/cmsheaders.json'))});
+    filesize.push( {file:"Urls",size: prettyBytes(fileBytes.sync('./db/cmsurls.json'))});
+    return filesize;
   }
 };
 

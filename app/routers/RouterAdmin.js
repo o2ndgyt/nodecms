@@ -85,7 +85,7 @@ router.get('/Logout',function (req, res) {
 // Dashboard
 //**********************
 router.get('/Dashboard', function (req, res) {
-    res.render('admin/dashboard');
+    res.render('admin/dashboard', { filedb: comfunc.GetDbSize() ,csrfToken:req.csrfToken() });
 });
 
 // Database
