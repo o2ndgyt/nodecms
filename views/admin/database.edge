@@ -1,16 +1,20 @@
 @layout('admin')
 @section('content')
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/19.1.4/css/dx.common.css" />
-<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/19.1.4/css/dx.light.css" />
-<script src="https://cdn3.devexpress.com/jslib/19.1.4/js/dx.all.js"></script>
+<script src="/admin/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/admin/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="/admin/dx.light.css" />
+<script src="/admin/dx.all.js"></script>
+
 <script lang="javascript">
 var priorities = ["File", "MongoDb"];
 $(function(){
-    $("#radio-group-simple").dxRadioGroup({
+    $("#radiodb").dxRadioGroup({
         items: priorities,
-        value: priorities[0]
+        value: "{{ config.DB }}"
     });
+});
+$(document).ready(function () {
+    SettingsDB();
 });
 </script>
 <div class="boxed">
@@ -29,13 +33,13 @@ $(function(){
                                 <div class="panel-body">
                                   
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label" for="appport">Database:</label>
+                                        <label class="col-sm-3 control-label" for="radiodb">Database:</label>
                                         <div class="col-sm-9">
-                                            <div id="radio-group-simple"></div>
+                                            <div id="radiodb"></div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label" for="xpowerby">MongoDB connection string</label>
+                                        <label class="col-sm-3 control-label" for="MongoConn">MongoDB connection string</label>
                                         <div class="col-sm-9">
                                             <INPUT class="form-control" value="{{ config.MongoConn }}" id="MongoConn" type="text" name="MongoConn">
                   

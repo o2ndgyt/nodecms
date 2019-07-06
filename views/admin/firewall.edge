@@ -1,0 +1,261 @@
+@layout('admin')
+@section('content')
+<script src="/admin/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/admin/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="/admin/dx.light.css" />
+<script src="/admin/dx.all.js"></script>
+
+<script lang="javascript">
+$(document).ready(function () {
+    Firewall();
+
+    var max_fields = 1000; //Maximum allowed input fields 
+    var max_fields_admin = 50; //Maximum allowed input fields
+    var initweb = 0; 
+    var initadmin=0;
+    
+    @each(item in config.WebBIPS)
+    $('#websiteblockip').append('<div><input type="text" value="{{ item }}" name="websiteblockips" class="websiteblockips" placeholder="example:192.168.0.1" /> <a href="javascript:void(0);" class="remove_field">Remove</a></div>');
+    @endeach
+
+    @each(item in config.AdminAIPS)
+    $('#adminip').append('<div><input type="text" name="adminips" value="{{ item }}" class="adminips" placeholder="example:192.168.0.1" /> <a href="javascript:void(0);" class="remove_field">Remove</a></div>');
+    @endeach
+
+	//When user click on add input button
+	$('#websiteblockadd').click(function(e){
+        e.preventDefault();
+		//Check maximum allowed input fields
+        if(initweb < max_fields){ 
+            initweb++; //input field increment
+			 //add input field
+            $('#websiteblockip').append('<div><input type="text" name="websiteblockips" class="websiteblockips" placeholder="example:192.168.0.1" /> <a href="javascript:void(0);" class="remove_field">Remove</a></div>');
+        }
+    });
+
+    	//When user click on add input button
+	$('#adminadd').click(function(e){
+        e.preventDefault();
+		//Check maximum allowed input fields
+        if(initadmin < max_fields_admin){ 
+            initadmin++; //input field increment
+			 //add input field
+            $('#adminip').append('<div><input type="text" class="adminips" name="adminips" placeholder="example:192.168.0.1" /> <a href="javascript:void(0);" class="remove_field">Remove</a></div>');
+        }
+    });
+
+
+    //when user click on remove button
+    $('#adminip').on("click",".remove_field", function(e){ 
+        e.preventDefault();
+		$(this).parent('div').remove(); //remove inout field
+		initadmin--; //inout field decrement
+    })
+
+    //when user click on remove button
+    $('#websiteblockip').on("click",".remove_field", function(e){ 
+        e.preventDefault();
+		$(this).parent('div').remove(); //remove inout field
+		initweb--; //inout field decrement
+    })
+});
+
+$(function(){
+    var websiteblockcgrid,adminallowcgrid
+       
+    var makeAsyncDataSource = function(){
+        return new DevExpress.data.CustomStore({
+            loadMode: "raw",
+            key: "code",
+            load: function() {
+                return $.getJSON("/admin/Firewall/countries");
+            }
+        });
+    };
+
+    var getSelectedItemsKeys = function(items) {
+        var result = [];
+        items.forEach(function(item) {
+            if(item.selected) {
+                result.push(item.key);
+            }
+            if(item.items.length) {
+                result = result.concat(getSelectedItemsKeys(item.items));
+            }
+        });
+        return result;
+    };
+    
+    $("#websiteblockc").dxDropDownBox({
+        value: [
+            @each(item in config.WebBCo)
+            "{{ item }}",
+            @endeach
+        ],
+        valueExpr: "code",
+        placeholder: "Select countries...",
+        displayExpr: "name",
+        showClearButton: true,
+        dataSource: makeAsyncDataSource(),
+        contentTemplate: function(e){
+            var value = e.component.option("value"),
+                $dataGrid = $("<div>").dxDataGrid({
+                    dataSource: e.component.option("dataSource"),
+                    columns: ["name", "code"],
+                    hoverStateEnabled: true,
+                    paging: { enabled: true, pageSize: 10 },
+                    filterRow: { visible: true },
+                    scrolling: { mode: "infinite" },
+                    height: 345,
+                    selection: { mode: "multiple" },
+                    selectedRowKeys: value,
+                    onSelectionChanged: function(selectedItems){
+                        var keys = selectedItems.selectedRowKeys;
+                        e.component.option("value", keys);
+                    }
+                });
+            
+            websiteblockcgrid = $dataGrid.dxDataGrid("instance");
+            
+            e.component.on("valueChanged", function(args){
+                var value = args.value;
+                websiteblockcgrid.selectRows(value, false);
+            });
+            
+            return $dataGrid;
+        }
+    });
+
+    $("#adminallowc").dxDropDownBox({
+        value: [
+            @each(item in config.AdminACo)
+            "{{ item }}",
+            @endeach
+        ],
+        valueExpr: "code",
+        placeholder: "Select countries...",
+        displayExpr: "name",
+        showClearButton: true,
+        dataSource: makeAsyncDataSource(),
+        contentTemplate: function(e){
+            var value = e.component.option("value"),
+                $dataGrid = $("<div>").dxDataGrid({
+                    dataSource: e.component.option("dataSource"),
+                    columns: ["name", "code"],
+                    hoverStateEnabled: true,
+                    paging: { enabled: true, pageSize: 10 },
+                    filterRow: { visible: true },
+                    scrolling: { mode: "infinite" },
+                    height: 345,
+                    selection: { mode: "multiple" },
+                    selectedRowKeys: value,
+                    onSelectionChanged: function(selectedItems){
+                        var keys = selectedItems.selectedRowKeys;
+                        e.component.option("value", keys);
+                    }
+                });
+            
+                adminallowcgrid = $dataGrid.dxDataGrid("instance");
+            
+            e.component.on("valueChanged", function(args){
+                var value = args.value;
+                adminallowcgrid.selectRows(value, false);
+            });
+            
+            return $dataGrid;
+        }
+    });
+
+});
+</script>
+<div class="boxed">
+               
+  <div id="content-container">
+     
+      <div class="pageheader">
+          <h3> <i class="fa fa-globe"></i> Firewalls </h3>        
+      </div>
+    
+      <div id="page-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel">
+                    
+                                <div class="panel-body">
+                               
+                                    <div class="tab">
+                                        <button class="tablinks" onclick="openCity(event, 'Website')">Website blocked</button>
+                                        <button class="tablinks" onclick="openCity(event, 'Admin')">Admin allowed</button>
+                                      </div>
+                                
+                                      <div id="Website" class="tabcontent">
+                                            <div class="panel-body">
+                                  
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label" for="websiteblockc">Blocked countries:</label>
+                                                    <div class="col-sm-9">
+                                                        <div id="websiteblockc"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label" for="websiteblocki">Blocked IPs</label>
+                                                    <div class="col-sm-9">
+                                                       
+                                                        <div id="websiteblockip">
+                                                            <div>
+                                                            </div>
+                                                        </div>
+                                                        <button id="websiteblockadd">Add More IPs (max 1000)</button>
+
+
+
+
+                                                    </div>
+                                                </div>
+                                       
+                                        </div>
+                                      </div>
+                                      <div id="Admin" class="tabcontent">
+                                            <div class="panel-body">
+                                  
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label" for="adminallowc">Allow countries:</label>
+                                                    <div class="col-sm-9">
+                                                        <div id="adminallowc"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label" for="adminallowi">Allow IPs</label>
+                                                    <div class="col-sm-9">
+                                                       
+                                                            <div id="adminip">
+                                                                    <div>
+                                                                    </div>
+                                                                </div>
+                                                                <button id="adminadd">Add More IPs (max 50)</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                      </div>
+                                   
+                                </div>
+                              
+                                <div class="panel-footer text-right">
+                                    <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o" id="saveset" ></a>
+                            
+                                </div>
+                           
+                </div>
+            </div>
+        </div>
+      </div>
+    
+  </div>
+
+</div>
+
+@endsection

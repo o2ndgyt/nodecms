@@ -14,6 +14,27 @@ function SendData(url,data) {
         });  
 }
 
+function openCity(evt, cityName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+  
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+  
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+  
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
 function ReadData(url,loadOptions)
 {
     var deferred = $.Deferred(),
@@ -69,6 +90,26 @@ function isNumberKey(evt) {
         return false;
     return true;
 }
+
+
+function Firewall()
+{
+        document.title = '#NodeCms - Admin Panel - Firewall';
+        $('#saveset').click(function () { 
+			SendData('Firewall', JSON.stringify( { AdminACo: $("#adminallowc").dxDropDownBox("option", "value"), WebBCo: $("#websiteblockc").dxDropDownBox("option", "value"), WebBIPS:$('.websiteblockips').toArray().map(x=>x.value),AdminAIPS:$('.adminips').toArray().map(x=>x.value) }));
+        });
+}
+
+function SettingsDB()
+{
+        document.title = '#NodeCms - Admin Panel - Databases';
+           
+        $('#saveset').click(function () { 
+			SendData('DB', JSON.stringify( {MongoConn:$('#MongoConn').val(), DB: $("#radiodb").dxRadioGroup("option", "value") }));
+        });
+
+}
+
 
 function Settings()
 {

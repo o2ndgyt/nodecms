@@ -96,6 +96,41 @@ router.get('/DB', function (req, res) {
      res.render('admin/database', { config: configdata,csrfToken:req.csrfToken() });
 });
 
+router.post('/DB', function (req, res) {
+    var configdata = db.getData("/");
+    configdata.DB = req.body.DB;
+    configdata.MongoConn = req.body.MongoConn;
+    db.push("/", configdata);
+    res.json({
+        success: "Settings saved",
+        status: 200
+    });
+});
+
+// Fiewall
+//**********************
+router.get('/Firewall', function (req, res) {
+    db.reload();
+    var configdata = db.getData("/");
+     res.render('admin/firewall', { config: configdata,csrfToken:req.csrfToken() });
+});
+
+router.get('/Firewall/countries', function (req, res) {
+    res.json(comfunc.CountriesList());
+});
+
+router.post('/Firewall', function (req, res) {
+    var configdata = db.getData("/");
+    configdata.WebBCo = req.body.WebBCo;
+    configdata.AdminACo = req.body.AdminACo;
+    configdata.WebBIPS=req.body.WebBIPS;
+    configdata.AdminAIPS=req.body.AdminAIPS;
+    db.push("/", configdata); 
+    res.json({
+        success: "Settings saved",
+        status: 200
+    });
+});
 
 
 // Settings
