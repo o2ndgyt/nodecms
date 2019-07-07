@@ -71,7 +71,10 @@ $(function(){
                 }
         }
           
-        ]
+        ],
+        onRowUpdating: function(options) { 
+             options.newData = $.extend({}, options.oldData, options.newData); 
+        }
     }).dxDataGrid("instance");
 });
 </script>

@@ -136,7 +136,9 @@ var comfunc = {
     filesize.push( {file:"Content Ads",size:prettyBytes(fileBytes.sync('./db/cmscontentsad.json'))});
     filesize.push( {file:"Headers",size: prettyBytes(fileBytes.sync('./db/cmsheaders.json'))});
     filesize.push( {file:"Urls",size: prettyBytes(fileBytes.sync('./db/cmsurls.json'))});
-    }
+    filesize.push( {file:"Template",size: prettyBytes(fileBytes.sync('./db/cmstemplates.json'))});
+    
+  }
     else
     {
       filesize.push( {file:"MongoDB",size:"Unlimited"});       

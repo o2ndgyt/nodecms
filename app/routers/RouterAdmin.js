@@ -187,6 +187,7 @@ router.post('/Langs/:id', function (req, res) {
         dblangs.push("/" + result, req.body);
         res.json({values: req.body});
     } else {
+        //todo
         res.json({
             success: "Update Error. Refresh page",
             status: 500
@@ -219,33 +220,28 @@ router.post('/Langs/d/:id', function (req, res) {
 
 // Header
 router.get('/Headers', function (req, res) {
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Alias}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
-    res.render('admin/headers', {
-        fo: fotter
-    });
+     res.render('admin/headers', { csrfToken:req.csrfToken() });
+});
+
+// Read
+router.get('/Headers/list', function (req, res) {
+    dbheaders.reload();
+    var adsdata = dbheaders.getData("/");
+    res.json({ "totalCount":adsdata.length, "items": adsdata});
 });
 
 // Create
 router.post('/Headers', function (req, res) {
     dbheaders.reload();
     var adsdata = dbheaders.getData("/");
+    req.body.Id=uuidv4();
+    req.body.HeaderScript=comfunc.A2B(req.body.HeaderScript);
+    req.body.BodyScript=comfunc.A2B(req.body.BodyScript);
+    req.body.FooterScript=comfunc.A2B(req.body.FooterScript);
     dbheaders.push("/" + adsdata.length, req.body, false);
-    res.json({
-        success: req.body.Alias + " created successfully",
-        status: 200
-    });
+    res.json({values: req.body});
 });
 
-// Read
-router.get('/Headers/list', function (req, res) {
-    dbheaders.reload();
-    try {
-        var adsdata = dbheaders.getData("/");
-    } catch (error) {
-        console.error(error);
-    };
-    res.json(adsdata);
-});
 
 
 // Update
@@ -254,12 +250,15 @@ router.post('/Headers/:id', function (req, res) {
     // find by id
     var result = dbheaders.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
+        req.body.Id=req.params.id;
+        req.body.HeaderScript=comfunc.A2B(req.body.HeaderScript);
+        req.body.BodyScript=comfunc.A2B(req.body.BodyScript);
+        req.body.FooterScript=comfunc.A2B(req.body.FooterScript);
+    
         dbheaders.push("/" + result, req.body);
-        res.json({
-            success: req.body.Alias + " updated successfully",
-            status: 200
-        });
+        res.json({values: req.body});
     } else {
+        //todo
         res.json({
             success: "Update Error. Refresh page",
             status: 500
@@ -277,12 +276,10 @@ router.post('/Headers/d/:id', function (req, res) {
     if (result > -1) {
         addata.splice(result, 1);
         dbheaders.push("/", addata);
-        res.json({
-            success: "Deleted successfully",
-            status: 200
-        });
+        res.json({values: req.params.id});
     } else {
         res.json({
+            //todo
             success: "Delete error. Refresh page",
             status: 500
         });

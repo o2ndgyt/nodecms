@@ -1,230 +1,149 @@
 @layout('admin')
 @section('content')
-<script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="/admin/jput-2.js"></script>
-<script type="text/javascript" src="/admin/guid.js"></script>
+<script src="/admin/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/admin/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="/admin/dx.light.css" />
+<script src="/admin/dx.all.js"></script>
+
 <script lang="javascript">
-function ClearForm() {
-	$('#Id').val('');
-	$('#Alias').val('');
-	$('#Title').val('');
-	$('#MetaDesc').val('');
-	$('#HeaderScript').val('');
-	$('#BodyScript').val('');
-	$('#FooterScript').val('');
-}
-
-function ChangeText(button) {
-
-	if ($('#editupdate').is(':visible')) {
-		if (button > 0 && button < 4) {
-
-			ClearForm();
-			$("#editupdate").toggle();
-			$("#linktext").text("Create");
-
-			if ($('#save').css('display') == 'none' && button == 1) {
-				$('#save,#update').toggle();
-			}
-			if (button == 3) {
-				$('#save,#update').toggle();
-			}
-		} else {
-			if ($('#save').css('display') == 'block') {
-				$('#save,#update').toggle();
-			}
-
-		}
-
-	} else {
-		$("#editupdate").toggle();
-		$("#linktext").text("Cancel");
-		if ($('#save').css('display') == 'block' && button == 4) {
-			$('#save,#update').toggle();
-		}
-
-	}
-}
-
-
-function SendData(crud, data, index) {
-	switch (crud) {
-		case 1:
-			$.ajax({
-				type: "POST",
-				url: "Headers",
-				data: JSON.stringify(data),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: function (msg) {
-					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
-				}
-			});
-			break;
-		case 2:
-			$.ajax({
-				type: "POST",
-				url: "Headers/" + index,
-				data: JSON.stringify(data),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: function (msg) {
-					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
-				}
-			});
-			break;
-		case 3:
-			$.ajax({
-				type: "POST",
-				url: "Headers/d/" + index,
-				data: '',
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: function (msg) {
-					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
-					if (msg.status == 200) {
-						jPut.users.remove(data);
-					}
-				}
-			});
-			break;
-	}
-
-}
-
-function ValidateData() {
-	if ($('#Alias').val().trim().length == 0) {
-		alertify.notify('Please choose an alias', 'error', 2, function () {});
-		return false;
-	}
-	return true;
-}
-
-function edit(index) {
-	$('#save,#update').toggle();
-	$('#Id').val(jPut.users.data[index].Id);
-	$('#Alias').val(jPut.users.data[index].Alias);
-	$('#Title').val(jPut.users.data[index].Title);
-	$('#MetaDesc').val(jPut.users.data[index].MetaDesc);
-	$('#HeaderScript').val(window.atob(jPut.users.data[index].HeaderScript));
-	$('#BodyScript').val(window.atob(jPut.users.data[index].BodyScript));
-	$('#FooterScript').val(window.atob(jPut.users.data[index].FooterScript));
-	$('#update').attr('data-id', index);
-	ChangeText(4);
-}
-
-$(document).ready(function () {
-
-	$("#link").click(function () {
-		ChangeText(1);
-	});
-
-	document.title = '@Admin Page - Headers';
-
-	$('#save').click(function () {
-		if (ValidateData()) {
-			var user = Object();
-			user['Id'] =GUID.create();
-			user['Alias'] = $('#Alias').val().trim();
-			user['Title'] = $('#Title').val().trim();
-			user['MetaDesc'] = $('#MetaDesc').val().trim();
-			user['HeaderScript'] = window.btoa($('#HeaderScript').val().trim());
-			user['BodyScript'] = window.btoa($('#BodyScript').val().trim());
-			user['FooterScript'] = window.btoa($('#FooterScript').val().trim());
-			jPut.users.append(user);
-			SendData(1, user, 0);
-			ChangeText(2);
-		}
-	});
-
-
-	$('#update').click(function () {
-		if (ValidateData()) {
-			var user = Object();
-			user['Id'] = $('#Id').val();
-			user['Title'] = $('#Title').val().trim();
-			user['Alias'] = $('#Alias').val().trim();
-			user['MetaDesc'] = $('#MetaDesc').val().trim();
-			user['HeaderScript'] = window.btoa($('#HeaderScript').val().trim());
-			user['BodyScript'] = window.btoa($('#BodyScript').val().trim());
-			user['FooterScript'] = window.btoa($('#FooterScript').val().trim());
-			jPut.users.update($('#update').attr('data-id'), user);
-			SendData(2, user, user['Id']);
-			ChangeText(3);
-		}
-	});
-
+ $(document).ready(function () {
+    Headers(); 
 });
+$(function(){
+    var orders = new DevExpress.data.CustomStore({
+        key: "Id",
+        load: function (loadOptions) {
+            return ReadData("/admin/Headers/list",loadOptions);           
+        },
+        insert: function(values) {
+            return SendDataTable( "/admin/Headers/", JSON.stringify(values),null);
+        },
+        update: function(key, values) {
+            return SendDataTable( "/admin/Headers/", JSON.stringify(values),key);
+        },
+        remove: function(key) {
+            return SendDataTable( "/admin/Headers/d/", JSON.stringify({key:key}),key);
+        }
 
+    });
+    
+    $("#gridContainer").dxDataGrid({
+        dataSource: {
+            store: orders
+        },
+        editing: {
+            mode: "form",
+            allowAdding: true,
+            allowUpdating: true,
+            allowDeleting: true
+        },
+        columnAutoWidth: true,
+        showBorders: true,
+        remoteOperations: {
+            sorting: true,
+            paging: true
+        },
+        paging: {
+            pageSize: 24
+        },
+        columns: [{
+            dataField: "Id",
+            dataType: "string",
+            visible:false, formItem: { visible:false }
+        },
+        {
+            dataField: "Alias",
+            dataType: "string",
+            validationRules: [{ type: "required" }],
+            caption:"Alias"
+        },
+        {
+            dataField: "Title",
+            dataType: "string",
+            validationRules: [{ type: "required" }],
+            caption:"Page title"
+        },
+        {
+            dataField: "MetaDesc",
+            dataType: "string",
+            visible:false,
+            caption:"Page Description"
+        },
+        {
+            dataField: "HeaderScript",
+            dataType: "string",
+            visible:false,
+            caption:"Script in Head",
+            formItem: {
+                    colSpan: 2,
+                    editorType: "dxTextArea",
+                    editorOptions: {
+                        height: 100
+                    }
+                }
+        },
+        {
+            dataField: "BodyScript",
+            dataType: "string",
+            visible:false,
+            caption:"Script in Body",
+            formItem: {
+                    colSpan: 2,
+                    editorType: "dxTextArea",
+                    editorOptions: {
+                        height: 100
+                    }
+                }
+        },
+        {
+            dataField: "FooterScript",
+            dataType: "string",
+            visible:false,
+            caption:"Script in Footer",
+            formItem: {
+                    colSpan: 2,
+                    editorType: "dxTextArea",
+                    editorOptions: {
+                        height: 100
+                    }
+                }
+        }
+        ],
+        onEditorPrepared: function(e) {
+            if (e.dataField == "HeaderScript" || e.dataField == "BodyScript" || e.dataField == "FooterScript" ) {     
+                $(e.editorElement).dxTextArea("instance").option('value',window.atob(e.value));
+            }
+        },
+        onRowUpdating: function(options) { 
+             options.newData = $.extend({}, options.oldData, options.newData); 
+        }
+    }).dxDataGrid("instance");
+});
 </script>
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-	<h1 class="h2">Headers</h1>
+   
+<div class="boxed">
+               
+  <div id="content-container">
+     
+      <div class="pageheader">
+          <h3> <i class="fa fa-header"></i> Headers </h3>
+          
+      </div>
+    
+      <div id="page-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        <div class="demo-container">
+                            <div id="gridContainer"></div>
+                        </div>
+                    </div>     
+                </div>
+            </div>
+        </div>
+      </div>
+  </div>
 </div>
-<INPUT class="form-control" id="Id" type="hidden" name="Id" readonly/>
-<div id="link"><a id="linktext" class="btn btn-primary" href="#">Create</a></div>
-<hr/>
-<div id="editupdate" style="display: none;">
-<div class="form-group">
-	<div class="container">
-		<div class="row">
-			<div class="col"> <label for="Alias">Alias:</label> </div>
-			<div class="col">
-				<INPUT class="form-control" id="Alias" type="text" name="Alias" required />
-			</div>
-		</div>
-		<br/>
-		<div class="row">
-			<div class="col"> <label for="Title">Title:</label> </div>
-			<div class="col">
-				<INPUT class="form-control" id="Title" type="text" name="Title" /> 
-			</div>
-		</div>
-		<br/>
-		<div class="row">
-			<div class="col-3">
-				<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-					<a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Description</a>
-					<a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Header Script</a>
-					<a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Body Script</a>
-					<a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Fotter Script</a>
-				</div>
-			</div>
-			<div class="col-9">
-				<div class="tab-content" id="v-pills-tabContent">
-					<div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-						<textarea class="form-control" id="MetaDesc" rows="5"></textarea>
-					</div>
-					<div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-						<textarea class="form-control" id="HeaderScript" rows="5"></textarea>
-					</div>
-					<div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-						<textarea class="form-control" id="BodyScript" rows="5"></textarea>
-					</div>
-					<div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-						<textarea class="form-control" id="FooterScript" rows="5"></textarea>
-					</div>
-				</div>
-			</div>
-		</div>
-		<a class="btn btn-outline-primary btn-lg btn-block" href="#" id="save">Save</a>
-		<a class="btn btn-outline-primary btn-lg btn-block" href="#" id="update" data-id="0" style="display:none;">Update</a>
-		<hr/>
-	</div>
-</div>
-</div>
-<table class="table table-dark">
-	<thead>
-		<tr>
-			<th scope="col">Index</th>
-			<th scope="col">Alias</th>
-			<th scope="col">Edit</th>
-			<th scope="col">Delete</th>
-		</tr>
-	</thead>
-	<tbody jput="users" jput-ajax_url="Headers/list">
-		<tr>
-			{{{fo}}}
-		</tr>
-	</tbody>
-</table>
+
 @endsection
