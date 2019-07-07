@@ -75,7 +75,7 @@ app.use(session(
 
 const apiLimiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    max: 50
+    max: 200
   });
 
 // defender
@@ -101,7 +101,7 @@ app.use(ipgeoblock({
   blockedCountries: configdata.WebBCo
 }, function (req, res) {	
  res.statusCode = 401;
-  res.end("Your ip on blacklist. Access Denied");
+  res.end("Your ip is on blacklist. Access Denied");
 }));
 
 // Admin routers
@@ -111,7 +111,7 @@ app.use('/admin',ipgeoblock({
   allowedCountries: configdata.AdminACo
 }, function (req, res) {
   res.statusCode = 401;
-  res.end("Your ip on blacklist. Access Denied");
+  res.end("Your ip is on blacklist. Access Denied");
 }), RouterAdmin);
 
 

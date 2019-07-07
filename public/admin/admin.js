@@ -1,3 +1,5 @@
+const pagetitle="#NodeCms - Admin Panel - "
+
 function SendData(url,data) { 
     $.ajax({
             type: "POST",
@@ -94,15 +96,29 @@ function isNumberKey(evt) {
 
 function Firewall()
 {
-        document.title = '#NodeCms - Admin Panel - Firewall';
+        document.title = pagetitle+'Firewall';
         $('#saveset').click(function () { 
 			SendData('Firewall', JSON.stringify( { AdminACo: $("#adminallowc").dxDropDownBox("option", "value"), WebBCo: $("#websiteblockc").dxDropDownBox("option", "value"), WebBIPS:$('.websiteblockips').toArray().map(x=>x.value),AdminAIPS:$('.adminips').toArray().map(x=>x.value) }));
         });
 }
 
+function Templates()
+{
+    document.title = pagetitle+'Templates';        
+}
+function TemplatesEdit(title)
+{
+    document.title = pagetitle+'Templates - '+title;        
+}
+
+function Langs()
+{
+    document.title = pagetitle+'Languages';        
+}
+
 function SettingsDB()
 {
-        document.title = '#NodeCms - Admin Panel - Databases';
+        document.title = pagetitle+'Databases';
            
         $('#saveset').click(function () { 
 			SendData('DB', JSON.stringify( {MongoConn:$('#MongoConn').val(), DB: $("#radiodb").dxRadioGroup("option", "value") }));
@@ -113,7 +129,7 @@ function SettingsDB()
 
 function Settings()
 {
-        document.title = '#NodeCms - Admin Panel - Settings';
+        document.title = pagetitle+'Settings';
     
         var myOptions = {
             "-1": "-1 Default compression level",

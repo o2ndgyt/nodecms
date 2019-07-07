@@ -13,6 +13,11 @@ prettyBytes = require('pretty-bytes');
 const uuidv4 = require('uuid/v4');
 
 var comfunc = {
+  A2B: function (data){
+    if (data != "")
+      return Buffer.from(data).toString('base64');
+    return "";
+  },
   B2A: function (data){
     if (data != "")
       return Buffer.from(data, 'base64').toString('ascii');

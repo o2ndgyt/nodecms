@@ -5,6 +5,7 @@ cmsmodulupdate=require('../modules/cmsmodul.update.js'),
 JsonDB = require('node-json-db'),
 db = new JsonDB("./db/config", true, false),
 dbads = new JsonDB("./db/cmsad", true, false),
+dbtemplates = new JsonDB("./db/cmstemplates", true, false),
 dblangs = new JsonDB("./db/cmslangs", true, false),
 dbheaders = new JsonDB("./db/cmsheaders", true, false),
 dbcontents = new JsonDB("./db/cmscontents", true, false),
@@ -172,11 +173,7 @@ router.post('/Langs', function (req, res) {
 // Read
 router.get('/Langs/list', function (req, res) {
     dblangs.reload();
-    try {
-        var adsdata = dblangs.getData("/");
-    } catch (error) {
-        console.error(error);
-    };
+    var adsdata = dblangs.getData("/");
     res.json({ "totalCount":adsdata.length, "items": adsdata});
 });
 
@@ -209,6 +206,7 @@ router.post('/Langs/d/:id', function (req, res) {
         res.json({values: req.params.id});
     } else {
         res.json({
+            //todo
             success: "Delete error. Refresh page",
             status: 500
         });
@@ -373,84 +371,103 @@ router.post('/Ads/d/:id', function (req, res) {
 //**********************
 
 
-router.get('/Mainwebsites', function (req, res) {
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td><a href="Mainwebsites/e/{{json.Name}}">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Name}}\');">Delete</a></td>';
-    res.render('admin/mainwebsites', {
-        fo: fotter
-    });
+router.get('/Templates', function (req, res) {
+    res.render('admin/templates', { csrfToken:req.csrfToken() });
 });
 
 // Read
-router.get('/Mainwebsites/list', function (req, res) {
-    var tmp = [];
-    comfunc.FileList().forEach(function (value) {
-        tmp.push({
-            "Name": value.replace("./views/", "").replace(".edge", "")
-        });
-    });
-    res.json(tmp);
+router.get('/Templates/list', function (req, res) {
+    dbtemplates.reload();
+    var adsdata = dbtemplates.getData("/");
+    res.json({ "totalCount":adsdata.length, "items": adsdata});
+
 });
 
 // Create
-router.post('/Mainwebsites', function (req, res) {
-
-    fs.access("./views/" + req.body.Name + ".edge", fs.constants.F_OK, (err) => {
-        if (err) {
-            var writeStream = fs.createWriteStream("./views/" + req.body.Name + ".edge");
-            writeStream.write("<html><title>@!Title</title><meta name=\"Description\" content=\"@!Desc\">\n<head>\n@!section('HeaderScript')\n</head>\n<body>\n@!section('BodyScript')\n<h1>\n@!section('ad_first')\n</h1>\n<h2>\n@!section('mod_first')\n</h2>\n@!section('FooterScript')\n</body>\n</html>");
-            writeStream.end();
-            res.json({
-                success: req.body.Name + " created successfully",
-                status: 200
-            });
-        } else {
-            res.json({
-                success: req.body.Name + " file exists",
-                status: 500
-            });
-        }
-    });
+router.post('/Templates', function (req, res) {
+    dbtemplates.reload();
+    var adsdata = dbtemplates.getData("/");
+    req.body.Id=uuidv4();
+    var data="<html><title>@!Title</title><meta name=\"Description\" content=\"@!Desc\">\n<head>\n@!section('HeaderScript')\n</head>\n<body>\n@!section('BodyScript')\n<h1>\n@!section('ad_first')\n</h1>\n<h2>\n@!section('mod_first')\n</h2>\n@!section('FooterScript')\n</body>\n</html>";            
+    req.body.HTML=comfunc.A2B(data);
+    dbtemplates.push("/" + adsdata.length, req.body, false);
+    res.json({values: req.body});
 });
 
-// Read
-router.get('/Mainwebsites/e/:file', function (req, res) {
-    fs.access("./views/" + req.params.file + ".edge", fs.constants.F_OK | fs.constants.W_OK, (err) => {
-        if (err) {
-            // File in param does not exist
-            //  res.redirect('/admin/Mainwebsites');
+// update
+router.post('/Templates/:id', function (req, res) {
+    dbtemplates.reload();
+    var result = dbtemplates.getData("/").findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        var element=dbtemplates.getData("/"+result)
+        element.Alias=req.body.Alias;
+        dbtemplates.push("/" + result, element);
+        res.json({values: element});
+    } else {
+        res.json({
             // todo
-            res.send(err);
-        } else {
-            var data = fs.readFileSync("./views/" + req.params.file + ".edge", 'utf8');
-            res.render('admin/mainwebsitesupdate', {
-                title: req.params.file,
-                filecon: data
-            });
+            success: "Update Error. Refresh page",
+            status: 500
+        });
+    } 
+});
 
-        }
-    });
+// Delete
+router.post('/Templates/d/:id', function (req, res) {
+    dbtemplates.reload();
+    var addata = dbtemplates.getData("/");
+    var result = addata.findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        addata.splice(result, 1);
+        dbtemplates.push("/", addata);
+        res.json({values: req.params.id});
+    } else {
+        res.json({
+            success: "Delete error. Refresh page",
+            status: 500
+        });
+    }
+});
 
+
+
+
+// Read
+router.get('/Templates/e/:id', function (req, res) {
+    dbtemplates.reload();
+    var addata = dbtemplates.getData("/");
+    var result = addata.findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        var element=dbtemplates.getData("/"+result)
+        res.render('admin/templateEdit', {
+            title: element.Alias,
+            filecon: comfunc.B2A(element.HTML),
+            id: element.Id,
+            csrfToken:req.csrfToken() 
+        });
+    }
+    else
+    {
+        res.redirect("admin/Templates");
+    }
+    
 });
 
 // Save file
-router.post('/Mainwebsites/e/:file', function (req, res) {
+router.post('/Templates/e/:id', function (req, res) {
+    dbtemplates.reload();
+    var result = dbtemplates.getData("/").findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        var element=dbtemplates.getData("/"+result)
+        element.HTML=comfunc.A2B(req.body.filecon);
+        dbtemplates.push("/" + result, element);
     
-    fs.writeFile("./views/" + req.params.file + ".edge",req.body.filecon,function (err) {
-    // todo err
-    });
-    if (req.params.file != req.body.Name) {
-        fs.rename("./views/" + req.params.file + ".edge", "./views/" + req.body.Name + ".edge", function (err) {
-        // todo err
-        //todo rename all content
-        
-        });
-
-    }
-    res.redirect('/admin/Mainwebsites');
+    } 
+    res.redirect('/admin/Templates');
 
 });
 
-
+/*TODO
 // Delete
 router.post('/Mainwebsites/d/:id', function (req, res) {
     fs.access("./views/" + req.params.id + ".edge", fs.constants.F_OK | fs.constants.W_OK, (err) => {
@@ -513,6 +530,7 @@ router.post('/Mainwebsites/d/:id', function (req, res) {
         }
     });
 });
+*/
 
 // Contents CRUD
 //**********************

@@ -1,0 +1,55 @@
+@layout('admin')
+@section('content')
+<script language="Javascript" type="text/javascript" src="/edit_area/edit_area_full.js"></script>
+
+<script lang="javascript"> 
+  $(document).ready(function () {
+    TemplatesEdit('{{{title}}}'); 
+    editAreaLoader.init({
+         id: "filecon"		
+         ,start_highlight: true	
+         ,allow_resize: "both"
+         ,allow_toggle: true
+         ,word_wrap: false
+         ,language: "en"
+         ,syntax: "html"	
+       });
+
+
+  });
+</script>
+    
+<div class="boxed">
+               
+  <div id="content-container">
+     
+      <div class="pageheader">
+          <h3> <i class="fa  fa-pencil-square-o" aria-hidden="true"></i> Edit {{{title}}} </h3>          
+      </div>
+    
+      <div id="page-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel">
+                  <form id="formid" method="POST" action="/admin/Templates/e/{{{id}}}">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                                <div class="panel-body">                              
+                                  <textarea id="filecon" style="height: 280px; width: 100%;" name="filecon">{{{filecon}}}</textarea>    
+                                </div>
+                              
+                                <div class="panel-footer text-right">
+                                  <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-ban" href="/admin/Templates" ></a>  
+                                  <button type="submit" class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o"></button>
+                                    
+                                </div>
+                              </form>
+                </div>
+            </div>
+        </div>
+      </div>
+    
+  </div>
+
+</div>
+
+@endsection

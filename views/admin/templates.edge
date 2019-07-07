@@ -6,23 +6,23 @@
 <script src="/admin/dx.all.js"></script>
 
 <script lang="javascript">
-  $(document).ready(function () {
-    Langs(); 
+ $(document).ready(function () {
+    Templates(); 
 });
 $(function(){
     var orders = new DevExpress.data.CustomStore({
         key: "Id",
         load: function (loadOptions) {
-            return ReadData("/admin/Langs/list",loadOptions);           
+            return ReadData("/admin/Templates/list",loadOptions);           
         },
         insert: function(values) {
-            return SendDataTable( "/admin/Langs/", JSON.stringify(values),null);
+            return SendDataTable( "/admin/Templates/", JSON.stringify(values),null);
         },
         update: function(key, values) {
-            return SendDataTable( "/admin/Langs/", JSON.stringify(values),key);
+            return SendDataTable( "/admin/Templates/", JSON.stringify(values),key);
         },
         remove: function(key) {
-            return SendDataTable( "/admin/Langs/d/", JSON.stringify({key:key}),key);
+            return SendDataTable( "/admin/Templates/d/", JSON.stringify({key:key}),key);
         }
 
     });
@@ -46,48 +46,54 @@ $(function(){
         paging: {
             pageSize: 24
         },
-        columns: [
-            {
+        columns: [{
             dataField: "Id",
             dataType: "string",
             visible:false, formItem: { visible:false }
         },
-        {
-            dataField: "Code",
-            dataType: "string",
-                validationRules: [{ type: "required" }],
-                caption:"Browser lang code"
-        },
-        {
+            {
             dataField: "Alias",
             dataType: "string",
-                validationRules: [{ type: "required" }],
-                caption:"Alias"
+            validationRules: [{ type: "required" }],
+            caption:"Alias"
+        },
+        {
+            dataField: "Id",
+            dataType: "string",
+            caption:"HTML editor",
+            formItem: { visible:false },
+                allowFiltering: false,
+                allowSorting: false,
+                cellTemplate: function (container, options) {
+                    $("<div>")
+                        .append($("<a>", { "text":"Open in HTML editor","href": "/admin/Templates/e/"+options.value }))
+                        .appendTo(container);
+                }
         }
           
         ]
     }).dxDataGrid("instance");
 });
 </script>
-
-
+   
 <div class="boxed">
                
   <div id="content-container">
      
       <div class="pageheader">
-          <h3> <i class="fa fa-language"></i> Languages </h3>        
+          <h3> <i class="fa fa-file-code-o"></i> Templates </h3>
+          
       </div>
     
       <div id="page-content">
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel">
-                                <div class="panel-body">
-                                    <div class="demo-container">
-                                        <div id="gridContainer"></div>
-                                    </div>
-                                </div>      
+                    <div class="panel-body">
+                        <div class="demo-container">
+                            <div id="gridContainer"></div>
+                        </div>
+                    </div>     
                 </div>
             </div>
         </div>
