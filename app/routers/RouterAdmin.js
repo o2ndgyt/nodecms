@@ -116,8 +116,11 @@ router.get('/Firewall', function (req, res) {
      res.render('admin/firewall', { config: configdata,csrfToken:req.csrfToken() });
 });
 
-router.get('/Firewall/countries', function (req, res) {
-    res.json(comfunc.CountriesList());
+router.get('/Firewall/countries/:id', function (req, res) {
+    var list=comfunc.CountriesList();
+    if (req.params.id=='2')
+        list.push(  {name: 'All', code: '*'});
+    res.json(list);
 });
 
 router.post('/Firewall', function (req, res) {
@@ -247,7 +250,6 @@ router.post('/Headers', function (req, res) {
 // Update
 router.post('/Headers/:id', function (req, res) {
     dbheaders.reload();
-    // find by id
     var result = dbheaders.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         req.body.Id=req.params.id;
@@ -271,7 +273,6 @@ router.post('/Headers/:id', function (req, res) {
 router.post('/Headers/d/:id', function (req, res) {
     dbheaders.reload();
     var addata = dbheaders.getData("/");
-    // find by id
     var result = addata.findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         addata.splice(result, 1);
@@ -292,50 +293,39 @@ router.post('/Headers/d/:id', function (req, res) {
 
 // Ads
 router.get('/Ads', function (req, res) {
+    res.render('admin/ads', { csrfToken:req.csrfToken() });
+});
+
+
+// Read
+router.get('/Ads/list', function (req, res) {
     dbads.reload();
-    var addata = dblangs.getData("/");
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.Name}}</td><td>{{json.GroupID}}</td><td>{{LongLang(json.lang)}}</td><td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
-    res.render('admin/ads', {
-        fo: fotter,
-        langs:addata
-    });
+    var adsdata = dbads.getData("/");
+    res.json({ "totalCount":adsdata.length, "items": adsdata});
 });
 
 // Create
 router.post('/Ads', function (req, res) {
     dbads.reload();
     var adsdata = dbads.getData("/");
+    req.body.Id=uuidv4();
+    req.body.AdvertJS=comfunc.A2B(req.body.AdvertJS);
     dbads.push("/" + adsdata.length, req.body, false);
-    res.json({
-        success: req.body.Name + " created successfully",
-        status: 200
-    });
-});
-
-// Read
-router.get('/Ads/list', function (req, res) {
-    dbads.reload();
-    try {
-        var adsdata = dbads.getData("/");
-    } catch (error) {
-        console.error(error);
-    };
-    res.json(adsdata);
+    res.json({values: req.body});
 });
 
 
 // Update
 router.post('/Ads/:id', function (req, res) {
     dbads.reload();
-    // find by id
     var result = dbads.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
+        req.body.Id=req.params.id;
+        req.body.AdvertJS=comfunc.A2B(req.body.AdvertJS);
         dbads.push("/" + result, req.body);
-        res.json({
-            success: req.body.Name + " updated successfully",
-            status: 200
-        });
+        res.json({values: req.body});
     } else {
+        //todo
         res.json({
             success: "Update Error. Refresh page",
             status: 500
@@ -352,12 +342,10 @@ router.post('/Ads/d/:id', function (req, res) {
     if (result > -1) {
         addata.splice(result, 1);
         dbads.push("/", addata);
-        res.json({
-            success: "Deleted successfully",
-            status: 200
-        });
+        res.json({values: req.params.id});
     } else {
         res.json({
+            //todo
             success: "Delete error. Refresh page",
             status: 500
         });

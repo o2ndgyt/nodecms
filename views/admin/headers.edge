@@ -43,6 +43,9 @@ $(function(){
             sorting: true,
             paging: true
         },
+        searchPanel: {
+            visible: true,
+        },
         paging: {
             pageSize: 24
         },
@@ -110,7 +113,10 @@ $(function(){
         }
         ],
         onEditorPrepared: function(e) {
+            if (e.value != null)
+
             if (e.dataField == "HeaderScript" || e.dataField == "BodyScript" || e.dataField == "FooterScript" ) {     
+            
                 $(e.editorElement).dxTextArea("instance").option('value',window.atob(e.value));
             }
         },

@@ -101,6 +101,10 @@ function Firewall()
 			SendData('Firewall', JSON.stringify( { AdminACo: $("#adminallowc").dxDropDownBox("option", "value"), WebBCo: $("#websiteblockc").dxDropDownBox("option", "value"), WebBIPS:$('.websiteblockips').toArray().map(x=>x.value),AdminAIPS:$('.adminips').toArray().map(x=>x.value) }));
         });
 }
+function Ads()
+{
+    document.title = pagetitle+'Ads';        
+}
 function Headers()
 {
     document.title = pagetitle+'Headers';        

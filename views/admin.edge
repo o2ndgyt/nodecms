@@ -17,13 +17,28 @@
         <link rel="stylesheet" href="/admin/alertify2.min.css"/>
         <script src="/admin/pace.min.js"></script>
         <script src="/admin/alertify.min.js"></script> 
-        <script src="/admin/jquery-2.1.1.min.js"></script> 
+        <script src="/admin/jquery-2.1.3.min.js"></script> 
         <script src="/admin/bootstrap.min.js"></script>
         <script src="/admin/jquery.nanoscroller.min.js"></script>
         <script src="/admin/metismenu.min.js"></script>
          <script src="/admin/jasmine.js"></script>
          <script src="/admin/admin.js"></script>
-     
+         <script src="session-timeout.js"></script>
+
+         <script lang="javascript">
+             $(document).ready(function () {
+                   $.sessionTimeout({
+                        message: 'Your session will be locked in a minute.',
+                        keepAlive:false,
+                        logoutUrl: '/admin/Logout',
+                        redirUrl: '/admin/Logout',
+                        warnAfter: 10*60*1000,
+                        redirAfter: 60*1000,
+                        countdownMessage: 'Redirecting in {timer} seconds.',
+                        countdownBar: true
+                    });
+                });
+        </script>
     </head>
     <body>
         <div id="container" class="effect mainnav-full">
@@ -93,9 +108,6 @@
                                    </li>
                                    <li>
                                         <a href="/admin/Routers"> Routers </a>
-                                   </li>
-                                   <li>
-                                        <a href="/admin/Urls"> Urls </a>
                                    </li>
                                    <li class="dropdown">
                                         <a href="#" data-toggle="dropdown" class="dropdown-toggle"> Moduls <b class="caret"></b></a>
