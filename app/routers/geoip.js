@@ -1,3 +1,10 @@
+/*
+Then download the latest version of [MaxMind GeoLite2 Country Database](
+	https://dev.maxmind.com/geoip/geoip2/geolite2/) 
+	and save it somewhere in the way that you application can access it. 
+	Make sure you download the database in MaxMind DB format.
+*/
+
 "use strict";
 
 var fs = require("fs-extra"),
@@ -37,6 +44,7 @@ module.exports = function (options, accessDenied) {
 	
 	function isBlocked(ip, req, res) {
 		req.location = req.location || {};
+		req.location.ip=ip;
 		req.location.country = {
 			data: null,
 			isoCode: ""

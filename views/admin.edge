@@ -27,6 +27,7 @@
 
          <script lang="javascript">
              $(document).ready(function () {
+                 if (window.location.pathname!="/admin/Login")
                    $.sessionTimeout({
                         message: 'Your session will be locked in a minute.',
                         keepAlive:false,
@@ -107,14 +108,15 @@
                                         <a href="/admin/Templates"> Templates </a>
                                    </li>
                                    <li>
-                                        <a href="/admin/Routers"> Routers </a>
+                                        <a href="/admin/Urls"> Urls </a>
                                    </li>
                                    <li class="dropdown">
-                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle"> Moduls <b class="caret"></b></a>
+                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle"> Cubes <b class="caret"></b></a>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="/admin/Headers"> Headers </a></li>
-                                            <li><a href="/admin/Contents"> Contents </a></li>
-                                            <li><a href="/admin/Ads"> Ads </a></li> 
+                                            <li><a href="/admin/Ads"> Ads </a></li>
+                                            <li><a href="/admin/Moduls"> Moduls </a></li>
+                                            <li><a href="/admin/Routers"> Routers </a></li> 
                                         </ul>  
                                     </li>
                             </ul>

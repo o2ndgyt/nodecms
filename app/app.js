@@ -1,7 +1,4 @@
-//var createError = require('http-errors');
-
-var path = require('path'),
-  logger = require('morgan'),
+var logger = require('morgan'),
   expressedge = require('express-edge'),
   compression = require('compression'),
   express = require('express'),
@@ -12,24 +9,14 @@ var path = require('path'),
   cookieParser = require('cookie-parser'),
   validator = require('express-validator'),
   session = require('express-session'),
-  simpleLanguage = require('simple-accept-language'),
-  dburls = new JsonDB("./db/cmsurls", true, false),
-  db = new JsonDB("./db/config", true, false),
-  dblangs = new JsonDB("./db/cmslangs", true, false),
-  dburls = new JsonDB("./db/cmsurls", true, false),
-  comfunc = require("../app/comfunc"),
-  RouterAdmin = require('../app/routers/RouterAdmin'),
+  passport=require('passport'),
   rateLimit = require("express-rate-limit"),
-  ipgeoblock = require("node-ipgeoblock"),
+  ipgeoblock = require(`${__base}app/routers/geoip.js`),
   flash=require('connect-flash'),
-  passport=require('passport');
+  RouterAdmin = require(`${__base}app/routers/routeradmin.js`),
+  db = new JsonDB(`${__base}db/config.js`, true, false);
 
-try {
-  var configdata = db.getData("/");
-} catch (error) {
-  console.error(error);
-};
-
+var configdata = db.getData("/");
 
 var app = express();
 
@@ -37,7 +24,7 @@ var app = express();
 app.use(useragent.express());
 
 // Robots
-app.use(robots(path.join(__dirname, '../public/robots.txt')));
+app.use(robots(`${__base}public/robots.txt`));
 
 // Defense
 app.use(helmet());
@@ -47,7 +34,7 @@ app.use(compression({ level: configdata.GZip }));
 
 // Template engine
 app.use(expressedge);
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', `${__base}views`);
 
 // Change X-Powered-By
 app.use(function (req, res, next) {
@@ -96,29 +83,29 @@ app.use( function (req,res,next){
 
 // ip/country defense
 app.use(ipgeoblock({
-  geolite2: "./geoip/geoip.mmdb",
+  geolite2: `${__base}geoip/geoip.mmdb`,
   blocked: configdata.WebBIPS,
   blockedCountries: configdata.WebBCo
 }, function (req, res) {	
  res.statusCode = 401;
-  res.end("Your ip is on blacklist. Access Denied");
+  res.end("Your ip ("+req.location.ip+") is on blacklist. Access Denied.");
 }));
 
 // Admin routers
 app.use('/admin',ipgeoblock({
-  geolite2: "./geoip/geoip.mmdb",
+  geolite2: `${__base}geoip/geoip.mmdb`,
   allowed:  configdata.AdminAIPS,
   allowedCountries: configdata.AdminACo
 }, function (req, res) {
   res.statusCode = 401;
-  res.end("Your ip is on blacklist. Access Denied");
+  res.end("Your ip ("+req.location.ip+") is on blacklist. Access Denied.");
 }), RouterAdmin);
 
 
 
 // URLs ENGINE with multi lang
 app.use(function (req, res, next) {
-
+/*
   var blnOk = false;
   dburls.reload();
   dblangs.reload();
@@ -220,7 +207,11 @@ app.use(function (req, res, next) {
     }
    
   }
-
+*/
+res.json({
+  msg: req.originalUrl+" engine off",
+  status: 404
+});
 });
 
 // error handler

@@ -1,0 +1,246 @@
+@layout('admin')
+@section('content')
+<script src="/admin/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/admin/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="/admin/dx.light.css" />
+<script src="/admin/dx.all.js"></script>
+
+<script lang="javascript">
+ $(document).ready(function () {
+    Templates(); 
+});
+$(function(){
+    var orders = new DevExpress.data.CustomStore({
+        key: "Id",
+        load: function (loadOptions) {
+            return ReadData("/admin/Routers/list",loadOptions);           
+        },
+        insert: function(values) {
+            return SendDataTable( "/admin/Routers/", JSON.stringify(values),null);
+        },
+        update: function(key, values) {
+            return SendDataTable( "/admin/Routers/", JSON.stringify(values),key);
+        },
+        remove: function(key) {
+            return SendDataTable( "/admin/Routers/d/", JSON.stringify({key:key}),key);
+        }
+
+    });
+
+    var headers = new DevExpress.data.CustomStore({
+        key: "Id",
+        loadMode: "raw",
+        load: function() { return $.getJSON("/admin/Routers/list/headers")}            
+    });
+
+    var templates = new DevExpress.data.CustomStore({
+        key: "Id",
+        loadMode: "raw",
+        load: function() { return $.getJSON("/admin/Routers/list/templates")}            
+    });
+
+    var adgroups = new DevExpress.data.CustomStore({
+        key: "Id",
+        loadMode: "raw",
+        load: function() { return $.getJSON("/admin/Routers/list/adgroups")}            
+    });
+
+    var moudulgroups = new DevExpress.data.CustomStore({
+        key: "Id",
+        loadMode: "raw",
+        load: function() { return $.getJSON("/admin/Routers/list/modulgroups")}            
+    });
+
+
+    $("#gridContainer").dxDataGrid({
+        dataSource: {
+            store: orders
+        },
+        editing: {
+            mode: "form",
+            allowAdding: true,
+            allowUpdating: true,
+            allowDeleting: true
+        },
+        columnAutoWidth: true,
+        showBorders: true,
+        remoteOperations: {
+            sorting: true,
+            paging: true
+        },
+        paging: {
+            pageSize: 24
+        },
+        columns: [{
+            dataField: "Id",
+            dataType: "string",
+            visible:false, formItem: { visible:false }
+        },
+        {
+            dataField: "Alias",
+            dataType: "string",
+            validationRules: [{ type: "required" }],
+            caption:"Alias"
+        },
+        {
+            dataField: "HeadId",
+            dataType: "string",
+            validationRules: [{ type: "required" }],
+            caption:"Header",
+            lookup: {
+                    dataSource: headers,
+                    displayExpr: "Alias",
+                    valueExpr: "Id"
+                }
+        },
+        {
+            dataField: "TemplateId",
+            dataType: "string",
+            validationRules: [{ type: "required" }],
+            caption:"Template",
+            lookup: {
+                    dataSource: templates,
+                    displayExpr: "Alias",
+                    valueExpr: "Id"
+                }
+        }
+        ],
+        onRowUpdating: function(options) { 
+             options.newData = $.extend({}, options.oldData, options.newData); 
+        },
+        masterDetail: {
+            enabled: true,
+            template: function(container, options) { 
+                var currentData = options.data;
+
+                $("<div>")
+                    .addClass("master-detail-caption")
+                    .text("Ads")
+                    .appendTo(container);
+
+                $("<div>")
+                    .dxDataGrid({
+                        columnAutoWidth: true,
+                        showBorders: true,
+                        columns:[
+                            {
+                                dataField: "Id",
+                                dataType: "string",
+                                visible:false, formItem: { visible:false }
+                            },
+                            {
+                                dataField: "HeadId",
+                                dataType: "string",
+                                visible:false, formItem: { visible:false }
+                            },
+                            {
+                                dataField: "Section",
+                                dataType: "string",
+                                formItem: { visible:false }
+                            },
+                            {
+                                dataField: "GroupID",
+                                dataType: "string",
+                                validationRules: [{ type: "required" }],
+                                caption:"Group",
+                                lookup: {
+                                        dataSource: adgroups,
+                                        displayExpr: "GroupID",
+                                        valueExpr: "Id"
+                                    }
+                            }
+                        ],
+                        dataSource: new DevExpress.data.CustomStore({
+                                    key: "Id",
+                                    load: function (loadOptions) {
+                                        return ReadData("/admin/Routersad/listads",loadOptions);           
+                                    },
+                                    update: function(key, values) {
+                                        return SendDataTable( "/admin/Routersad", JSON.stringify(values),key);
+                                    }
+                                    filter: ["HeadId", "=", options.key]
+                                });
+                    }).appendTo(container);
+                
+                $("<div>")
+                    .addClass("master-detail-caption")
+                    .text("Moduls")
+                    .appendTo(container);
+
+                $("<div>")
+                    .dxDataGrid({
+                        columnAutoWidth: true,
+                        showBorders: true,
+                        columns:[
+                            {
+                                dataField: "Id",
+                                dataType: "string",
+                                visible:false, formItem: { visible:false }
+                            },
+                            {
+                                dataField: "HeadId",
+                                dataType: "string",
+                                visible:false, formItem: { visible:false }
+                            },
+                            {
+                                dataField: "Section",
+                                dataType: "string",
+                                formItem: { visible:false }
+                            },
+                            {
+                                dataField: "GroupID",
+                                dataType: "string",
+                                validationRules: [{ type: "required" }],
+                                caption:"Group",
+                                lookup: {
+                                        dataSource: modulgroups,
+                                        displayExpr: "GroupID",
+                                        valueExpr: "Id"
+                                    }
+                            }
+                        ],
+                        dataSource: new DevExpress.data.CustomStore({
+                                    key: "Id",
+                                    load: function (loadOptions) {
+                                        return ReadData("/admin/Contents/list/Moduls",loadOptions);           
+                                    },
+                                    update: function(key, values) {
+                                        return SendDataTable( "/admin/Contents/Moduls", JSON.stringify(values),key);
+                                    }
+                                    filter: ["HeadId", "=", options.key]
+                                });
+                    }).appendTo(container);
+            }
+        }
+    }).dxDataGrid("instance");
+});
+</script>
+   
+<div class="boxed">
+               
+  <div id="content-container">
+     
+      <div class="pageheader">
+          <h3> <i class="fa fa-external-link"></i> Contents </h3>
+          
+      </div>
+    
+      <div id="page-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        <div class="demo-container">
+                            <div id="gridContainer"></div>
+                        </div>
+                    </div>     
+                </div>
+            </div>
+        </div>
+      </div>
+    
+  </div>
+
+</div>
+
+@endsection

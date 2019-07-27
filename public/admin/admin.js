@@ -101,6 +101,10 @@ function Firewall()
 			SendData('Firewall', JSON.stringify( { AdminACo: $("#adminallowc").dxDropDownBox("option", "value"), WebBCo: $("#websiteblockc").dxDropDownBox("option", "value"), WebBIPS:$('.websiteblockips').toArray().map(x=>x.value),AdminAIPS:$('.adminips').toArray().map(x=>x.value) }));
         });
 }
+function Modules()
+{
+    document.title = pagetitle+'Modules';        
+}
 function Ads()
 {
     document.title = pagetitle+'Ads';        
@@ -112,6 +116,10 @@ function Headers()
 function Templates()
 {
     document.title = pagetitle+'Templates';        
+}
+function ModulEdit(title)
+{
+    document.title = pagetitle+'Modul - '+title;        
 }
 function TemplatesEdit(title)
 {

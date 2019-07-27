@@ -1,13 +1,12 @@
-var JsonDB=require('node-json-db'),
-app = require('./app/app.js'),
-http = require('http'),
-db = new JsonDB("./db/config", true, false);
+global.__base = __dirname + '/';
 
-try {
-    var data = db.getData("/");
-} catch(error) {
-    console.error(error);
-};
+var JsonDB = require('node-json-db'),
+    http = require('http'),
+    app = require((`${__base}app/app.js`),
+    db = new JsonDB(`${__base}db/config`, true, false));
+
+
+var data = db.getData("/");
 
 var port = normalizePort(process.env.PORT || data.Appport);
 app.set('port', port);
@@ -54,6 +53,6 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    console.log('NodeCms on ' + bind+' Have a nice day :)');
+    console.log('NodeCms on ' + bind + ' Have a nice day :)');
 }
 
