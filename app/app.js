@@ -14,7 +14,7 @@ var logger = require('morgan'),
   ipgeoblock = require(`${__base}app/routers/geoip.js`),
   flash=require('connect-flash'),
   RouterAdmin = require(`${__base}app/routers/routeradmin.js`),
-  db = new JsonDB(`${__base}db/config.js`, true, false);
+  db = new JsonDB(`${__base}db/config`, true, false);
 
 var configdata = db.getData("/");
 

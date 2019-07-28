@@ -5,12 +5,12 @@ var fs = require('fs-extra'),
   _ = require('lodash'),
   JsonDB = require('node-json-db'),
   cmsmodulread = require(`${__base}/app/modules/cmsmodul.read.js`),
-  dbads = new JsonDB(`${__base}/db/cmsad.js`, true, false),
-  dbheaders = new JsonDB(`${__base}/db/cmsheaders.js`, true, false),
-  dbrouters = new JsonDB(`${__base}/db/cmsrouters.js`, true, false),
-  dbroutersad = new JsonDB(`${__base}/db/cmsroutersad.js`, true, false),
-  dbtemplates = new JsonDB(`${__base}/db/cmstemplates.js`, true, false),
-  db = new JsonDB(`${__base}/db/config.js`, true, false);
+  dbads = new JsonDB(`${__base}/db/cmsad`, true, false),
+  dbheaders = new JsonDB(`${__base}/db/cmsheaders`, true, false),
+  dbrouters = new JsonDB(`${__base}/db/cmsrouters`, true, false),
+  dbroutersad = new JsonDB(`${__base}/db/cmsroutersad`, true, false),
+  dbtemplates = new JsonDB(`${__base}/db/cmstemplates`, true, false),
+  db = new JsonDB(`${__base}/db/config`, true, false);
 
 var comfunc = {
   Modules: function () {
