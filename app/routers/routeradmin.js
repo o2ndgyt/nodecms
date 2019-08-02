@@ -81,7 +81,7 @@ router.get('/Logout', function (req, res) {
 // Dashboard
 //**********************
 router.get('/Dashboard', function (req, res) {
-    res.render('admin/dashboard', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken() });
+    res.render('admin/dashboard', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken(),geoexp:comfunc.GeoExpired() });
 });
 
 // Database
@@ -108,7 +108,7 @@ router.post('/DB', function (req, res) {
 router.get('/Firewall', function (req, res) {
     db.reload();
     var configdata = db.getData("/");
-    res.render('admin/firewall', { config: configdata, csrfToken: req.csrfToken() });
+    res.render('admin/firewall', { config: configdata, csrfToken: req.csrfToken(),ip: req.location.ip });
 });
 
 router.get('/Firewall/countries/:id', function (req, res) {

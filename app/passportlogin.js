@@ -1,7 +1,7 @@
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
     JsonDB = require('node-json-db'),
-    db = new JsonDB(`${__base}db/config.js`, true, false);
+    db = new JsonDB(`${__base}db/config`, true, false);
 
 passport.serializeUser(function (user, done) {
     done(null, user);

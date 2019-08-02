@@ -1,10 +1,5 @@
 @layout('admin')
 @section('content')
-<script src="/admin/jquery-3.4.1.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/admin/dx.common.css" />
-<link rel="stylesheet" type="text/css" href="/admin/dx.light.css" />
-<script src="/admin/dx.all.js"></script>
-
 <script lang="javascript">
  $(document).ready(function () {
     Templates(); 
@@ -46,6 +41,9 @@ $(function(){
         paging: {
             pageSize: 24
         },
+        searchPanel: {
+            visible: true,
+        },
         columns: [{
             dataField: "Id",
             dataType: "string",
@@ -66,7 +64,7 @@ $(function(){
                 allowSorting: false,
                 cellTemplate: function (container, options) {
                     $("<div>")
-                        .append($("<a>", { "text":"Open in HTML editor","href": "/admin/Templates/e/"+options.value }))
+                        .append($("<a>", { "text":"Open in HTML editor","href": "/admin/Templates/e/"+options.value,"class":"dx-link dx-link-edit" }))
                         .appendTo(container);
                 }
         }

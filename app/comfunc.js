@@ -3,6 +3,7 @@ var fs = require('fs-extra'),
   prettyBytes = require('pretty-bytes'),
   uuidv4 = require('uuid/v4'),
   _ = require('lodash'),
+  moment = require('moment'),
   JsonDB = require('node-json-db'),
   cmsmodulread = require(`${__base}/app/modules/cmsmodul.read.js`),
   dbads = new JsonDB(`${__base}/db/cmsad`, true, false),
@@ -13,6 +14,11 @@ var fs = require('fs-extra'),
   db = new JsonDB(`${__base}/db/config`, true, false);
 
 var comfunc = {
+  GeoExpired: function ()
+  {  
+    var { mtime } = fs.statSync(`${__base}/geoip/geoip.mmdb`)
+    return moment(mtime).fromNow(); 
+    },
   Modules: function () {
     var tmp1 = _.functionsIn(cmsmodulread);
     var tmp2 = [{ "Id": "None", "Alias": "None" }];

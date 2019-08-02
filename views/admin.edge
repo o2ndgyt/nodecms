@@ -17,27 +17,28 @@
         <link rel="stylesheet" href="/admin/alertify2.min.css"/>
         <script src="/admin/pace.min.js"></script>
         <script src="/admin/alertify.min.js"></script> 
-        <script src="/admin/jquery-2.1.3.min.js"></script> 
+        <script src="/admin/jquery-3.4.1.min.js"></script> 
         <script src="/admin/bootstrap.min.js"></script>
         <script src="/admin/jquery.nanoscroller.min.js"></script>
         <script src="/admin/metismenu.min.js"></script>
          <script src="/admin/jasmine.js"></script>
          <script src="/admin/admin.js"></script>
-         <script src="session-timeout.js"></script>
+         <script src="/admin/timeout.js"></script>
+         <link rel="stylesheet" type="text/css" href="/admin/dx.common.css" />
+         <link rel="stylesheet" type="text/css" href="/admin/dx.light.css" />
+         <script src="/admin/dx.all.js"></script>
+         
 
          <script lang="javascript">
              $(document).ready(function () {
                  if (window.location.pathname!="/admin/Login")
-                   $.sessionTimeout({
-                        message: 'Your session will be locked in a minute.',
-                        keepAlive:false,
-                        logoutUrl: '/admin/Logout',
-                        redirUrl: '/admin/Logout',
-                        warnAfter: 10*60*1000,
-                        redirAfter: 60*1000,
-                        countdownMessage: 'Redirecting in {timer} seconds.',
-                        countdownBar: true
-                    });
+                    sessionTimeout({
+                        message: 'Your session will be locked in a minute !',
+                        logOutUrl: '/admin/Logout',
+                        timeOutUrl: '/admin/Logout',
+                        timeOutAfter:6*60*1000,
+                        warnAfter: 5*60*1000
+                        });
                 });
         </script>
     </head>
