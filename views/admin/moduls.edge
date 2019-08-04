@@ -2,7 +2,7 @@
 @section('content')
 <script lang="javascript">
  $(document).ready(function () {
-    Modules(); 
+    SetTitle('Modules'); 
 });
 $(function(){
     var orders = new DevExpress.data.CustomStore({
@@ -50,7 +50,7 @@ $(function(){
         columnAutoWidth: true,
         showBorders: true,
         remoteOperations: {
-            sorting: true,
+            sorting: false,
             paging: true
         },
         paging: {
@@ -81,7 +81,7 @@ $(function(){
             editCellTemplate: function (container, options) {
                 $('<div>').dxTagBox({
                 dataSource: countries,
-                values:  options.value,
+                value:  options.value,
                 valueExpr: 'code',
                 displayExpr: 'name',
                 searchEnabled: true,
@@ -98,7 +98,7 @@ $(function(){
             validationRules: [{ type: "required" }],
             caption:"Modul",
             lookup: {
-                    dataSource: modules,
+                    dataSource: moudules,
                     displayExpr: "Alias",
                     valueExpr: "Id"
                 }
@@ -111,24 +111,14 @@ $(function(){
                 allowFiltering: false,
                 allowSorting: false,
                 cellTemplate: function (container, options) {
-                    if (options.value!="None")
-                    {
                         $("<div>")
-                            .append($("<a>", { "text":"Modul config","href": "/admin/Moduls/m/"+options.value }))
+                            .append($("<a>", { "text":"Modul config","href": "/admin/Moduls/m/"+options.value,"class":"dx-link dx-link-edit" }))
                             .appendTo(container);
-                    }
-                    else
-                    {
-                        $("<div>")
-                            .append($("<p>", { "text":"None" }))
-                            .appendTo(container);
-                    }
                 }
         }
         ],
         onEditorPrepared: function(e) {
-            if (e.value != null)
-            if (e.dataField == "AdvertJS") 
+            if (e.value != null && e.dataField == "AdvertJS") 
             {     
                 $(e.editorElement).dxTextArea("instance").option('value',window.atob(e.value));
             }
@@ -145,7 +135,7 @@ $(function(){
   <div id="content-container">
      
       <div class="pageheader">
-          <h3> <i class="fa fa-modx" aria-hidden="true"></i> Moduls </h3>
+          <h3> <i class="fa fa-cogs" aria-hidden="true"></i> Moduls </h3>
           
       </div>
     

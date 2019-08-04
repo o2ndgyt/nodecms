@@ -152,6 +152,39 @@ router.post('/Settings', function (req, res) {
     });
 });
 
+
+// Change Pwd
+//**********************
+router.get('/ChangePwd', function (req, res) {
+    db.reload();
+    var configdata = db.getData("/");
+    res.render('admin/changepwd', { config: configdata, csrfToken: req.csrfToken() });
+});
+
+router.post('/ChangePwd', function (req, res) {
+    var configdata = db.getData("/");
+
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (re.test(req.body.AdminUser) && req.body.AdminPWD.length>5)
+      {
+        configdata.AdminUser = req.body.AdminUser;
+        configdata.AdminPWD = req.body.AdminPWD;
+        db.push("/", configdata);
+        res.json({
+            success: "Login changed",
+            status: 200
+        });
+    }
+    else
+    {
+        res.json({
+            success: "Invalid Email or too short password. Password is min 6 char",
+            status: 500
+        });
+    }
+});
+
+
 // Langs CRUD
 //**********************
 router.get('/Langs', function (req, res) {
@@ -444,7 +477,8 @@ router.post('/Templates/e/:id', function (req, res) {
 
     }
     res.redirect('/admin/Templates');
-
+    //TODO 
+    // CHANGE cmsroutersad
 });
 
 /*TODO
@@ -512,6 +546,33 @@ router.post('/Mainwebsites/d/:id', function (req, res) {
 });
 */
 
+// Routers ads CRUD
+//**********************
+router.get('/Routersad/ads/list/:id', function (req, res) {
+    dbroutersad.reload();
+    var adsdata = dbroutersad.getData("/");
+    var filtered = adsdata.filter(function (value) { return value.Mode =="A" && value.HeadId == req.params.id; });
+    res.json({ "totalCount": filtered.length, "items": filtered });
+});
+
+router.get('/Routersad/moduls/list/:id', function (req, res) {
+    dbroutersad.reload();
+    var adsdata = dbroutersad.getData("/");
+    var filtered = adsdata.filter(function (value) { return value.Mode =="M" && value.HeadId == req.params.id; });
+    res.json({ "totalCount": filtered.length, "items": filtered });
+});
+
+// Create
+router.post('/Routersad/:id', function (req, res) {
+    dbroutersad.reload();
+    var addata = dbroutersad.getData("/");
+    var result = addata.findIndex(item => item.Id === req.params.id);
+    if (result > -1)       
+        dbroutersad.push("/" + result, req.body);
+    
+    res.json({ values: req.body });
+});
+
 // Routers CRUD
 //**********************
 
@@ -527,13 +588,6 @@ router.get('/Routers/list', function (req, res) {
     res.json({ "totalCount": adsdata.length, "items": adsdata });
 });
 
-router.get('/Routersad/list/:modul', function (req, res) {
-    dbroutersad.reload();
-    var adsdata = dbroutersad.getData("/");
-    res.json({ "totalCount": adsdata.length, "items": adsdata });
-});
-
-
 router.get('/Routers/list/headers', function (req, res) {
     dbheaders.reload();
     res.json(dbheaders.getData("/"));
@@ -548,9 +602,9 @@ router.get('/Routers/list/adgroups', function (req, res) {
     dbads.reload();
     var grouped = _.groupBy(dbads.getData("/"), ad => ad.GroupID.trim());
 
-    var tmp = [{ "Id": "---", "GroupID": "---" }];
+    var tmp = [{ "Id": "---", "Group": "---" }];
     _.forEach(Object.keys(grouped), function (value) {
-        tmp.push({ "Id": value.trim(), "GroupID": value.trim() });
+        tmp.push({ "Id": value.trim(), "Group": value.trim() });
     });
 
     res.json(tmp);
@@ -560,9 +614,9 @@ router.get('/Routers/list/modulgroups', function (req, res) {
     dbmoduls.reload();
     var grouped = _.groupBy(dbmoduls.getData("/"), ad => ad.GroupID.trim());
 
-    var tmp = [{ "Id": "---", "GroupID": "---" }];
+    var tmp = [{ "Id": "---", "Group": "---" }];
     _.forEach(Object.keys(grouped), function (value) {
-        tmp.push({ "Id": value.trim(), "GroupID": value.trim() });
+        tmp.push({ "Id": value.trim(), "Group": value.trim() });
     });
     res.json(tmp);
 });
@@ -652,149 +706,6 @@ router.post('/Routers/d/:id', function (req, res) {
     }
 
 });
-
-
-
-/*
-// Read
-router.get('/Routers/e/:id', function (req, res) {
-    dbrouters.reload();
-    var addata = dbrouters.getData("/");
-    var filterhead = addata.filter(function (value) { return value.Id == req.params.id; });
-
-    dbroutersad.reload();
-    var addataAds = dbroutersad.getData("/");
-    var filteredA = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode == "A"; });
-    var filteredM = addataAds.filter(function (value) { return value.HeadId == req.params.id && value.Mode == "M"; });
-
-    dbheaders.reload();
-    var headers = dbheaders.getData("/");
-
-    dbads.reload();
-    var adsdata = dbads.getData("/");
-    var grouped = _.groupBy(adsdata, ad => ad.GroupID.trim());
-
-    var tmp = [];
-    _.forEach(Object.keys(grouped), function (value) {
-        tmp.push({ "Name": value.trim() });
-    });
-
-    var tmp1 = _.functionsIn(cmsmodulread);
-    var tmp2 = [];
-    _.forEach(tmp1, function (value) { tmp2.push({ "Name": value.trim() }); });
-
-    req.session.moduls=[];
-    res.render('admin/contentsupdate', {
-        title: filterhead[0].Alias,
-        id: req.params.id,
-        headers: headers,
-        ads: filteredA,
-        groupids: tmp,
-        pagemoduls: filteredM,
-        moduls: tmp2
-    });
-
-
-});
-*/
-/*
-// Update file
-router.post('/Contents/e/:id', function (req, res) {
- 
-    // update content
-    dbcontents.reload();
-    var addata = dbcontents.getData("/");
-    var result =  _.find(addata, { 'Id': req.params.id });
-    var index = addata.findIndex(item => item.Id === req.params.id );
-    if (index > -1) {
-        result.Alias=req.body.Alias;
-        result.HeadId=req.body.HeadId;
-        dbcontents.push("/" + index, result);
-    }
-
-    // update ads
-    dbcontentsad.reload();
-    var addataAds = dbcontentsad.getData("/");
-
-    // collect all modul ads
-    var filteredA = addataAds.filter(function (value) { return value.HeadId == req.params.id});
-    filteredA.forEach( function (value) {
-        var resultads = _.find(addataAds, { 'Id': value.Id });
-        var indexads = addataAds.findIndex(item => item.Id === value.Id);
-        if (indexads > -1) {
-            resultads.GroupID=req.body["ad_"+value.Id];
-            dbcontentsad.push("/" + indexads, resultads);
-        }
-
-    });
-
-
-
-     // session available then save session to db
-    if (req.session.moduls.length>0)
-    {    
-        req.session.moduls.forEach( function (value) 
-        {        
-            var resultad = _.find(addataAds, { 'Id': value.Id });
-            var indexad = addataAds.findIndex(item => item.Id === value.Id);
-            if (indexad > -1) {
-                resultad.Data=value.Data;
-                dbcontentsad.push("/" + indexad, resultad);
-            }
-        }
-        );
-    }
-    res.redirect('/admin/Contents');
-});
-*/
-
-/*
-// Read moduls
-router.get('/Contents/m/:id/:modul', function (req, res) {
-    var data='';
-    if (req.session.moduls.length>0)
-    {
-            // use session data
-            data=_.find(req.session.moduls, { 'Id': req.params.id }).Data;           
-    }
-    else
-    {
-        // no session create session fill it from db
-        dbcontentsad.reload();
-        var addataAds = dbcontentsad.getData("/");
-        data=_.find(addataAds, { 'Id': req.params.id }).Data;
-    }
-      
-    // call read fn to convert data
-    var adatmodul = cmsmodulread[req.params.modul](data);
-
-    res.render('admin/moduls/' + req.params.modul, {
-        id: req.params.id,
-        data: adatmodul,
-        modul:req.params.modul
-    });
-});
-*/
-
-/*
-// Update moduls
-router.post('/Contents/m/:id/:modul', function (req, res) {
-    // call update fn to convert data
-    var adatmodul = cmsmodulupdate[req.params.modul](req.body.filecon);
-    // save to session
-    if (req.session.moduls)
-    {
-        var index = _.findIndex(req.session.moduls, {'Id': req.params.id });
-        // Replace item at index using native splice
-        req.session.moduls.splice(index, 1, { "Id": req.params.id, "Data":adatmodul });   
-    }
-    else
-    {    
-        req.session.moduls.push({ "Id": req.params.id, "Data":adatmodul });
-    }
-    res.render('admin/moduls/None');
-});
-*/
 
 
 // Urls CRUD
@@ -958,16 +869,18 @@ router.get('/Moduls/m/:id', function (req, res) {
     res.render('admin/moduls/' + data.Modul, {
         id: req.params.id,
         data: convertdata,
-        modul: data.Modul
+        alias: data.Alias,
+        modul:data.Modul,
+        csrfToken: req.csrfToken()
     });
 });
 
 // Update moduls
-router.post('/Moduls/m/:id', function (req, res) {
+router.post('/Moduls/m/:id/:modul', function (req, res) {
     dbmoduls.reload();
     var result = dbmoduls.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
-        var adatmodul = cmsmodulupdate[data.Modul](req.body.filecon, []);
+        var adatmodul = cmsmodulupdate[req.params.modul](req.body.filecon, [req.body.param0,req.body.param1,req.body.param2,req.body.param3,req.body.param4,req.body.param5,req.body.param6,req.body.param7,req.body.param8,req.body.param9]);
         var data = dbmoduls.getData("/" + result);
         data.Data = adatmodul;
         dbmoduls.push("/" + result, data);
@@ -975,12 +888,5 @@ router.post('/Moduls/m/:id', function (req, res) {
     res.redirect('/admin/Moduls');
 });
 
-
-
-
-function myAuthorizer(username, password) {
-    var configdata = db.getData("/");
-    return username === configdata.AdminUser && password === configdata.AdminPWD;
-}
 
 module.exports = router;

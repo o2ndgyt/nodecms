@@ -7,32 +7,28 @@ function SendData(url,data) {
             data: data,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-    headers:  {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    },
+            headers:  {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function (msg) {
                 alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
             }
         });  
 }
 
-function openCity(evt, cityName) {
-    // Declare all variables
+function openTab(evt, cityName) {
     var i, tabcontent, tablinks;
   
-    // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
       tabcontent[i].style.display = "none";
     }
   
-    // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
   
-    // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(cityName).style.display = "block";
     evt.currentTarget.className += " active";
   }
@@ -92,48 +88,25 @@ function isNumberKey(evt) {
         return false;
     return true;
 }
+function SetTitle(title)
+{
+    document.title = pagetitle+title; 
+
+}
 
 
 function Firewall()
 {
-        document.title = pagetitle+'Firewall';
+    SetTitle('Firewall');
         $('#saveset').click(function () { 
 			SendData('Firewall', JSON.stringify( { AdminACo: $("#adminallowc").dxDropDownBox("option", "value"), WebBCo: $("#websiteblockc").dxDropDownBox("option", "value"), WebBIPS:$('.websiteblockips').toArray().map(x=>x.value),AdminAIPS:$('.adminips').toArray().map(x=>x.value) }));
         });
 }
-function Modules()
-{
-    document.title = pagetitle+'Modules';        
-}
-function Ads()
-{
-    document.title = pagetitle+'Ads';        
-}
-function Headers()
-{
-    document.title = pagetitle+'Headers';        
-}
-function Templates()
-{
-    document.title = pagetitle+'Templates';        
-}
-function ModulEdit(title)
-{
-    document.title = pagetitle+'Modul - '+title;        
-}
-function TemplatesEdit(title)
-{
-    document.title = pagetitle+'Templates - '+title;        
-}
 
-function Langs()
-{
-    document.title = pagetitle+'Languages';        
-}
 
 function SettingsDB()
 {
-        document.title = pagetitle+'Databases';
+        SetTitle('Databases');
            
         $('#saveset').click(function () { 
 			SendData('DB', JSON.stringify( {MongoConn:$('#MongoConn').val(), DB: $("#radiodb").dxRadioGroup("option", "value") }));
@@ -144,7 +117,7 @@ function SettingsDB()
 
 function Settings()
 {
-        document.title = pagetitle+'Settings';
+        SetTitle('Settings');
     
         var myOptions = {
             "-1": "-1 Default compression level",
@@ -169,6 +142,16 @@ function Settings()
            
         $('#saveset').click(function () {
 			SendData('Settings', JSON.stringify( {Appport:$('#Appport').val(), compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val() }));
+        });
+
+}
+
+function ChangePwd()
+{
+        SetTitle('Change Password');
+    
+       $('#saveset').click(function () {
+			SendData('ChangePwd', JSON.stringify( {AdminUser:$('#AdminUser').val(),AdminPWD:$('#AdminPWD').val() }));
         });
 
 }

@@ -2,7 +2,7 @@
 @section('content')
 <script lang="javascript">
  $(document).ready(function () {
-    Headers(); 
+    SetTitle('Headers'); 
 });
 $(function(){
     var orders = new DevExpress.data.CustomStore({
@@ -34,7 +34,7 @@ $(function(){
         columnAutoWidth: true,
         showBorders: true,
         remoteOperations: {
-            sorting: true,
+            sorting: false,
             paging: true
         },
         searchPanel: {

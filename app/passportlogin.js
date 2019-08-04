@@ -8,6 +8,7 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(function (id, done) {
+    db.reload();
     var configdata = db.getData("/");
     done(null, configdata.AdminUser);
 });
@@ -17,6 +18,7 @@ passport.use('local.signin', new LocalStrategy({
     passwordField: 'passwordlogin',
     passReqToCallback: true
 }, function (req, email, password, done) {
+    db.reload();
     req.checkBody('emaillogin', 'Invalid Email').notEmpty().isEmail();
     req.checkBody('passwordlogin', 'Too short password.Password is min 4 char').notEmpty().isLength({ min: 4 });
     var errors = req.validationErrors();

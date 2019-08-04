@@ -2,8 +2,8 @@
 @section('content')
 <script lang="javascript">
  $(document).ready(function () {
-    Templates(); 
-});
+    SetTitle('Routers');
+}); 
 $(function(){
     var orders = new DevExpress.data.CustomStore({
         key: "Id",
@@ -40,7 +40,7 @@ $(function(){
         load: function() { return $.getJSON("/admin/Routers/list/adgroups")}            
     });
 
-    var moudulgroups = new DevExpress.data.CustomStore({
+    var modulgroups = new DevExpress.data.CustomStore({
         key: "Id",
         loadMode: "raw",
         load: function() { return $.getJSON("/admin/Routers/list/modulgroups")}            
@@ -56,11 +56,14 @@ $(function(){
             allowAdding: true,
             allowUpdating: true,
             allowDeleting: true
+        }, 
+        searchPanel: {
+            visible: true,
         },
         columnAutoWidth: true,
         showBorders: true,
         remoteOperations: {
-            sorting: true,
+            sorting: false,
             paging: true
         },
         paging: {
@@ -107,16 +110,18 @@ $(function(){
             enabled: true,
             template: function(container, options) { 
                 var currentData = options.data;
-
-                $("<div>")
-                    .addClass("master-detail-caption")
-                    .text("Ads")
-                    .appendTo(container);
-
+    
                 $("<div>")
                     .dxDataGrid({
                         columnAutoWidth: true,
                         showBorders: true,
+                        onRowUpdating: function(options) { 
+                            options.newData = $.extend({}, options.oldData, options.newData); 
+                        },
+                        editing: {
+                                mode: "form",
+                                allowUpdating: true,
+                        }, 
                         columns:[
                             {
                                 dataField: "Id",
@@ -134,13 +139,13 @@ $(function(){
                                 formItem: { visible:false }
                             },
                             {
-                                dataField: "GroupID",
+                                dataField: "GroupId",
                                 dataType: "string",
                                 validationRules: [{ type: "required" }],
                                 caption:"Group",
                                 lookup: {
                                         dataSource: adgroups,
-                                        displayExpr: "GroupID",
+                                        displayExpr: "Group",
                                         valueExpr: "Id"
                                     }
                             }
@@ -148,24 +153,27 @@ $(function(){
                         dataSource: new DevExpress.data.CustomStore({
                                     key: "Id",
                                     load: function (loadOptions) {
-                                        return ReadData("/admin/Routersad/listads",loadOptions);           
+                                        return ReadData("/admin/Routersad/ads/list/"+options.key,loadOptions);           
                                     },
                                     update: function(key, values) {
-                                        return SendDataTable( "/admin/Routersad", JSON.stringify(values),key);
+                                        return SendDataTable( "/admin/Routersad/", JSON.stringify(values),key);
                                     }
-                                    filter: ["HeadId", "=", options.key]
-                                });
+                                })
                     }).appendTo(container);
                 
-                $("<div>")
-                    .addClass("master-detail-caption")
-                    .text("Moduls")
-                    .appendTo(container);
+              
 
                 $("<div>")
                     .dxDataGrid({
                         columnAutoWidth: true,
                         showBorders: true,
+                        onRowUpdating: function(options) { 
+                            options.newData = $.extend({}, options.oldData, options.newData); 
+                        },
+                        editing: {
+                                mode: "form",
+                                allowUpdating: true,
+                        }, 
                         columns:[
                             {
                                 dataField: "Id",
@@ -183,27 +191,27 @@ $(function(){
                                 formItem: { visible:false }
                             },
                             {
-                                dataField: "GroupID",
+                                dataField: "GroupId",
                                 dataType: "string",
                                 validationRules: [{ type: "required" }],
                                 caption:"Group",
                                 lookup: {
                                         dataSource: modulgroups,
-                                        displayExpr: "GroupID",
+                                        displayExpr: "Group",
                                         valueExpr: "Id"
                                     }
                             }
                         ],
                         dataSource: new DevExpress.data.CustomStore({
+                            
                                     key: "Id",
                                     load: function (loadOptions) {
-                                        return ReadData("/admin/Contents/list/Moduls",loadOptions);           
+                                        return ReadData("/admin/Routersad/moduls/list/"+options.key,loadOptions);           
                                     },
                                     update: function(key, values) {
-                                        return SendDataTable( "/admin/Contents/Moduls", JSON.stringify(values),key);
-                                    }
-                                    filter: ["HeadId", "=", options.key]
-                                });
+                                        return SendDataTable( "/admin/Routersad/", JSON.stringify(values),key);
+                                    }                              
+                                })
                     }).appendTo(container);
             }
         }

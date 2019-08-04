@@ -21,7 +21,7 @@ var comfunc = {
     },
   Modules: function () {
     var tmp1 = _.functionsIn(cmsmodulread);
-    var tmp2 = [{ "Id": "None", "Alias": "None" }];
+    var tmp2 = [];
     _.forEach(tmp1, function (value) { tmp2.push({ "Id": value.trim(), "Alias": value.trim() }); });
     return tmp2;
   },
@@ -84,12 +84,12 @@ var comfunc = {
 
     return strHtml;
   },
-  SearchTextinFile: function (searchStr, file, caseSensitive) {
+  SearchTextinFile: function (searchStr, templateid, caseSensitive) {
 
     dbtemplates.reload();
-    var result = dbtemplates.getData("/").findIndex(item => item.Id === searchStr);
+    var result = dbtemplates.getData("/").findIndex(item => item.Id === templateid);
     if (result > -1) {
-      var str = dbtemplates.getData("/" + result)
+      var str = this.B2A(dbtemplates.getData("/" + result).HTML);
       var searchStrLen = searchStr.length;
       if (searchStrLen == 0) {
         return [];
@@ -111,15 +111,15 @@ var comfunc = {
       return [];
     }
   },
-  GetSections: function (file, HeadId) {
+  GetSections: function (templateid, HeadId) {
     var searchintext = "@!section('";
-    var data = this.SearchTextinFile(searchintext, file, false);
+    var data = this.SearchTextinFile(searchintext, templateid, false);
     var indices = [];
 
     dbtemplates.reload();
-    var result = dbtemplates.getData("/").findIndex(item => item.Id === file);
+    var result = dbtemplates.getData("/").findIndex(item => item.Id === templateid);
     if (result > -1) {
-      var str = dbtemplates.getData("/" + result)
+      var str = this.B2A(dbtemplates.getData("/" + result).HTML);
 
       if (data.length == 0) { return indices; }
 

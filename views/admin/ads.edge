@@ -2,7 +2,7 @@
 @section('content')
 <script lang="javascript">
  $(document).ready(function () {
-    Ads(); 
+    SetTitle('Ads'); 
 });
 $(function(){
     var orders = new DevExpress.data.CustomStore({
@@ -45,7 +45,7 @@ $(function(){
         columnAutoWidth: true,
         showBorders: true,
         remoteOperations: {
-            sorting: true,
+            sorting: false,
             paging: true
         },
         paging: {
@@ -76,7 +76,7 @@ $(function(){
             editCellTemplate: function (container, options) {
                 $('<div>').dxTagBox({
                 dataSource: countries,
-                values:  options.value,
+                value:  options.value,
                 valueExpr: 'code',
                 displayExpr: 'name',
                 searchEnabled: true,
@@ -92,6 +92,7 @@ $(function(){
             dataType: "string",
             visible:false,
             caption:"Advert Script",
+            validationRules: [{ type: "required" }],
             formItem: {
                     colSpan: 2,
                     editorType: "dxTextArea",

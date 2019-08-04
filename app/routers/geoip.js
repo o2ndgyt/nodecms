@@ -49,15 +49,18 @@ module.exports = function (options, accessDenied) {
 			data: null,
 			isoCode: ""
 		};
-		
-		// 1. Check that IP address is blocked
-		if (options.blocked.indexOf(ip) > -1) {
-			return true;
-		}
-		
-		if (options.allowed.indexOf(ip) > -1) {
+		//check that IP address is local
+		if (ip.indexOf("192.168")>-1)
 			return false;
-		}
+
+		// 1. Check that IP address is blocked
+		if (options.blocked.indexOf(ip) > -1) 
+			return true;
+		
+		
+		if (options.allowed.indexOf(ip) > -1) 
+			return false;
+		
 
 		var blocked = false;
 		var query = mmdb.lookup(ip);

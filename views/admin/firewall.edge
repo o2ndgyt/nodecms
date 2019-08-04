@@ -4,8 +4,8 @@
 $(document).ready(function () {
     Firewall();
 
-    var max_fields = 1000; //Maximum allowed input fields 
-    var max_fields_admin = 50; //Maximum allowed input fields
+    var max_fields = 1000; 
+    var max_fields_admin = 50; 
     var initweb = 0; 
     var initadmin=0;
     
@@ -17,41 +17,32 @@ $(document).ready(function () {
     $('#adminip').append('<div><input type="text" name="adminips" value="{{ item }}" class="adminips" placeholder="example:192.168.0.1" /> <a href="javascript:void(0);" class="remove_field">Remove</a></div>');
     @endeach
 
-	//When user click on add input button
 	$('#websiteblockadd').click(function(e){
         e.preventDefault();
-		//Check maximum allowed input fields
         if(initweb < max_fields){ 
-            initweb++; //input field increment
-			 //add input field
+            initweb++; 
             $('#websiteblockip').append('<div><input type="text" name="websiteblockips" class="websiteblockips" placeholder="example:192.168.0.1" /> <a href="javascript:void(0);" class="remove_field">Remove</a></div>');
         }
     });
 
-    	//When user click on add input button
 	$('#adminadd').click(function(e){
         e.preventDefault();
-		//Check maximum allowed input fields
         if(initadmin < max_fields_admin){ 
-            initadmin++; //input field increment
-			 //add input field
+            initadmin++;
             $('#adminip').append('<div><input type="text" class="adminips" name="adminips" placeholder="example:192.168.0.1" /> <a href="javascript:void(0);" class="remove_field">Remove</a></div>');
         }
     });
 
-
-    //when user click on remove button
     $('#adminip').on("click",".remove_field", function(e){ 
         e.preventDefault();
-		$(this).parent('div').remove(); //remove inout field
-		initadmin--; //inout field decrement
+		$(this).parent('div').remove(); 
+		initadmin--;
     })
 
-    //when user click on remove button
     $('#websiteblockip').on("click",".remove_field", function(e){ 
         e.preventDefault();
-		$(this).parent('div').remove(); //remove inout field
-		initweb--; //inout field decrement
+		$(this).parent('div').remove();
+		initweb--; 
     })
 });
 
@@ -179,8 +170,8 @@ $(function(){
                                 <div class="panel-body">
                                
                                     <div class="tab">
-                                        <button class="tablinks" onclick="openCity(event, 'Website')">Website blocked</button>
-                                        <button class="tablinks" onclick="openCity(event, 'Admin')">Admin allowed</button>
+                                        <button class="tablinks" onclick="openTab(event, 'Website')">Website blocked</button>
+                                        <button class="tablinks" onclick="openTab(event, 'Admin')">Admin allowed</button>
                                       </div>
                                 
                                       <div id="Website" class="tabcontent">
@@ -201,10 +192,6 @@ $(function(){
                                                             </div>
                                                         </div>
                                                         <button id="websiteblockadd">Add More IPs (max 1000)</button>
-
-
-
-
                                                     </div>
                                                 </div>
                                        
