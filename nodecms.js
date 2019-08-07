@@ -5,7 +5,6 @@ var JsonDB = require('node-json-db'),
     app = require((`${__base}app/app.js`),
     db = new JsonDB(`${__base}db/config`, true, false));
 
-
 var data = db.getData("/");
 
 var port = normalizePort(process.env.PORT || data.Appport);
@@ -53,6 +52,6 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    console.log('NodeCms on ' + bind + ' Have a nice day :)');
+    console.log('NodeCms on ' + bind + ' Have a nice day ;)');
 }
 
