@@ -9,6 +9,10 @@ $(function(){
         items: priorities,
         value: "{{ config.DB }}"
     });
+    $("#dbreset").dxCheckBox({
+        text: "CONFIRM RESET DATABASE",
+        value: false
+    });
 });
 $(document).ready(function () {
     SettingsDB();
@@ -28,7 +32,7 @@ $(document).ready(function () {
                 <div class="panel">
                     
                                 <div class="panel-body">
-                                  
+                                   
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label" for="radiodb">Database:</label>
                                         <div class="col-sm-9">
@@ -42,13 +46,18 @@ $(document).ready(function () {
                   
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="dbreset">Reset database</label>
+                                            <div class="col-sm-9">
+                                                <div id="dbreset"></div>
+                                            </div>
+                                    </div>
                                 </div>
                               
                                 <div class="panel-footer text-right">
-                                    <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o" id="saveset" ></a>
-                            
+                                    <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o" id="saveset" ></a>     
                                 </div>
-                           
+                              
                 </div>
             </div>
         </div>
