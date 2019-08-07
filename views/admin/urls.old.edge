@@ -1,0 +1,296 @@
+@layout('admin')
+@section('content')
+<script type="text/javascript" src="/admin/slugify.en.min.js"></script>
+<script type="text/javascript" src="/admin/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/admin/jput-2.js"></script>
+<script type="text/javascript" src="/admin/guid.js"></script>
+
+<script lang="javascript">
+function ClearForm() {
+	$('#Id').val('');
+	$('#Alias').val('');
+	$('#PageFullUrl').val('');
+	$('#PageUrl').val('');
+	$('#BodyID').val('');
+	$('#changefreq').val('never');
+	$('#lang').val('*');
+}
+
+function ChangeText(button) {
+
+	if ($('#editupdate').is(':visible')) {
+		if (button > 0 && button < 4) {
+
+			ClearForm();
+			$("#editupdate").toggle();
+			$("#linktext").text("Create");
+
+			if ($('#save').css('display') == 'none' && button == 1) {
+				$('#save,#update').toggle();
+			}
+			if (button == 3) {
+				$('#save,#update').toggle();
+			}
+		} else {
+			if ($('#save').css('display') == 'block') {
+				$('#save,#update').toggle();
+			}
+
+		}
+
+	} else {
+		$("#editupdate").toggle();
+		$("#linktext").text("Cancel");
+		if ($('#save').css('display') == 'block' && button == 4) {
+			$('#save,#update').toggle();
+		}
+
+	}
+}
+
+function SendData(crud, data, index) {
+	switch (crud) {
+		case 1:
+			$.ajax({
+				type: "POST",
+				url: "Urls",
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+				}
+			});
+			break;
+		case 2:
+			$.ajax({
+				type: "POST",
+				url: "Urls/" + index,
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+				}
+			});
+			break;
+		case 3:
+			$.ajax({
+				type: "POST",
+				url: "Urls/d/" + index,
+				data: '',
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (msg) {
+					alertify.notify(msg.success, msg.status == 200 ? 'success' : 'error', 2, function () {});
+					if (msg.status == 200) {
+						jPut.users.remove(data);
+					}
+				}
+			});
+			break;
+	}
+
+}
+
+
+function edit(index) {
+	$('#save,#update').toggle();
+	$('#Id').val(jPut.users.data[index].Id);
+	$('#Alias').val(jPut.users.data[index].Alias);
+	$('#PageFullUrl').val(jPut.users.data[index].PageFullUrl);
+	$('#PageUrl').val(jPut.users.data[index].PageUrl);
+	$('#BodyID').val(jPut.users.data[index].BodyID);
+	$("#Type").val(jPut.users.data[index].Type);
+	$("#Changefreq").val(jPut.users.data[index].Changefreq);
+	$('#Lang').val(jPut.users.data[index].Lang);
+	$('#update').attr('data-id', index);
+	ChangeText(4);
+}
+
+function ValidateData() {
+	if ($('#Alias').val().trim().length == 0) {
+		alertify.notify('Please choose an Alias', 'error', 2, function () {});
+		return false;
+	}
+	if ($('#PageFullUrl').val().trim().length == 0 && $('#Type').val().trim()=='Page') {
+		alertify.notify('Please fill Page Url', 'error', 2, function () {});
+		return false;
+	}
+	return true;
+}
+
+function LongLang(lang)
+{
+	return $("#Lang option[value='"+lang+"']").text();
+}
+
+function LongBodyID(lang)
+{
+	return $("#BodyID option[value='"+lang+"']").text();
+}
+
+$(document).ready(function () {
+
+	$('#PageUrl').keyup(function(){
+		var slug = Slugify.parse($(this).val());
+		$('#PageFullUrl').val(slug);
+	});
+
+	var myOptions = {
+		"never": "never",
+		"always": "always",
+		"hourly": "hourly",
+		"daily": "daily",
+		"weekly": "weekly",
+		"monthly": "monthly",
+		"yearly": "yearly"
+	};
+
+	var _select = $('<select>');
+	$.each(myOptions, function (val, text) {
+		_select.append($('<option></option>').val(val).html(text));
+	});
+
+	$("#Changefreq").append(_select.html());
+	
+	document.title = '@Admin Page - Urls';
+
+	$("#link").click(function () {
+		ChangeText(1);
+	});
+
+	$('#save').click(function () {
+
+			if (ValidateData()) {
+				var user = Object();
+				user['Id'] = GUID.create();
+				user['Alias'] = $('#Alias').val().trim();
+				user['PageFullUrl'] = $('#PageFullUrl').val().trim();
+				user['PageUrl'] = $('#PageUrl').val().trim();
+				user['BodyID'] = $('#BodyID').val().trim();
+				user['Changefreq'] = $('#Changefreq').val().trim();
+				user['Type'] = $('#Type').val().trim();
+				user['Lang'] = $('#Lang').val().trim();
+				jPut.users.append(user); 
+				SendData(1, user, 0); 
+				ChangeText(2);
+
+				}
+	});
+
+
+	$('#update').click(function () {
+		if (ValidateData()) {
+			var user = Object();
+			user['Id'] = $('#Id').val().trim();
+			user['Alias'] = $('#Alias').val().trim();
+			user['PageFullUrl'] = $('#PageFullUrl').val().trim();
+			user['PageUrl'] = $('#PageUrl').val().trim();
+			user['BodyID'] = $('#BodyID').val().trim();
+			user['Changefreq'] = $('#Changefreq').val().trim();
+			user['Type'] = $('#Type').val().trim();
+			user['Lang'] = $('#Lang').val().trim();
+			jPut.users.update($('#update').attr('data-id'), user);
+			SendData(2, user, user['Id']); 
+			ChangeText(3);
+		}
+	});
+
+});
+
+</script>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+		<h1 class="h2">Urls</h1>
+	 </div>
+	 <INPUT class="form-control"  id="Id" type="hidden" name="Id" readonly/>
+	 <div id="link"><a id="linktext" class="btn btn-primary" href="#">Create</a></div>
+	 <div id="editupdate" style="display: none;">
+		<hr/>
+		<div class="form-group">
+		   <div class="container">
+			  <div class="row">
+				 <div class="col">	<label for="Alias">Alias:</label> </div>
+				 <div class="col"> <INPUT class="form-control"  id="Alias" type="text" name="Alias"/> </div>
+			  </div>
+			  <br/>
+			  <div class="row">
+				 <div class="col">	<label for="PageUrl">Page Url (only Type=Page):</label> </div>
+				 <div class="col"> <INPUT class="form-control"  id="PageUrl" type="text" name="PageUrl"/> 
+					<INPUT class="form-control"  id="PageFullUrl" type="text" name="PageFullUrl" readonly/>
+				</div>
+			  </div>
+			  <br/>
+			  <div class="row">
+				 <div class="col"><label for="BodyID">Content:</label></div>
+				 <div class="col">
+					<select class="form-control" id="BodyID" name="BodyID">
+					   @each(content in contents)
+					   <option value="{{ content.Id }}">{{ content.Alias }}</option>
+					   @else
+					   <option value="None">no content</option>
+					   @endeach								
+					</select>
+				 </div>
+			  </div>
+			  <br/>
+			  <div class="row">
+				 <div class="col"><label for="Type">Type:</label></div>
+				 <div class="col">
+					<select class="form-control" id="Type" name="Type">
+					   <option value="Page">Page</option>
+					   <option value="Home">Home</option>  
+					   <option value="404">404 - Page not found</option>							
+					</select>
+				 </div>
+			  </div>
+			  <br/>
+			  <div class="row">
+				 <div class="col">
+					<label for="Changefreq">Change freq:</label>
+				 </div>
+				 <div class="col">
+					<select class="form-control" id="Changefreq" name="Changereq">
+					</select>
+				 </div>
+			  </div>
+			  <br/>
+			  <div class="row">
+				 <div class="col"><label for="Lang">Language</label></div>
+				 <div class="col">
+					<select class="form-control" id="Lang" name="Lang">
+					   <option value="*">All</option>
+					   @each(lang in langs)
+					   <option value="{{ lang.Id }}">{{ lang.Alias }} ({{ lang.Code }})</option>
+					   @endeach										  
+					</select>
+				 </div>
+			  </div>
+			  <br/>
+			  <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="save">Save</a>
+			  <a class="btn btn-outline-primary btn-lg btn-block" href="#" id="update" data-id="0" style="display:none;">Update</a>
+		   </div>
+		</div>
+	 </div>
+	 <hr/>
+	 <table class="table table-dark">
+		<thead>
+		   <tr>
+			  <th scope="col">Index</th>
+			  <th scope="col">Url</th>
+			  <th scope="col">Alias</th>
+			  <th scope="col">Content</th>
+			  <th scope="col">Lang</th>
+			  <th scope="col">Type</th>
+			  <th scope="col">Edit</th>
+			  <th scope="col">Delete</th>
+		   </tr>
+		</thead>
+		<tbody jput="users" jput-ajax_url="Urls/list" >
+		   <tr>
+			  {{{fo}}}
+		   </tr>
+		</tbody>
+	 </table>
+	 
+@endsection

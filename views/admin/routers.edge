@@ -8,7 +8,7 @@ $(function(){
     var orders = new DevExpress.data.CustomStore({
         key: "Id",
         load: function (loadOptions) {
-            return ReadData("/admin/Routers/list",loadOptions);           
+            return ReadData("/admin/Routers/list/1",loadOptions);           
         },
         insert: function(values) {
             return SendDataTable( "/admin/Routers/", JSON.stringify(values),null);

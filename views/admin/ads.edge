@@ -28,6 +28,11 @@ $(function(){
         load: function() { return $.getJSON("/admin/Firewall/countries/2")}            
     });
 
+    var websiteslookup = new DevExpress.data.CustomStore({
+        key: "Id",
+        loadMode: "raw",
+        load: function() { return $.getJSON("/admin/Websites/list/2")}            
+    });
 
     $("#gridContainer").dxDataGrid({
         dataSource: {
@@ -61,6 +66,17 @@ $(function(){
             dataType: "string",
             validationRules: [{ type: "required" }],
             caption:"Alias"
+        },
+        {
+            dataField: "WebsiteId",
+            dataType: "string",
+            validationRules: [{ type: "required" }],
+            caption:"Website",
+             lookup: {
+                    dataSource: websiteslookup,
+                    displayExpr: "Website",
+                    valueExpr: "Id"
+                }
         },
         {
             dataField: "GroupID",

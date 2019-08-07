@@ -15,6 +15,7 @@ var express = require('express'),
     dbroutersad = new JsonDB(`${__base}db/cmsroutersad`, true, false),
     dburls = new JsonDB(`${__base}db/cmsurls`, true, false),
     dbmoduls = new JsonDB(`${__base}db/cmsmoduls`, true, false),
+    dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false),
     cmsmodulread = require(`${__base}app/modules/cmsmodul.read.js`),
     cmsmodulupdate = require(`${__base}app/modules/cmsmodul.update.js`);
 
@@ -202,10 +203,14 @@ router.post('/Langs', function (req, res) {
 });
 
 // Read
-router.get('/Langs/list', function (req, res) {
+router.get('/Langs/list/:id', function (req, res) {
     dblangs.reload();
     var adsdata = dblangs.getData("/");
-    res.json({ "totalCount": adsdata.length, "items": adsdata });
+    if (req.params.id == 2)
+    { 
+        adsdata.push({Id:"*",Code:"*",Alias:"All"});
+    }
+    res.json(req.params.id == 2 ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
 });
 
 
@@ -235,6 +240,67 @@ router.post('/Langs/d/:id', function (req, res) {
     if (result > -1) {
         addata.splice(result, 1);
         dblangs.push("/", addata);
+        res.json({ values: req.params.id });
+    } else {
+        res.json({
+            //todo
+            success: "Delete error. Refresh page",
+            status: 500
+        });
+    }
+});
+
+// Websites CRUD
+//**********************
+router.get('/Websites', function (req, res) {
+    res.render('admin/websites', { csrfToken: req.csrfToken() });
+});
+
+
+// Create
+router.post('/Websites', function (req, res) {
+    dbwebsites.reload();
+    var adsdata = dbwebsites.getData("/");
+    req.body.Id = uuidv4();
+    dbwebsites.push("/" + adsdata.length, req.body, false);
+    res.json({ values: req.body });
+});
+
+// Read
+router.get('/Websites/list/:id', function (req, res) {
+    dbwebsites.reload();
+    var adsdata = dbwebsites.getData("/");
+    res.json(d == '2' ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
+});
+
+
+
+// Update
+router.post('/Websites/:id', function (req, res) {
+    dbwebsites.reload();
+    var result = dbwebsites.getData("/").findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        req.body.Id = req.params.id;
+        dbwebsites.push("/" + result, req.body);
+        res.json({ values: req.body });
+    } else {
+        //todo
+        res.json({
+            success: "Update Error. Refresh page",
+            status: 500
+        });
+    }
+
+});
+
+// Delete
+router.post('/Websites/d/:id', function (req, res) {
+    dbwebsites.reload();
+    var addata = dblangs.getData("/");
+    var result = addata.findIndex(item => item.Id === req.params.id);
+    if (result > -1) {
+        addata.splice(result, 1);
+        dbwebsites.push("/", addata);
         res.json({ values: req.params.id });
     } else {
         res.json({
@@ -582,10 +648,10 @@ router.get('/Routers', function (req, res) {
 });
 
 
-router.get('/Routers/list', function (req, res) {
+router.get('/Routers/list/:id', function (req, res) {
     dbrouters.reload();
     var adsdata = dbrouters.getData("/");
-    res.json({ "totalCount": adsdata.length, "items": adsdata });
+    res.json(req.params.id == 2 ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
 });
 
 router.get('/Routers/list/headers', function (req, res) {
@@ -594,8 +660,20 @@ router.get('/Routers/list/headers', function (req, res) {
 });
 
 router.get('/Routers/list/templates', function (req, res) {
+    dbwebsites.reload();
+    var dbweb=dbwebsites.getData("/");
     dbtemplates.reload();
-    res.json(dbtemplates.getData("/"));
+    var data=dbtemplates.getData("/");
+    var indices = [];
+    data.forEach(function (element) {
+        var result = dbweb.findIndex(item => item.Id === element.WebsiteId);
+        var website="";
+        if (result > -1) {
+            website = " ("+dbweb.getData("/" + result).Website+")";
+        }
+        indices.push({ "Id": element.Id, "Alias": element.Alias+website});        
+      });
+    res.json(indices);
 });
 
 router.get('/Routers/list/adgroups', function (req, res) {
@@ -713,41 +791,34 @@ router.post('/Routers/d/:id', function (req, res) {
 
 // Urls
 router.get('/Urls', function (req, res) {
-    var fotter = '<th scope="row">{{index}}</th><td>{{json.PageFullUrl}}</td><td>{{json.Alias}}</td><td>{{LongBodyID(json.BodyID)}}</td><td>{{LongLang(json.Lang)}}</td><td>{{json.Type}}</td> <td><a href="#" onclick="edit({{index}})">Edit</a></td><td><a href="#" onclick="SendData(3,{{index}},\'{{json.Id}}\');">Delete</a></td>';
-    dburls.reload();
-    dblangs.reload();
-    dbcontents.reload();
-    var addata = dblangs.getData("/");
-    var addata1 = dbcontents.getData("/");
-    res.render('admin/urls', {
-        fo: fotter,
-        langs: addata,
-        contents: addata1
+    res.render('admin/urls', { csrfToken: req.csrfToken() });
+});
 
-    });
+// Read
+router.get('/Urls/list', function (req, res) {
+    dburls.reload();
+    var adsdata = dburls.getData("/");
+    res.json({ "totalCount": adsdata.length, "items": adsdata });
 });
 
 // Create
 router.post('/Urls', function (req, res) {
     dburls.reload();
     var adsdata = dburls.getData("/");
+    req.body.Id = uuidv4();
     dburls.push("/" + adsdata.length, req.body, false);
-    res.json({
-        success: req.body.Alias + " created successfully",
-        status: 200
-    });
+    res.json({ values: req.body });
 });
 
-// Read
-router.get('/Urls/list', function (req, res) {
-    dburls.reload();
-    try {
-        var adsdata = dburls.getData("/");
-    } catch (error) {
-        console.error(error);
-    };
-    res.json(adsdata);
+router.get('/Urls/list/type', function (req, res) {
+    res.json(comfunc.UrlType());
 });
+
+router.get('/Urls/list/changefreq', function (req, res) {
+    res.json(comfunc.RobotList());
+});
+
+
 
 
 // Update
@@ -755,35 +826,30 @@ router.post('/Urls/:id', function (req, res) {
     dburls.reload();
     var result = dburls.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
+        req.body.Id = req.params.id;
         dburls.push("/" + result, req.body);
-        res.json({
-            success: req.body.Alias + " updated successfully",
-            status: 200
-        });
+        res.json({ values: req.body });
     } else {
+        //todo
         res.json({
             success: "Update Error. Refresh page",
             status: 500
         });
     }
-
 });
 
 // Delete
 router.post('/Urls/d/:id', function (req, res) {
     dburls.reload();
     var addata = dburls.getData("/");
-    // find by id
     var result = addata.findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         addata.splice(result, 1);
         dburls.push("/", addata);
-        res.json({
-            success: "Deleted successfully",
-            status: 200
-        });
+        res.json({ values: req.params.id });
     } else {
         res.json({
+            //todo
             success: "Delete error. Refresh page",
             status: 500
         });
@@ -864,7 +930,7 @@ router.get('/Moduls/m/:id', function (req, res) {
     dbmoduls.reload();
     data = _.find(dbmoduls.getData("/"), { 'Id': req.params.id });
 
-    var convertdata = cmsmodulread[data.Modul](data.Data, ["id0", "id1", "id2", "id3", "id4", "id5", "id6", "id7", "id8", "id9"]);
+    var convertdata = cmsmodulread[data.Modul](data.Data);
 
     res.render('admin/moduls/' + data.Modul, {
         id: req.params.id,
@@ -880,7 +946,7 @@ router.post('/Moduls/m/:id/:modul', function (req, res) {
     dbmoduls.reload();
     var result = dbmoduls.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
-        var adatmodul = cmsmodulupdate[req.params.modul](req.body.filecon, [req.body.param0,req.body.param1,req.body.param2,req.body.param3,req.body.param4,req.body.param5,req.body.param6,req.body.param7,req.body.param8,req.body.param9]);
+        var adatmodul = cmsmodulupdate[req.params.modul](req.body.filecon);
         var data = dbmoduls.getData("/" + result);
         data.Data = adatmodul;
         dbmoduls.push("/" + result, data);

@@ -21,6 +21,12 @@ $(function(){
         }
     });
     
+    var websiteslookup = new DevExpress.data.CustomStore({
+        key: "Id",
+        loadMode: "raw",
+        load: function() { return $.getJSON("/admin/Websites/list/2")}            
+    });
+
     $("#gridContainer").dxDataGrid({
         dataSource: {
             store: orders
@@ -47,6 +53,17 @@ $(function(){
             dataField: "Id",
             dataType: "string",
             visible:false, formItem: { visible:false }
+        }, 
+        {
+            dataField: "WebsiteId",
+            dataType: "string",
+            validationRules: [{ type: "required" }],
+            caption:"Website",
+             lookup: {
+                    dataSource: websiteslookup,
+                    displayExpr: "Website",
+                    valueExpr: "Id"
+                }
         },
         {
             dataField: "Alias",

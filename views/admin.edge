@@ -24,11 +24,10 @@
          <script src="/admin/jasmine.js"></script>
          <script src="/admin/admin.js"></script>
          <script src="/admin/timeout.js"></script>
+         <script src="/admin/slugify.en.min.js"></script>
          <link rel="stylesheet" type="text/css" href="/admin/dx.common.css" />
          <link rel="stylesheet" type="text/css" href="/admin/dx.light.css" />
          <script src="/admin/dx.all.js"></script>
-         
-
          <script lang="javascript">
              $(document).ready(function () {
                  if (window.location.pathname!="/admin/Login")
@@ -69,7 +68,7 @@
                                  
                                     <ul class="head-list">
                                         <li>
-                                            <a href="/admin/ChangePwd">  <i class="fa fa-gear fa-fw"></i> Change password </a>
+                                            <a href="/admin/ChangePwd"><i class="fa fa-gear fa-fw"></i> Change password </a>
                                         </li>
                                         <li>
                                             <a href="/admin/Logout"> <i class="fa fa-sign-out fa-fw"></i> Logout </a>
@@ -102,8 +101,11 @@
                                         <li><a href="/admin/Firewall"> Firewall </a></li>            
                                     </ul>
                                 </li>
-                                <li>
+                                     <li>
                                         <a href="/admin/FileManager"> File Manager </a>
+                                   </li>
+                                   <li>
+                                    <a href="/admin/Websites"> Websites </a>
                                    </li>
                                    <li>
                                         <a href="/admin/Templates"> Templates </a>

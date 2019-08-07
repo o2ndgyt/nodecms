@@ -153,11 +153,32 @@ var comfunc = {
       filesize.push({ file: "Urls", size: prettyBytes(fileBytes.sync('./db/cmsurls.json')) });
       filesize.push({ file: "Templates", size: prettyBytes(fileBytes.sync('./db/cmstemplates.json')) });
       filesize.push({ file: "Moduls", size: prettyBytes(fileBytes.sync('./db/cmsmoduls.json')) });
+      filesize.push({ file: "Websites", size: prettyBytes(fileBytes.sync('./db/cmswebsites.json')) });
     }
     else {
       filesize.push({ file: "MongoDB", size: "Unlimited" });
     }
     return filesize;
+  },
+  RobotList: function () {
+    var robots = [
+      { name: 'never', code: 'never' },
+      { name: 'always', code: 'always' },
+      { name: 'hourly', code: 'hourly' },
+      { name: 'daily', code: 'daily' },
+      { name: 'weekly', code: 'weekly' },
+      { name: 'monthly', code: 'monthly' },
+      { name: 'yearly', code: 'yearly' }
+    ];
+    return robots;
+  },
+  UrlType: function () {
+    var robots = [
+      { name: 'P', code: 'Page' },
+      { name: 'H', code: 'Home' },
+      { name: '404', code: '404 - Page not found' }
+    ];
+    return robots;
   },
   CountriesList: function () {
     var countries = [

@@ -1,31 +1,25 @@
 @layout('admin')
 @section('content')
 <script lang="javascript">
- $(document).ready(function () {
-    SetTitle('Templates');
+  $(document).ready(function () {
+    SetTitle('Websites'); 
 });
 $(function(){
     var orders = new DevExpress.data.CustomStore({
         key: "Id",
         load: function (loadOptions) {
-            return ReadData("/admin/Templates/list",loadOptions);           
+            return ReadData("/admin/Websites/list/1",loadOptions);           
         },
         insert: function(values) {
-            return SendDataTable( "/admin/Templates/", JSON.stringify(values),null);
+            return SendDataTable( "/admin/Websites/", JSON.stringify(values),null);
         },
         update: function(key, values) {
-            return SendDataTable( "/admin/Templates/", JSON.stringify(values),key);
+            return SendDataTable( "/admin/Websites/", JSON.stringify(values),key);
         },
         remove: function(key) {
-            return SendDataTable( "/admin/Templates/d/", JSON.stringify({key:key}),key);
+            return SendDataTable( "/admin/Websites/d/", JSON.stringify({key:key}),key);
         }
 
-    });
-
-    var websiteslookup = new DevExpress.data.CustomStore({
-        key: "Id",
-        loadMode: "raw",
-        load: function() { return $.getJSON("/admin/Websites/list/2")}            
     });
     
     $("#gridContainer").dxDataGrid({
@@ -50,40 +44,22 @@ $(function(){
         searchPanel: {
             visible: true,
         },
-        columns: [{
+        columns: [
+            {
             dataField: "Id",
             dataType: "string",
             visible:false, formItem: { visible:false }
         },
         {
-            dataField: "WebsiteId",
+            dataField: "Website",
             dataType: "string",
-            validationRules: [{ type: "required" }],
-            caption:"Website",
-             lookup: {
-                    dataSource: websiteslookup,
-                    displayExpr: "Website",
-                    valueExpr: "Id"
-                }
+                validationRules: [{ type: "required" }],
+                caption:"Hostname (ndg.yt)"
         },
         {
-            dataField: "Alias",
+            dataField: "Note",
             dataType: "string",
-            validationRules: [{ type: "required" }],
-            caption:"Alias"
-        },
-        {
-            dataField: "Id",
-            dataType: "string",
-            caption:"HTML editor",
-            formItem: { visible:false },
-                allowFiltering: false,
-                allowSorting: false,
-                cellTemplate: function (container, options) {
-                    $("<div>")
-                        .append($("<a>", { "text":"Open in HTML editor","href": "/admin/Templates/e/"+options.value,"class":"dx-link dx-link-edit" }))
-                        .appendTo(container);
-                }
+            caption:"Note"
         }
           
         ],
@@ -93,14 +69,14 @@ $(function(){
     }).dxDataGrid("instance");
 });
 </script>
-   
+
+
 <div class="boxed">
                
   <div id="content-container">
      
       <div class="pageheader">
-          <h3> <i class="fa fa-file-code-o"></i> Templates </h3>
-          
+          <h3> <i class="fa fa-language"></i> Websites </h3>        
       </div>
     
       <div id="page-content">
@@ -111,7 +87,7 @@ $(function(){
                         <div class="demo-container">
                             <div id="gridContainer"></div>
                         </div>
-                    </div>     
+                    </div>      
                 </div>
             </div>
         </div>
