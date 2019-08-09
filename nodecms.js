@@ -1,13 +1,34 @@
 global.__base = __dirname + '/';
 
 var JsonDB = require('node-json-db'),
-    http = require('http'),
+    spdy = require('spdy'),
+    _ = require('lodash'),
     app = require((`${__base}app/app.js`),
-    db = new JsonDB(`${__base}db/config`, true, false));
+    dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false));
 
-var data = db.getData("/");
 
-var port = normalizePort(process.env.PORT || data.Appport);
+var data = dbwebsites.getData("/");
+
+// create each webserver per domain
+
+_.forEach(data, function (element) {
+
+    var options = { key: element.RSA, cert: element.CER };
+
+    spdy.createServer(options, app)
+    .listen( element.Port, (error) => {
+    if (error) {
+      console.error(error)
+      return process.exit(1)
+    } else {
+      console.log(`Node-CMS ${element.Website} on ${element.Port} Ready. Have a nice day ;)`)
+    }
+  });
+});
+
+
+
+/*
 app.set('port', port);
 
 var server = http.createServer(app);
@@ -54,4 +75,4 @@ function onListening() {
         : 'port ' + addr.port;
     console.log('NodeCms on ' + bind + ' Have a nice day ;)');
 }
-
+*/

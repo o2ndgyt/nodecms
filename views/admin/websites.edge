@@ -60,8 +60,50 @@ $(function(){
             dataField: "Note",
             dataType: "string",
             caption:"Note"
+        },
+        {
+            dataField: "Port",
+            dataType: "number",
+            caption:"Port",
+            validationRules: [{ type: "required" }],
+            editCellTemplate: function (container, options) {
+                $('<div>').dxNumberBox({
+                value:  options.value,
+                showSpinButtons: true,
+                onValueChanged: function(e) {
+                options.setValue(e.value);
+                }
+                }).appendTo(container);
+            }
+        },
+        {
+            dataField: "RSA",
+            dataType: "string",
+            visible:false,
+            caption:"RSA private key",
+            validationRules: [{ type: "required" }],
+            formItem: {
+                    colSpan: 2,
+                    editorType: "dxTextArea",
+                    editorOptions: {
+                        height: 100
+                    }
+                }
+        },
+        {
+            dataField: "CER",
+            dataType: "string",
+            visible:false,
+            caption:"Certificate",
+            validationRules: [{ type: "required" }],
+            formItem: {
+                    colSpan: 2,
+                    editorType: "dxTextArea",
+                    editorOptions: {
+                        height: 100
+                    }
+                }
         }
-          
         ],
         onRowUpdating: function(options) { 
              options.newData = $.extend({}, options.oldData, options.newData); 
