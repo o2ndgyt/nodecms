@@ -3,6 +3,7 @@ global.__base = __dirname + '/';
 var JsonDB = require('node-json-db'),
     spdy = require('spdy'),
     _ = require('lodash'),
+    vhttps = require('vhttps'),
     app = require((`${__base}app/app.js`),
     dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false));
 
@@ -10,7 +11,23 @@ var JsonDB = require('node-json-db'),
 var data = dbwebsites.getData("/");
 
 // create each webserver per domain
+var cred=[];
+_.forEach(data, function (element) {
+    cred.push({ hostname: element.Website, cert:element.CER,  key: element.RSA });
+});
 
+
+const httpsServer = vhttps.createServer(cred[0], cred, app);
+httpsServer.listen(443, (error) => {
+    if (error) {
+      console.error(error)
+      return process.exit(1)
+    } else {
+      console.log("Node-CMS Ready. Have a nice day ;)");
+    }
+  });
+
+/*
 _.forEach(data, function (element) {
 
     var options = { key: element.RSA, cert: element.CER };
@@ -24,8 +41,9 @@ _.forEach(data, function (element) {
       console.log(`Node-CMS ${element.Website} on ${element.Port} Ready. Have a nice day ;)`)
     }
   });
+  
 });
-
+*/
 
 
 /*

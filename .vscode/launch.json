@@ -7,16 +7,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "nodemon win",
-            "runtimeExecutable": "pm2 start nodecms.js --wait-ready --listen-timeout 3000",
-            "restart": true,
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
-        },
-       
-        {
-            "type": "node",
-            "request": "launch",
             "name": "Linux version",
             "program": "${workspaceFolder}/nodecms.js"
         },
