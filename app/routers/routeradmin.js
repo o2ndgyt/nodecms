@@ -143,7 +143,6 @@ router.get('/Settings', function (req, res) {
 
 router.post('/Settings', function (req, res) {
     var configdata = db.getData("/");
-    configdata.Appport = req.body.Appport;
     configdata.compress = req.body.compress;
     configdata.XPowerBy = req.body.XPowerBy;
     db.push("/", configdata);
@@ -250,6 +249,15 @@ router.post('/Langs/d/:id', function (req, res) {
     }
 });
 
+router.get('/Restart', function (req, res) {
+    process.on('SIGINT', function() {
+     
+          process.exit(1);
+    
+     });
+});
+
+
 // Websites CRUD
 //**********************
 router.get('/Websites', function (req, res) {
@@ -270,7 +278,7 @@ router.post('/Websites', function (req, res) {
 router.get('/Websites/list/:id', function (req, res) {
     dbwebsites.reload();
     var adsdata = dbwebsites.getData("/");
-    res.json(d == '2' ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
+    res.json(req.params.id == '2' ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
 });
 
 
