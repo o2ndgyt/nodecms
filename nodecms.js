@@ -1,11 +1,20 @@
 global.__base = __dirname + '/';
+var multiserver = require(`${__base}app/multiserver.js`);
 
-var JsonDB = require('node-json-db'),
-    spdy = require('spdy'),
+multiserver.Init();
+console.log("Node-CMS Ready. Have a nice day ;)");
+
+
+/* 
+var JsonDB = require('node-json-db'),  
     _ = require('lodash'),
     vhttps = require('vhttps'),
     app = require((`${__base}app/app.js`),
     dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false));
+
+
+
+
 
 
 var data = dbwebsites.getData("/");
@@ -27,7 +36,7 @@ httpsServer.listen(443, (error) => {
     }
   });
 
-/*
+
 _.forEach(data, function (element) {
 
     var options = { key: element.RSA, cert: element.CER };
@@ -43,7 +52,7 @@ _.forEach(data, function (element) {
   });
   
 });
-*/
+
 
 
 /*
