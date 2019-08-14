@@ -2,6 +2,7 @@ var express = require('express'),
     router = express.Router(),
     JsonDB = require('node-json-db'),
     _ = require('lodash'),
+    { Certificate } = require('@fidm/x509'),
     csrf = require('csurf'),
     passport = require('passport'),
     uuidv4 = require('uuid/v4'),
@@ -270,6 +271,9 @@ router.post('/Websites', function (req, res) {
     dbwebsites.reload();
     var adsdata = dbwebsites.getData("/");
     req.body.Id = uuidv4();
+    req.body.ValidFrom=Certificate.fromPEM(req.body.CER).validFrom;
+    req.body.ValidTo=Certificate.fromPEM(req.body.CER).validTo;
+    req.body.Active=comfunc.CerExpired(req.body.ValidFrom,req.body.ValidTo);
     dbwebsites.push("/" + adsdata.length, req.body, false);
     res.json({ values: req.body });
 });
@@ -289,6 +293,9 @@ router.post('/Websites/:id', function (req, res) {
     var result = dbwebsites.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         req.body.Id = req.params.id;
+        req.body.ValidFrom=Certificate.fromPEM(req.body.CER).validFrom;
+        req.body.ValidTo=Certificate.fromPEM(req.body.CER).validTo;   
+        req.body.Active=comfunc.CerExpired(req.body.ValidFrom,req.body.ValidTo);       
         dbwebsites.push("/" + result, req.body);
         res.json({ values: req.body });
     } else {

@@ -9,6 +9,7 @@
   "author": "o2 by ndg",
   "license": "ISC",
   "dependencies": {
+    "@fidm/x509": "^1.2.1",
     "child_process": "^1.0.2",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",

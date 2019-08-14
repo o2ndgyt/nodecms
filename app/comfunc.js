@@ -14,6 +14,11 @@ var fs = require('fs-extra'),
   db = new JsonDB(`${__base}/db/config`, true, false);
 
 var comfunc = {
+  CerExpired : function (stime,endtime)
+  { 
+    var date= new Date();
+    return  date< stime ? "Not started": date>endtime ? "Expired":"Active until "+moment(endtime).toNow(true); 
+  },
   GeoExpired: function ()
   {  
     var { mtime } = fs.statSync(`${__base}/geoip/geoip.mmdb`)
