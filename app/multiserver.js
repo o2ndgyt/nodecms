@@ -6,11 +6,13 @@ var opts = {
     serverModule: proxyWrap.proxy( require('http'), proxy_opts),
     ssl: {
         //Do this if you want http2:
-       // http2: true,        
-       // serverModule: proxyWrap.proxy(require('spdy').server, proxy_opts),
+       http2: true,        
+       serverModule: proxyWrap.proxy(require('spdy').server, proxy_opts),
         //Do this if you only want regular https
         // serverModule: proxyWrap.proxy( require('http'), proxy_opts), 
-        port: 443
+        port: 443,
+        key: `${__base}cert/default.rsa`,
+        cert: `${__base}cert/default.cer`,
     }
 }
 
@@ -35,8 +37,8 @@ var multiserver = {
     
         Servers.push(
             {
-            Server:  http.createServer(app).listen(element.Port),
-            //spdy.createServer(options, app).listen(element.Port),
+            Server: spdy.createServer(options, app).listen(element.Port),
+            // http.createServer(app).listen(element.Port),
             hostname: element.Website, Port:element.Port}
         )
 
@@ -44,15 +46,18 @@ var multiserver = {
         fs.writeFile(`${__base}cert/${element.Website}.cer`, element.CER);
 
         console.log(`https://${element.Website}:${element.Port}`);
-        proxy.register(element.Website, `http://${element.Website}:${element.Port}`,
+        if (element.Website=="sportonline.dev")
+        {
+        proxy.register(element.Website, `https://${element.Website}:${element.Port}`,
         {
           ssl: {
+            redirect: true,
             key: `${__base}cert/${element.Website}.rsa`,
             cert: `${__base}cert/${element.Website}.cer`,
           }
 
         });
-
+      }
         // _.foreach
       });
       

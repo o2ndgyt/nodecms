@@ -139,7 +139,34 @@ function Settings()
         });
     
         $("#compress").append(_select.html());
-           
+
+        var myOptions1 = {
+            "C": "CloudFlare",
+            "L": "Let's encrypt",
+            "O": "Own SSL",
+            "0": "No SSL"
+        };
+    
+        var _select1 = $('<select>');
+        $.each(myOptions1, function (val, text) {
+            _select1.append($('<option></option>').val(val).html(text));
+        });
+    
+        $("#ssl").append(_select.html());
+
+        var myOptions2 = {
+            "A": "Apache",
+            "N": "Nginx",
+            "0": "NodeJs"
+        };
+    
+        var _select2 = $('<select>');
+        $.each(myOptions2, function (val, text) {
+            _select2.append($('<option></option>').val(val).html(text));
+        });
+    
+        $("#webs").append(_select.html());
+        
         $('#saveset').click(function () {
 			SendData('Settings', JSON.stringify( {Appport:$('#Appport').val(), compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val() }));
         });
