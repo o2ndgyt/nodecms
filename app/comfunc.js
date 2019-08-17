@@ -11,9 +11,28 @@ var fs = require('fs-extra'),
   dbrouters = new JsonDB(`${__base}/db/cmsrouters`, true, false),
   dbroutersad = new JsonDB(`${__base}/db/cmsroutersad`, true, false),
   dbtemplates = new JsonDB(`${__base}/db/cmstemplates`, true, false),
+  dbwebsites = new JsonDB(`${__base}/db/cmswebsites`, true, false),
   db = new JsonDB(`${__base}/db/config`, true, false);
 
 var comfunc = {
+  GetWebsite : function (Routerid)
+  {
+    var result = dbrouters.getData("/").findIndex(item => item.Id === Routerid);
+    if (result > -1) {
+      var templateid = dbrouters.getData("/" + result).TemplateId;
+      var result1 = dbtemplates.getData("/").findIndex(item => item.Id === templateid);
+      if (result1 > -1) {
+        var websiteid = dbtemplates.getData("/" + result1).WebsiteId;
+        var result2 = dbwebsites.getData("/").findIndex(item => item.Id === websiteid);
+        if (result2 > -1) {
+          return dbwebsites.getData("/" + result2).Website;
+          
+        } 
+      
+      }
+    }
+    return "";
+  },
   CerExpired : function (stime,endtime)
   { 
     var date= new Date();
@@ -32,12 +51,12 @@ var comfunc = {
   },
 
   A2B: function (data) {
-    if (data != "")
+    if (data != "" || data !=null)
       return Buffer.from(data).toString('base64');
     return "";
   },
   B2A: function (data) {
-    if (data != "")
+    if (data != "" || data!=null)
       return Buffer.from(data, 'base64').toString('ascii');
     return "";
   },

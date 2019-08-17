@@ -669,12 +669,12 @@ router.get('/Routers/list/:id', function (req, res) {
     res.json(req.params.id == 2 ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
 });
 
-router.get('/Routers/list/headers', function (req, res) {
+router.get('/Routers/listext/headers', function (req, res) {
     dbheaders.reload();
     res.json(dbheaders.getData("/"));
 });
 
-router.get('/Routers/list/templates', function (req, res) {
+router.get('/Routers/listext/templates', function (req, res) {
     dbwebsites.reload();
     var dbweb=dbwebsites.getData("/");
     dbtemplates.reload();
@@ -684,18 +684,18 @@ router.get('/Routers/list/templates', function (req, res) {
         var result = dbweb.findIndex(item => item.Id === element.WebsiteId);
         var website="";
         if (result > -1) {
-            website = " ("+dbweb.getData("/" + result).Website+")";
+            website = " ("+dbwebsites.getData("/" + result).Website+")";
         }
         indices.push({ "Id": element.Id, "Alias": element.Alias+website});        
       });
     res.json(indices);
 });
 
-router.get('/Routers/list/adgroups', function (req, res) {
+router.get('/Routers/listext/adgroups', function (req, res) {
     dbads.reload();
     var grouped = _.groupBy(dbads.getData("/"), ad => ad.GroupID.trim());
 
-    var tmp = [{ "Id": "---", "Group": "---" }];
+    var tmp = [{ "Id": "@", "Group": "---" }];
     _.forEach(Object.keys(grouped), function (value) {
         tmp.push({ "Id": value.trim(), "Group": value.trim() });
     });
@@ -703,11 +703,11 @@ router.get('/Routers/list/adgroups', function (req, res) {
     res.json(tmp);
 });
 
-router.get('/Routers/list/modulgroups', function (req, res) {
+router.get('/Routers/listext/modulgroups', function (req, res) {
     dbmoduls.reload();
     var grouped = _.groupBy(dbmoduls.getData("/"), ad => ad.GroupID.trim());
 
-    var tmp = [{ "Id": "---", "Group": "---" }];
+    var tmp = [{ "Id": "@", "Group": "---" }];
     _.forEach(Object.keys(grouped), function (value) {
         tmp.push({ "Id": value.trim(), "Group": value.trim() });
     });
@@ -821,6 +821,7 @@ router.post('/Urls', function (req, res) {
     dburls.reload();
     var adsdata = dburls.getData("/");
     req.body.Id = uuidv4();
+    req.body.Website=comfunc.GetWebsite(req.body.RouterId);
     dburls.push("/" + adsdata.length, req.body, false);
     res.json({ values: req.body });
 });
@@ -842,6 +843,7 @@ router.post('/Urls/:id', function (req, res) {
     var result = dburls.getData("/").findIndex(item => item.Id === req.params.id);
     if (result > -1) {
         req.body.Id = req.params.id;
+        req.body.Website=comfunc.GetWebsite(req.body.RouterId);
         dburls.push("/" + result, req.body);
         res.json({ values: req.body });
     } else {

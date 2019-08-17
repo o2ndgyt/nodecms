@@ -21,29 +21,29 @@ $(function(){
         }
 
     });
-
+ 
     var headers = new DevExpress.data.CustomStore({
         key: "Id",
         loadMode: "raw",
-        load: function() { return $.getJSON("/admin/Routers/list/headers")}            
+        load: function() { return $.getJSON("/admin/Routers/listext/headers")}            
     });
 
     var templates = new DevExpress.data.CustomStore({
         key: "Id",
         loadMode: "raw",
-        load: function() { return $.getJSON("/admin/Routers/list/templates")}            
+        load: function() { return $.getJSON("/admin/Routers/listext/templates")}            
     });
 
     var adgroups = new DevExpress.data.CustomStore({
         key: "Id",
         loadMode: "raw",
-        load: function() { return $.getJSON("/admin/Routers/list/adgroups")}            
+        load: function() { return $.getJSON("/admin/Routers/listext/adgroups")}            
     });
 
     var modulgroups = new DevExpress.data.CustomStore({
         key: "Id",
         loadMode: "raw",
-        load: function() { return $.getJSON("/admin/Routers/list/modulgroups")}            
+        load: function() { return $.getJSON("/admin/Routers/listext/modulgroups")}            
     });
 
 

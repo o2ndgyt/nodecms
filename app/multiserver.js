@@ -37,8 +37,9 @@ var multiserver = {
     
         Servers.push(
             {
-            Server: spdy.createServer(options, app).listen(element.Port),
-            // http.createServer(app).listen(element.Port),
+            Server: http.createServer(app).listen(element.Port),
+            //spdy.createServer(options, app).listen(element.Port),
+            // 
             hostname: element.Website, Port:element.Port}
         )
 
@@ -46,9 +47,9 @@ var multiserver = {
         fs.writeFile(`${__base}cert/${element.Website}.cer`, element.CER);
 
         console.log(`https://${element.Website}:${element.Port}`);
-        if (element.Website=="sportonline.dev")
-        {
-        proxy.register(element.Website, `https://${element.Website}:${element.Port}`,
+     /*   if (element.Website=="sportonline.dev")
+       // {
+        proxy.register(element.Website, `http://${element.Website}:${element.Port}`,
         {
           ssl: {
             redirect: true,
@@ -57,7 +58,7 @@ var multiserver = {
           }
 
         });
-      }
+      }*/
         // _.foreach
       });
       
