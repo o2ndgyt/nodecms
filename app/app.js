@@ -105,11 +105,16 @@ app.use('/admin',ipgeoblock({
 
 // URLs ENGINE with multi lang
 app.use(function (req, res, next) {
-/*
+
   var blnOk = false;
   dburls.reload();
   dblangs.reload();
   var strLang = "*";
+
+  // check hostname
+  // check exact url
+  // check non-exact url
+  
 
   // search langid
   var result = dblangs.getData("/").findIndex(item => item.Code === simpleLanguage(req));
@@ -207,11 +212,7 @@ app.use(function (req, res, next) {
     }
    
   }
-*/
-res.json({
-  msg: req.originalUrl+" engine off",
-  status: 404
-});
+
 });
 
 // error handler

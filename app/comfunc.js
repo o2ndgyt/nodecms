@@ -60,7 +60,7 @@ var comfunc = {
       return Buffer.from(data, 'base64').toString('ascii');
     return "";
   },
-  UrlEngine: function (id, langid) {
+  UrlEngine: function (id, langid,url) {
     dbrouters.reload();
     dbheaders.reload();
     dbads.reload();
