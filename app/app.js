@@ -14,6 +14,7 @@ var logger = require('morgan'),
   ipgeoblock = require(`${__base}app/routers/geoip.js`),
   flash=require('connect-flash'),
   RouterAdmin = require(`${__base}app/routers/routeradmin.js`),
+  DbFunc = require(`${__base}app/routers/dbfunc.js`),
   db = new JsonDB(`${__base}db/config`, true, false);
 
 var configdata = db.getData("/");
@@ -106,21 +107,38 @@ app.use('/admin',ipgeoblock({
 // URLs ENGINE with multi lang
 app.use(function (req, res, next) {
 
-  var blnOk = false;
-  dburls.reload();
-  dblangs.reload();
-  var strLang = "*";
-
+  var strLangId = DbFunc.GetLangId(simpleLanguage(req));
+  var strWebsiteId = DbFunc.GetWebsiteId(req.hostname);
   // check hostname
-  // check exact url
-  // check non-exact url
+  if (strWebsiteId !="*")
+  {
+     // check exact url
+     var strRouterId=DbFunc.GetRouterId(strLangId,req.originalUrl,req.hostname);
+     if (typeof(strRouterId) === 'object')
+     {
+        res.send(comfunc.UrlEngine(strRouterId,strWebsiteId,req.location.country.isoCode));
+     }
+     else
+     {
+          // check non-exact url
+
+     }
+     
+  }
+  else
+  {
+    res.json({
+      msg: `Website ${req.hostname} not registered.`,
+      status: 404
+  });
+
+  }
   
 
-  // search langid
-  var result = dblangs.getData("/").findIndex(item => item.Code === simpleLanguage(req));
-  if (result > -1) {
-    strLang = dblangs.getData("/" + result).Id;
-  }
+  
+/*
+    // search langid
+ 
 
   // home page
   if (req.originalUrl === '/') {
@@ -128,7 +146,7 @@ app.use(function (req, res, next) {
     var result = dburls.getData("/").findIndex(item => item.Type === "Home" && item.Lang === strLang);
     if (result > -1) {
       // home page with lang
-      res.send(comfunc.UrlEngine(dburls.getData("/" + result).BodyID, strLang));
+     
     }
     else {
       if (strLang != "*") {
@@ -213,6 +231,11 @@ app.use(function (req, res, next) {
    
   }
 
+res.json({
+  msg: "engine off",
+  status: 404
+});
+*/
 });
 
 // error handler

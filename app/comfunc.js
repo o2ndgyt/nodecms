@@ -6,6 +6,7 @@ var fs = require('fs-extra'),
   moment = require('moment'),
   JsonDB = require('node-json-db'),
   cmsmodulread = require(`${__base}/app/modules/cmsmodul.read.js`),
+  DbFunc = require(`${__base}app/routers/dbfunc.js`),
   dbads = new JsonDB(`${__base}/db/cmsad`, true, false),
   dbheaders = new JsonDB(`${__base}/db/cmsheaders`, true, false),
   dbrouters = new JsonDB(`${__base}/db/cmsrouters`, true, false),
@@ -60,41 +61,20 @@ var comfunc = {
       return Buffer.from(data, 'base64').toString('ascii');
     return "";
   },
-  UrlEngine: function (id, langid,url) {
-    dbrouters.reload();
-    dbheaders.reload();
-    dbads.reload();
-    dbroutersad.reload();
-
-    var strHtml = `UrlEngine BodyID error:${id} lang id:${langid} `;
-
-    var result = dbrouters.getData("/").findIndex(item => item.Id === id);
-    if (result > -1) {
-      var objContent = dbrouters.getData("/" + result);
-      // read html
-      strHtml = fs.readFileSync("./views/" + objContent.FileLayout + ".edge", 'utf8');
-      // read header
-      var result = dbheaders.getData("/").findIndex(item => item.Id === objContent.HeadId);
-      if (result > -1) {
-        var objHeader = dbheaders.getData("/" + result);
-        strHtml = strHtml.replace("@!Title", objHeader.Title).replace("@!Desc", objHeader.MetaDesc).replace("@!section('HeaderScript')", comfunc.B2A(objHeader.HeaderScript)).replace("@!section('BodyScript')", comfunc.B2A(objHeader.BodyScript)).replace("@!section('FooterScript')", comfunc.B2A(objHeader.FooterScript));
-      }
-
-      // ads
-      var filteredCAd = dbroutersad.getData("/").filter(function (value) { return value.HeadId === objContent.Id && value.Mode === "A"; });
-      filteredCAd.forEach(function (item) {
-        // search one ad
-        var adHtml = "";
-        var filterads = dbads.getData("/").filter(function (value) { return value.GroupID === item.GroupID && (value.lang === langid || value.lang === "*"); });
-        if (filterads.length > 0) {
-          var adelement = 0;
-          if (filterads.length > 1)
-            adelement = Math.floor(Math.random() * filterads.length - 1);
-          adHtml = comfunc.B2A(filterads[adelement].AdvertJS);
-        }
-        strHtml = strHtml.replace("@!section('" + item.Section + "')", adHtml);
-      });
-
+  UrlEngine: function (objRouter,strWebsiteId,strFireWall) {
+ 
+    var strHtml = DbFunc.GetHtml(objRouter.TemplateId);
+    if (strHtml !="*")
+    {
+        strHtml=DbFunc.GetHeader(objRouter.HeadId,strHtml);
+        strHtml=DbFunc.GetAds(objRouter.Id,strHtml,strWebsiteId,strFireWall);
+    }
+    else
+    {
+      strHtml=`UrlEngine Router error Alias:${objRouter.Alias}`
+    }
+   
+    
       // moduls
       var filteredCMo = dbroutersad.getData("/").filter(function (value) { return value.HeadId === objContent.Id && value.Mode === "M"; });
       filteredCMo.forEach(function (item) {
@@ -104,7 +84,7 @@ var comfunc = {
           strHtml = strHtml.replace("@!section('" + item.Section + "')", strModul);
         }
       });
-    }
+    
 
     return strHtml;
   },

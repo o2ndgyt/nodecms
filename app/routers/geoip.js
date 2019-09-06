@@ -47,7 +47,7 @@ module.exports = function (options, accessDenied) {
 		req.location.ip=ip;
 		req.location.country = {
 			data: null,
-			isoCode: ""
+			isoCode: "*"
 		};
 				
 		//check that IP address is local
