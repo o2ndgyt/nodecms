@@ -107,135 +107,70 @@ app.use('/admin',ipgeoblock({
 // URLs ENGINE with multi lang
 app.use(function (req, res, next) {
 
-  var strLangId = DbFunc.GetLangId(simpleLanguage(req));
-  var strWebsiteId = DbFunc.GetWebsiteId(req.hostname);
+  var strLangId = DbFunc[configdata.DB+"_GetLangId"](simpleLanguage(req));
+  var strWebsiteId = DbFunc[configdata.DB+"_GetWebsiteId"](req.hostname);
   // check hostname
   if (strWebsiteId !="*")
   {
      // check exact url
-     var strRouterId=DbFunc.GetRouterId(strLangId,req.originalUrl,req.hostname);
+     var blnOk=true;
+     var strRouterId=DbFunc[configdata.DB+"_GetRouterId"](strLangId,req.originalUrl,req.hostname);
      if (typeof(strRouterId) === 'object')
      {
+        blnOk=false;
         res.send(comfunc.UrlEngine(strRouterId,strWebsiteId,req.location.country.isoCode));
      }
      else
+     {      
+          // check non-exact url (for eaxmple /video/:id0 or /video/:id0/:id1 etc)
+          var lstPath=req.originalUrl.split("/");
+          if (lstPath.length>1)
+          {
+              for (var i = lstPath.length; i >1; i--)
+              { 
+                 for (var x=lstPath.length-i;x>-1;x--)
+                 {
+                    lstPath[lstPath.length-x-1]=`:id${x}`;
+                    var strRouterId=DbFunc[configdata.DB+"_GetRouterId"](strLangId,lstPath.join(""),req.hostname);
+                    if (typeof(strRouterId) === 'object')
+                    {
+                       blnOk=false;
+                       res.send(comfunc.UrlEngine(strRouterId,strWebsiteId,req.location.country.isoCode));
+                    }
+                 }
+              }
+          }
+     }  
+     if (blnOk)
      {
-          // check non-exact url
-
-     }
-     
+        // error page 404
+        res.status(err.status || 404);
+        var strRouterId=DbFunc[configdata.DB+"_GetRouterId"](strLangId,"404",req.hostname);
+        if (typeof(strRouterId) === 'object')
+        {
+           res.send(comfunc.UrlEngine(strRouterId,strWebsiteId,req.location.country.isoCode));
+        }
+        else
+        { 
+          res.json({
+            msg: `Website:${req.hostname} Langid:${strLangId} Url:${req.originalUrl} not registered.`,
+            status: 404
+        });      
+        }
+     }   
   }
   else
   {
+    res.status(err.status || 404);
+
     res.json({
-      msg: `Website ${req.hostname} not registered.`,
+      msg: `Website:${req.hostname} not registered.`,
       status: 404
   });
 
   }
   
 
-  
-/*
-    // search langid
- 
-
-  // home page
-  if (req.originalUrl === '/') {
-    // home page with lang
-    var result = dburls.getData("/").findIndex(item => item.Type === "Home" && item.Lang === strLang);
-    if (result > -1) {
-      // home page with lang
-     
-    }
-    else {
-      if (strLang != "*") {
-        // home page without lang
-        var result = dburls.getData("/").findIndex(item => item.Type === "Home" && item.Lang === "*");
-        if (result > -1) {
-          res.send(comfunc.UrlEngine(dburls.getData("/" + result).BodyID, strLang));
-        }
-        else {
-          // no homepage -> error
-          blnOk = true;
-        }
-      }
-      else {
-        // no homepage -> error
-        blnOk = true;
-      }
-
-    }
-  }
-  else {
-    // sub page
-    var result = dburls.getData("/").findIndex(item => item.Type === "Page" && item.Lang === strLang && item.PageFullUrl === "/" + req.originalUrl);
-    if (result > -1) {
-      // home page with lang
-      res.send(comfunc.UrlEngine(dburls.getData("/" + result).BodyID, strLang));
-    }
-    else {
-      if (strLang != "*") {
-        // page without lang
-        var result = dburls.getData("/").findIndex(item => item.Type === "Page" && item.Lang === "*" && item.PageFullUrl === "/" + req.originalUrl);
-        if (result > -1) {
-          res.send(comfunc.UrlEngine(dburls.getData("/" + result).BodyID, strLang));
-        }
-        else {
-          // no page -> error
-          blnOk = true;
-        }
-      }
-      else {
-        // no homepage -> error
-        blnOk = true;
-      }
-
-    }
-
-  }
-
-  // error page
-  if (blnOk) {
-    res.status(err.status || 404);
-    var result = dburls.getData("/").findIndex(item => item.Type === "404" && item.Lang === strLang);
-    if (result > -1) {
-      // home page with lang
-      res.send(comfunc.UrlEngine(dburls.getData("/" + result).BodyID, strLang));
-    }
-    else
-    {
-      if (strLang != "*") {
-        // 404 without lang
-        var result = dburls.getData("/").findIndex(item => item.Type === "404" && item.Lang === "*");
-        if (result > -1) {
-          res.send(comfunc.UrlEngine(dburls.getData("/" + result).BodyID, strLang));
-        }
-        else {
-          // no error page
-          res.json({
-            msg: req.originalUrl+" not found, no error page definied",
-            status: 404
-        });
-        }
-      }
-      else {
-       // no error page
-       res.json({
-        msg: req.originalUrl+" not found, no error page definied",
-        status: 404
-    });
-      }
-
-    }
-   
-  }
-
-res.json({
-  msg: "engine off",
-  status: 404
-});
-*/
 });
 
 // error handler

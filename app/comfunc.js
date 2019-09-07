@@ -15,9 +15,10 @@ var fs = require('fs-extra'),
   dbwebsites = new JsonDB(`${__base}/db/cmswebsites`, true, false),
   db = new JsonDB(`${__base}/db/config`, true, false);
 
+var configdata = db.getData("/");
+
 var comfunc = {
-  GetWebsite : function (Routerid)
-  {
+  GetWebsite: function (Routerid) {
     var result = dbrouters.getData("/").findIndex(item => item.Id === Routerid);
     if (result > -1) {
       var templateid = dbrouters.getData("/" + result).TemplateId;
@@ -27,23 +28,21 @@ var comfunc = {
         var result2 = dbwebsites.getData("/").findIndex(item => item.Id === websiteid);
         if (result2 > -1) {
           return dbwebsites.getData("/" + result2).Website;
-          
-        } 
-      
+
+        }
+
       }
     }
     return "";
   },
-  CerExpired : function (stime,endtime)
-  { 
-    var date= new Date();
-    return  date< stime ? "Not started": date>endtime ? "Expired":"Active until "+moment(endtime).toNow(true); 
+  CerExpired: function (stime, endtime) {
+    var date = new Date();
+    return date < stime ? "Not started" : date > endtime ? "Expired" : "Active until " + moment(endtime).toNow(true);
   },
-  GeoExpired: function ()
-  {  
+  GeoExpired: function () {
     var { mtime } = fs.statSync(`${__base}/geoip/geoip.mmdb`)
-    return moment(mtime).fromNow(); 
-    },
+    return moment(mtime).fromNow();
+  },
   Modules: function () {
     var tmp1 = _.functionsIn(cmsmodulread);
     var tmp2 = [];
@@ -52,39 +51,27 @@ var comfunc = {
   },
 
   A2B: function (data) {
-    if (data != "" || data !=null)
+    if (data != "" || data != null)
       return Buffer.from(data).toString('base64');
     return "";
   },
   B2A: function (data) {
-    if (data != "" || data!=null)
+    if (data != "" || data != null)
       return Buffer.from(data, 'base64').toString('ascii');
     return "";
   },
-  UrlEngine: function (objRouter,strWebsiteId,strFireWall) {
- 
-    var strHtml = DbFunc.GetHtml(objRouter.TemplateId);
-    if (strHtml !="*")
-    {
-        strHtml=DbFunc.GetHeader(objRouter.HeadId,strHtml);
-        strHtml=DbFunc.GetAds(objRouter.Id,strHtml,strWebsiteId,strFireWall);
+  UrlEngine: function (objRouter, strWebsiteId, strFireWall) {
+
+    var strHtml = DbFunc[configdata.DB + "_GetHtml"](objRouter.TemplateId);
+    if (strHtml != "*") {
+      strHtml = DbFunc[configdata.DB + "_GetHeader"](objRouter.HeadId, strHtml);
+      strHtml = DbFunc[configdata.DB + "_GetAds"](objRouter.Id, strHtml, strWebsiteId, strFireWall);
+      strHtml = DbFunc[configdata.DB + "_GetModuls"](objRouter.Id, strHtml, strFireWall);
+
     }
-    else
-    {
-      strHtml=`UrlEngine Router error Alias:${objRouter.Alias}`
+    else {
+      strHtml = `UrlEngine Router error Alias:${objRouter.Alias}`
     }
-   
-    
-      // moduls
-      var filteredCMo = dbroutersad.getData("/").filter(function (value) { return value.HeadId === objContent.Id && value.Mode === "M"; });
-      filteredCMo.forEach(function (item) {
-        // call read fn to convert data
-        if (item.GroupID != "None") {
-          var strModul = cmsmodulread[item.GroupID](item.Data);
-          strHtml = strHtml.replace("@!section('" + item.Section + "')", strModul);
-        }
-      });
-    
 
     return strHtml;
   },
