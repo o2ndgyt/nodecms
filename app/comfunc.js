@@ -7,14 +7,12 @@ var fs = require('fs-extra'),
   JsonDB = require('node-json-db'),
   cmsmodulread = require(`${__base}/app/modules/cmsmodul.read.js`),
   DbFunc = require(`${__base}app/routers/dbfunc.js`),
-  dbads = new JsonDB(`${__base}/db/cmsad`, true, false),
-  dbheaders = new JsonDB(`${__base}/db/cmsheaders`, true, false),
   dbrouters = new JsonDB(`${__base}/db/cmsrouters`, true, false),
-  dbroutersad = new JsonDB(`${__base}/db/cmsroutersad`, true, false),
   dbtemplates = new JsonDB(`${__base}/db/cmstemplates`, true, false),
   dbwebsites = new JsonDB(`${__base}/db/cmswebsites`, true, false),
   db = new JsonDB(`${__base}/db/config`, true, false);
 
+db.reload();
 var configdata = db.getData("/");
 
 var comfunc = {
@@ -122,9 +120,9 @@ var comfunc = {
         //except head,body,footer js script
         if (str3 != "HeaderScript" && str3 != "BodyScript" && str3 != "FooterScript") {
           var id = uuidv4();
-          if (str3.substr(0, 3).toLowerCase() == "ad_")
+          if (str3.substr(0, 3).toLowerCase() == "ad#")
             indices.push({ "Id": id, "HeadId": HeadId, "Mode": "A", "Section": str3, "GroupId": "---" });
-          if (str3.substr(0, 4).toLowerCase() == "mod_")
+          if (str3.substr(0, 4).toLowerCase() == "mod#")
             indices.push({ "Id": id, "HeadId": HeadId, "Mode": "M", "Section": str3, "GroupId": "---" });
         }
       });

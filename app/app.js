@@ -13,6 +13,7 @@ var logger = require('morgan'),
   rateLimit = require("express-rate-limit"),
   ipgeoblock = require(`${__base}app/routers/geoip.js`),
   flash=require('connect-flash'),
+  csrf = require('csurf'),
   RouterAdmin = require(`${__base}app/routers/routeradmin.js`),
   DbFunc = require(`${__base}app/routers/dbfunc.js`),
   db = new JsonDB(`${__base}db/config`, true, false);
@@ -20,6 +21,10 @@ var logger = require('morgan'),
 var configdata = db.getData("/");
 
 var app = express();
+
+var csrfProtecion = csrf();
+app.use(csrfProtecion);
+
 
 // User agent
 app.use(useragent.express());

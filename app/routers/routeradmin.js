@@ -2,11 +2,10 @@ var express = require('express'),
     router = express.Router(),
     JsonDB = require('node-json-db'),
     _ = require('lodash'),
-    { Certificate } = require('@fidm/x509'),
-    csrf = require('csurf'),
     passport = require('passport'),
     uuidv4 = require('uuid/v4'),
     comfunc = require(`${__base}app/comfunc.js`),
+    DbFunc = require(`${__base}app/routers/dbfunc.js`),
     db = new JsonDB(`${__base}db/config`, true, false),
     dbads = new JsonDB(`${__base}db/cmsad`, true, false),
     dbtemplates = new JsonDB(`${__base}db/cmstemplates`, true, false),
@@ -21,8 +20,8 @@ var express = require('express'),
     cmsmodulupdate = require(`${__base}app/modules/cmsmodul.update.js`);
 
 
-var csrfProtecion = csrf();
-router.use(csrfProtecion);
+db.reload();
+var globalconfigdata = db.getData("/");
 
 require(`${__base}app/passportlogin.js`);
 
@@ -172,14 +171,14 @@ router.post('/ChangePwd', function (req, res) {
         configdata.AdminPWD = req.body.AdminPWD;
         db.push("/", configdata);
         res.json({
-            success: "Login changed",
+            success: "Login details saved.",
             status: 200
         });
     }
     else
     {
         res.json({
-            success: "Invalid Email or too short password. Password is min 6 char",
+            success: "Invalid email or too short password. Password is min 6 char !",
             status: 500
         });
     }
@@ -195,67 +194,23 @@ router.get('/Langs', function (req, res) {
 
 // Create
 router.post('/Langs', function (req, res) {
-    dblangs.reload();
-    var adsdata = dblangs.getData("/");
-    req.body.Id = uuidv4();
-    dblangs.push("/" + adsdata.length, req.body, false);
-    res.json({ values: req.body });
+    res.json(DbFunc[globalconfigdata.DB+"_PostLangs"](req.body));
 });
 
 // Read
-router.get('/Langs/list/:id', function (req, res) {
-    dblangs.reload();
-    var adsdata = dblangs.getData("/");
-    if (req.params.id == 2)
-    { 
-        adsdata.push({Id:"*",Code:"*",Alias:"All"});
-    }
-    res.json(req.params.id == 2 ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
+router.get('/Langs/list/:id', function (req, res) {  
+    res.json(DbFunc[globalconfigdata.DB+"_ListLangs"](req.params.id));
 });
 
 
 // Update
 router.post('/Langs/:id', function (req, res) {
-    dblangs.reload();
-    var result = dblangs.getData("/").findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        req.body.Id = req.params.id;
-        dblangs.push("/" + result, req.body);
-        res.json({ values: req.body });
-    } else {
-        //todo
-        res.json({
-            success: "Update Error. Refresh page",
-            status: 500
-        });
-    }
-
+    res.json (DbFunc[globalconfigdata.DB+"_UpdateLangs"](req.params.id,req.body));
 });
 
 // Delete
 router.post('/Langs/d/:id', function (req, res) {
-    dblangs.reload();
-    var addata = dblangs.getData("/");
-    var result = addata.findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        addata.splice(result, 1);
-        dblangs.push("/", addata);
-        res.json({ values: req.params.id });
-    } else {
-        res.json({
-            //todo
-            success: "Delete error. Refresh page",
-            status: 500
-        });
-    }
-});
-
-router.get('/Restart', function (req, res) {
-    process.on('SIGINT', function() {
-     
-          process.exit(1);
-    
-     });
+    res.json (DbFunc[globalconfigdata.DB+"_DeleteLangs"](req.params.id));
 });
 
 
@@ -268,62 +223,22 @@ router.get('/Websites', function (req, res) {
 
 // Create
 router.post('/Websites', function (req, res) {
-    dbwebsites.reload();
-    var adsdata = dbwebsites.getData("/");
-    req.body.Id = uuidv4();
-    req.body.ValidFrom=Certificate.fromPEM(req.body.CER).validFrom;
-    req.body.ValidTo=Certificate.fromPEM(req.body.CER).validTo;
-    req.body.Active=comfunc.CerExpired(req.body.ValidFrom,req.body.ValidTo);
-    dbwebsites.push("/" + adsdata.length, req.body, false);
-    res.json({ values: req.body });
+    res.json (DbFunc[globalconfigdata.DB+"_PostWebsites"](req.body));
 });
 
 // Read
 router.get('/Websites/list/:id', function (req, res) {
-    dbwebsites.reload();
-    var adsdata = dbwebsites.getData("/");
-    res.json(req.params.id == '2' ? adsdata : { "totalCount": adsdata.length, "items": adsdata });
+    res.json(DbFunc[globalconfigdata.DB+"_ListWebsites"](req.params.id));
 });
-
-
 
 // Update
 router.post('/Websites/:id', function (req, res) {
-    dbwebsites.reload();
-    var result = dbwebsites.getData("/").findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        req.body.Id = req.params.id;
-        req.body.ValidFrom=Certificate.fromPEM(req.body.CER).validFrom;
-        req.body.ValidTo=Certificate.fromPEM(req.body.CER).validTo;   
-        req.body.Active=comfunc.CerExpired(req.body.ValidFrom,req.body.ValidTo);       
-        dbwebsites.push("/" + result, req.body);
-        res.json({ values: req.body });
-    } else {
-        //todo
-        res.json({
-            success: "Update Error. Refresh page",
-            status: 500
-        });
-    }
-
+    res.json (DbFunc[globalconfigdata.DB+"_UpdateWebsites"](req.params.id,req.body));
 });
 
 // Delete
 router.post('/Websites/d/:id', function (req, res) {
-    dbwebsites.reload();
-    var addata = dblangs.getData("/");
-    var result = addata.findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        addata.splice(result, 1);
-        dbwebsites.push("/", addata);
-        res.json({ values: req.params.id });
-    } else {
-        res.json({
-            //todo
-            success: "Delete error. Refresh page",
-            status: 500
-        });
-    }
+    res.json (DbFunc[globalconfigdata.DB+"_DeleteWebsites"](req.params.id));
 });
 
 
@@ -337,63 +252,23 @@ router.get('/Headers', function (req, res) {
 
 // Read
 router.get('/Headers/list', function (req, res) {
-    dbheaders.reload();
-    var adsdata = dbheaders.getData("/");
-    res.json({ "totalCount": adsdata.length, "items": adsdata });
+    res.json(DbFunc[globalconfigdata.DB+"_ListHeaders"] );
 });
 
 // Create
 router.post('/Headers', function (req, res) {
-    dbheaders.reload();
-    var adsdata = dbheaders.getData("/");
-    req.body.Id = uuidv4();
-    req.body.HeaderScript = comfunc.A2B(req.body.HeaderScript);
-    req.body.BodyScript = comfunc.A2B(req.body.BodyScript);
-    req.body.FooterScript = comfunc.A2B(req.body.FooterScript);
-    dbheaders.push("/" + adsdata.length, req.body, false);
-    res.json({ values: req.body });
+    res.json(DbFunc[globalconfigdata.DB+"_PostHeaders"](req.body));
 });
-
 
 
 // Update
 router.post('/Headers/:id', function (req, res) {
-    dbheaders.reload();
-    var result = dbheaders.getData("/").findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        req.body.Id = req.params.id;
-        req.body.HeaderScript = comfunc.A2B(req.body.HeaderScript);
-        req.body.BodyScript = comfunc.A2B(req.body.BodyScript);
-        req.body.FooterScript = comfunc.A2B(req.body.FooterScript);
-
-        dbheaders.push("/" + result, req.body);
-        res.json({ values: req.body });
-    } else {
-        //todo
-        res.json({
-            success: "Update Error. Refresh page",
-            status: 500
-        });
-    }
-
+    res.json(DbFunc[globalconfigdata.DB+"_UpdateHeaders"](req.params.id,req.body));
 });
 
 // Delete
 router.post('/Headers/d/:id', function (req, res) {
-    dbheaders.reload();
-    var addata = dbheaders.getData("/");
-    var result = addata.findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        addata.splice(result, 1);
-        dbheaders.push("/", addata);
-        res.json({ values: req.params.id });
-    } else {
-        res.json({
-            //todo
-            success: "Delete error. Refresh page",
-            status: 500
-        });
-    }
+    res.json(DbFunc[globalconfigdata.DB+"_DeleteHeaders"](req.params.id));
 });
 
 
@@ -408,57 +283,23 @@ router.get('/Ads', function (req, res) {
 
 // Read
 router.get('/Ads/list', function (req, res) {
-    dbads.reload();
-    var adsdata = dbads.getData("/");
-    res.json({ "totalCount": adsdata.length, "items": adsdata });
+    res.json(DbFunc[globalconfigdata.DB+"_ListAds"]);
 });
 
 // Create
 router.post('/Ads', function (req, res) {
-    dbads.reload();
-    var adsdata = dbads.getData("/");
-    req.body.Id = uuidv4();
-    req.body.AdvertJS = comfunc.A2B(req.body.AdvertJS);
-    dbads.push("/" + adsdata.length, req.body, false);
-    res.json({ values: req.body });
+    res.json(DbFunc[globalconfigdata.DB+"_PostAds"](req.body));
 });
 
 
 // Update
 router.post('/Ads/:id', function (req, res) {
-    dbads.reload();
-    var result = dbads.getData("/").findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        req.body.Id = req.params.id;
-        req.body.AdvertJS = comfunc.A2B(req.body.AdvertJS);
-        dbads.push("/" + result, req.body);
-        res.json({ values: req.body });
-    } else {
-        //todo
-        res.json({
-            success: "Update Error. Refresh page",
-            status: 500
-        });
-    }
-
+    res.json(DbFunc[globalconfigdata.DB+"_UpdateAds"](req.params.id,req.body));
 });
 
 // Delete
 router.post('/Ads/d/:id', function (req, res) {
-    dbads.reload();
-    var addata = dbads.getData("/");
-    var result = addata.findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        addata.splice(result, 1);
-        dbads.push("/", addata);
-        res.json({ values: req.params.id });
-    } else {
-        res.json({
-            //todo
-            success: "Delete error. Refresh page",
-            status: 500
-        });
-    }
+    res.json(DbFunc[globalconfigdata.DB+"_DeleteAds"](req.params.id));
 });
 
 // Main Websites CRUD
@@ -471,38 +312,19 @@ router.get('/Templates', function (req, res) {
 
 // Read
 router.get('/Templates/list', function (req, res) {
-    dbtemplates.reload();
-    var adsdata = dbtemplates.getData("/");
-    res.json({ "totalCount": adsdata.length, "items": adsdata });
+    res.json(DbFunc[globalconfigdata.DB+"_ListWebsites"]);
 });
 
 // Create
 router.post('/Templates', function (req, res) {
-    dbtemplates.reload();
-    var adsdata = dbtemplates.getData("/");
-    req.body.Id = uuidv4();
-    var data = "<html><title>@!Title</title><meta name=\"Description\" content=\"@!Desc\">\n<head>\n@!section('HeaderScript')\n</head>\n<body>\n@!section('BodyScript')\n<h1>\n@!section('ad_first')\n</h1>\n<h2>\n@!section('mod_first')\n</h2>\n@!section('FooterScript')\n</body>\n</html>";
-    req.body.HTML = comfunc.A2B(data);
-    dbtemplates.push("/" + adsdata.length, req.body, false);
-    res.json({ values: req.body });
+    res.json(DbFunc[globalconfigdata.DB+"_PostWebsites"](req.body));
 });
 
 // update
 router.post('/Templates/:id', function (req, res) {
-    dbtemplates.reload();
-    var result = dbtemplates.getData("/").findIndex(item => item.Id === req.params.id);
-    if (result > -1) {
-        var element = dbtemplates.getData("/" + result)
-        element.Alias = req.body.Alias;
-        dbtemplates.push("/" + result, element);
-        res.json({ values: element });
-    } else {
-        res.json({
-            // todo
-            success: "Update Error. Refresh page",
-            status: 500
-        });
-    }
+    res.json(DbFunc[globalconfigdata.DB+"_UpdateWebsites"](req.params.id,req.body));
+
+    
 });
 
 // Delete template
@@ -558,74 +380,8 @@ router.post('/Templates/e/:id', function (req, res) {
 
     }
     res.redirect('/admin/Templates');
-    //TODO 
-    // CHANGE cmsroutersad
 });
 
-/*TODO
-// Delete
-router.post('/Mainwebsites/d/:id', function (req, res) {
-    fs.access("./views/" + req.params.id + ".edge", fs.constants.F_OK | fs.constants.W_OK, (err) => {
-        if (err) {
-            res.json({
-                success: req.params.id + " file does not exists. Refresh page",
-                status: 500
-            });
-        } else {
-            fs.unlink("./views/" + req.params.id + ".edge", (error) => {
-                if (error) {
-                    res.json({
-                        success: req.params.id + " " + error.message,
-                        status: 500
-                    });
-                } else {
-                    //delete all content
-                    dbcontents.reload();
-                    dburls.reload();
-                    var addata = dbcontents.getData("/");
-                    var addata1 = dbcontents.getData("/");
-                    var addata2 =  dburls.getData("/");
-                    addata1.forEach(function(item) {
-                    
-                    var result = addata.findIndex(item => item.FileLayout === req.params.id);
-                    if (result > -1) {
-                        //delete all urls with this content
-                        var data=dbcontents.getData("/"+result);
-                        addata2.forEach(function(item) {
-                                dburls.reload();
-                                var addata3 = dburls.getData("/");
-                                // find by id
-                                var result2 = addata3.findIndex(item => item.BodyID === data.Id);
-                                if (result2 > -1) {
-                                    addata3.splice(result, 1);
-                                    dburls.push("/", addata3);
-                                }
-                        });
-
-
-                        addata.splice(result, 1);
-                        dbcontents.push("/", addata);
-                
-                        // delete head ads      
-                        dbcontentsad.reload();
-                        var filtered = dbcontentsad.getData("/").filter(function (value) { return value.HeadId != data.Id; });
-                
-                        dbcontentsad.push("/", filtered);
-                
-                    } 
-                });
-
-
-                    res.json({
-                        success: req.params.id + " deleted successfully",
-                        status: 200
-                    });
-                }
-            })
-        }
-    });
-});
-*/
 
 // Routers ads CRUD
 //**********************
