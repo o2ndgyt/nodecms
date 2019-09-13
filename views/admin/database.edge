@@ -1,9 +1,9 @@
 @layout('admin')
 @section('content')
-
-
 <script lang="javascript">
-var priorities = ["File", "MongoDB"];
+var priorities = ["File"];
+//var priorities = ["File", "MongoDB"];
+
 $(function(){
     $("#radiodb").dxRadioGroup({
         items: priorities,
@@ -18,21 +18,16 @@ $(document).ready(function () {
     SettingsDB();
 });
 </script>
-<div class="boxed">
-               
+<div class="boxed">         
   <div id="content-container">
-     
       <div class="pageheader">
           <h3> <i class="fa fa-database"></i> Databases </h3>        
       </div>
-    
       <div id="page-content">
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel">
-                    
                                 <div class="panel-body">
-                                   
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label" for="radiodb">Database:</label>
                                         <div class="col-sm-9">
@@ -42,7 +37,7 @@ $(document).ready(function () {
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label" for="MongoConn">MongoDB connection string</label>
                                         <div class="col-sm-9">
-                                            <INPUT class="form-control" value="{{ config.MongoConn }}" id="MongoConn" type="text" name="MongoConn">
+                                            <INPUT disabled class="form-control" value="{{ config.MongoConn }}" id="MongoConn" type="text" name="MongoConn">
                   
                                         </div>
                                     </div>
@@ -53,18 +48,13 @@ $(document).ready(function () {
                                             </div>
                                     </div>
                                 </div>
-                              
                                 <div class="panel-footer text-right">
                                     <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o" id="saveset" ></a>     
-                                </div>
-                              
+                                </div>         
                 </div>
             </div>
         </div>
       </div>
-    
   </div>
-
 </div>
-
 @endsection

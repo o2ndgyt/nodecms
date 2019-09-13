@@ -65,7 +65,6 @@ var comfunc = {
       strHtml = DbFunc[configdata.DB + "_GetHeader"](objRouter.HeadId, strHtml);
       strHtml = DbFunc[configdata.DB + "_GetAds"](objRouter.Id, strHtml, strWebsiteId, strFireWall);
       strHtml = DbFunc[configdata.DB + "_GetModuls"](objRouter.Id, strHtml, strFireWall);
-
     }
     else {
       strHtml = `UrlEngine Router error Alias:${objRouter.Alias}`
@@ -136,9 +135,10 @@ var comfunc = {
     if (configdata.DB === "File") {
       filesize.push({ file: "Files", size: "max. 200 MB/file" });
       filesize.push({ file: "ADs", size: prettyBytes(fileBytes.sync('./db/cmsad.json')) });
+      filesize.push({ file: "Headers", size: prettyBytes(fileBytes.sync('./db/cmsheaders.json')) });
+      filesize.push({ file: "Headers", size: prettyBytes(fileBytes.sync('./db/cmslangs.json')) });
       filesize.push({ file: "Routers", size: prettyBytes(fileBytes.sync('./db/cmsrouters.json')) });
       filesize.push({ file: "Routers  details", size: prettyBytes(fileBytes.sync('./db/cmsroutersad.json')) });
-      filesize.push({ file: "Headers", size: prettyBytes(fileBytes.sync('./db/cmsheaders.json')) });
       filesize.push({ file: "Urls", size: prettyBytes(fileBytes.sync('./db/cmsurls.json')) });
       filesize.push({ file: "Templates", size: prettyBytes(fileBytes.sync('./db/cmstemplates.json')) });
       filesize.push({ file: "Moduls", size: prettyBytes(fileBytes.sync('./db/cmsmoduls.json')) });
