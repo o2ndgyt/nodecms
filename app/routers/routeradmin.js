@@ -72,6 +72,19 @@ router.get('/Dashboard', function (req, res) {
     res.render('admin/dashboard', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken(), geoexp: comfunc.GeoExpired() });
 });
 
+
+
+// File Manager
+//**********************
+router.get('/FileManager', function (req, res) {
+    res.render('admin/filemanager', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken() });
+});
+
+router.get('/FileManager/list', function (req, res) {
+    var filelist=comfunc.walkSync(`${__base}public/`);
+    res.json({ "totalCount": filelist.length, "items": filelist } );
+});
+
 // Database
 //**********************
 router.get('/DB', function (req, res) {
@@ -246,7 +259,7 @@ router.get('/Headers', function (req, res) {
 });
 
 router.get('/Headers/list', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListHeaders"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListHeaders"]());
 });
 
 router.post('/Headers', function (req, res) {
@@ -268,7 +281,7 @@ router.get('/Ads', function (req, res) {
 });
 
 router.get('/Ads/list', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListAds"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListAds"]());
 });
 
 router.post('/Ads', function (req, res) {
@@ -290,7 +303,7 @@ router.get('/Templates', function (req, res) {
 });
 
 router.get('/Templates/list', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListTemplates"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListTemplates"]());
 });
 
 router.post('/Templates', function (req, res) {
@@ -338,19 +351,19 @@ router.get('/Routers/list/:id', function (req, res) {
 });
 
 router.get('/Routers/listext/headers', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListExtHeaders"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListExtHeaders"]());
 });
 
 router.get('/Routers/listext/templates', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListExtTemplates"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListExtTemplates"]());
 });
 
 router.get('/Routers/listext/adgroups', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListExtAdGroups"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListExtAdGroups"]());
 });
 
 router.get('/Routers/listext/modulgroups', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListExtModulGroups"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListExtModulGroups"]());
 });
 
 router.post('/Routers', function (req, res) {
@@ -372,7 +385,7 @@ router.get('/Urls', function (req, res) {
 });
 
 router.get('/Urls/list', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListUrls"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListUrls"]());
 });
 
 router.post('/Urls', function (req, res) {
@@ -402,7 +415,7 @@ router.get('/Moduls', function (req, res) {
 });
 
 router.get('/Moduls/list', function (req, res) {
-    res.json(DbFunc[globalconfigdata.DB + "_ListModuls"]);
+    res.json(DbFunc[globalconfigdata.DB + "_ListModuls"]());
 });
 
 router.get('/Moduls/list/modules', function (req, res) {

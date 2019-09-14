@@ -152,7 +152,7 @@ function Settings()
             _select1.append($('<option></option>').val(val).html(text));
         });
     
-        $("#ssl").append(_select.html());
+        $("#ssl").append(_select1.html());
 
         var myOptions2 = {
             "A": "Apache",
@@ -165,7 +165,7 @@ function Settings()
             _select2.append($('<option></option>').val(val).html(text));
         });
     
-        $("#webs").append(_select.html());
+        $("#webs").append(_select2.html());
         
         $('#saveset').click(function () {
 			SendData('Settings', JSON.stringify( {Appport:$('#Appport').val(), compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val() }));

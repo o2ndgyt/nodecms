@@ -1,4 +1,6 @@
 var fs = require('fs-extra'),
+  mime = require('mime'),
+  path=require('path'),
   fileBytes = require('file-bytes'),
   prettyBytes = require('pretty-bytes'),
   uuidv4 = require('uuid/v4'),
@@ -12,10 +14,27 @@ var fs = require('fs-extra'),
   dbwebsites = new JsonDB(`${__base}/db/cmswebsites`, true, false),
   db = new JsonDB(`${__base}/db/config`, true, false);
 
-db.reload();
-var configdata = db.getData("/");
+try {
+  db.reload();
+  var configdata = db.getData("/");
+}
+catch (err) { console.log(err); }
 
 var comfunc = {
+  walkSync: function (dir,filelist = []) {
+    fs.readdirSync(dir).forEach(file => {
+      filelist = fs.statSync(path.join(dir, file)).isDirectory()
+        ? comfunc.walkSync(path.join(dir, file), filelist)
+        : filelist.concat({
+          id: uuidv4(),
+          name: file,
+          path: dir.replace(/\\/g,'/').replace(__base.replace(/\\/g,'/'),'').replace('public',''),
+          size: prettyBytes(fs.statSync(path.join(dir, file)).size),
+          type: mime.getType(file)
+        });
+    });
+    return filelist;
+  },
   GetWebsite: function (Routerid) {
     var result = dbrouters.getData("/").findIndex(item => item.Id === Routerid);
     if (result > -1) {
@@ -28,7 +47,6 @@ var comfunc = {
           return dbwebsites.getData("/" + result2).Website;
 
         }
-
       }
     }
     return "";
@@ -47,7 +65,6 @@ var comfunc = {
     _.forEach(tmp1, function (value) { tmp2.push({ "Id": value.trim(), "Alias": value.trim() }); });
     return tmp2;
   },
-
   A2B: function (data) {
     if (data != "" || data != null)
       return Buffer.from(data).toString('base64');
@@ -59,7 +76,6 @@ var comfunc = {
     return "";
   },
   UrlEngine: function (objRouter, strWebsiteId, strFireWall) {
-
     var strHtml = DbFunc[configdata.DB + "_GetHtml"](objRouter.TemplateId);
     if (strHtml != "*") {
       strHtml = DbFunc[configdata.DB + "_GetHeader"](objRouter.HeadId, strHtml);
