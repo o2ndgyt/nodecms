@@ -1,5 +1,5 @@
 var fs = require('fs-extra'),
-  mime = require('mime'),
+ // mime = require('mime'),
   path=require('path'),
   fileBytes = require('file-bytes'),
   prettyBytes = require('pretty-bytes'),
@@ -30,7 +30,7 @@ var comfunc = {
           name: file,
           path: dir.replace(/\\/g,'/').replace(__base.replace(/\\/g,'/'),'').replace('public',''),
           size: prettyBytes(fs.statSync(path.join(dir, file)).size),
-          type: mime.getType(file)
+          //type: mime.getType(file)
         });
     });
     return filelist;

@@ -2,11 +2,44 @@ var express = require('express'),
     router = express.Router(),
     JsonDB = require('node-json-db'),
     passport = require('passport'),
+    path = require('path'),
+    archiver = require('archiver'),
+    multer = require('multer'),
+    fs = require('fs-extra'),
     comfunc = require(`${__base}app/comfunc.js`),
+    filemanager = require(`${__base}app/routers/filemanager.js`),
     DbFunc = require(`${__base}app/routers/dbfunc.js`),
     db = new JsonDB(`${__base}db/config`, true, false);
 
+
+var fileName = [];
+//MULTER CONFIG: to get file photos to temp server storage
+const multerConfig = {
+    //specify diskStorage (another option is memory)
+    storage: multer.diskStorage({
+        //specify destination
+        destination: function (req, file, next) {
+            next(null, './');
+        },
+
+        //specify the filename to be unique
+        filename: function (req, file, next) {
+            fileName.push(file.originalname);
+            next(null, file.originalname);
+
+        }
+    }),
+
+    // filter out and prevent non-image files.
+    fileFilter: function (req, file, next) {
+        next(null, true);
+    }
+};
+
+
 require(`${__base}app/passportlogin.js`);
+
+const contentRootPath = `${__base}public/`;
 
 try {
     db.reload();
@@ -80,10 +113,137 @@ router.get('/FileManager', function (req, res) {
     res.render('admin/filemanager', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken() });
 });
 
+/*
 router.get('/FileManager/list', function (req, res) {
-    var filelist=comfunc.walkSync(`${__base}public/`);
-    res.json({ "totalCount": filelist.length, "items": filelist } );
+    var filelist = comfunc.walkSync(`${__base}public/`);
+    res.json({ "totalCount": filelist.length, "items": filelist });
 });
+*/
+
+router.get('/FileManager/GetImage', function (req, res) {
+    var image = req.query.path;
+    fs.readFile(contentRootPath + image, function (err, content) {
+        if (err) {
+            res.writeHead(400, { 'Content-type': 'text/html' });
+            res.end("No such image");
+        } else {
+            //specify the content type in the response will be an image
+            res.writeHead(200, { 'Content-type': 'image/jpg' });
+            res.end(content);
+        }
+    });
+});
+
+router.post('/FileManager/Upload', multer(multerConfig).any('uploadFiles'), function (req, res) {
+    var obj;
+    for (var i = 0; i < fileName.length; i++) {
+        fs.rename('./' + fileName[i], path.join(contentRootPath, req.body.path + fileName[i]), function (err) {
+            if (err) throw err;
+        });
+    }
+    res.send('Success');
+    fileName = [];
+});
+
+router.post('/FileManager/Download', function (req, res) {
+    var downloadObj = JSON.parse(req.body.downloadInput);
+    if (downloadObj.names.length === 1 && downloadObj.data[0].isFile) {
+        var file = contentRootPath + downloadObj.path + downloadObj.names[0];
+        res.download(file);
+    } else {
+        var archive = archiver('zip', {
+            gzip: true,
+            zlib: { level: 9 } // Sets the compression level.
+        });
+        var output = fs.createWriteStream('./Files.zip');
+        downloadObj.data.forEach(function (item) {
+            archive.on('error', function (err) {
+                throw err;
+            });
+            if (item.isFile) {
+                archive.file(contentRootPath + downloadObj.path + item.name, { name: item.name });
+            }
+            else {
+                archive.directory(contentRootPath + downloadObj.path + item.name + "/", item.name);
+            }
+        });
+        archive.pipe(output);
+        archive.finalize();
+        output.on('close', function () {
+            var stat = fs.statSync(output.path);
+            res.writeHead(200, {
+                'Content-disposition': 'attachment; filename=Files.zip; filename*=UTF-8',
+                'Content-Type': 'APPLICATION/octet-stream',
+                'Content-Length': stat.size
+            });
+            var filestream = fs.createReadStream(output.path);
+            filestream.pipe(res);
+        });
+    }
+});
+
+router.post('/FileManager/list', function (req, res) {
+    req.setTimeout(0);
+    // Action for getDetails
+    if (req.body.action == "details") {
+        filemanager.getFileDetails(req, res, contentRootPath + req.body.path);
+
+    }
+    // Action for copying files
+    if (req.body.action == "copy") {
+        filemanager.CopyFiles(req, res, contentRootPath);
+    }
+    // Action for movinh files
+    if (req.body.action == "move") {
+        filemanager.MoveFiles(req, res, contentRootPath);
+    }
+    // Action to create a new folder
+    if (req.body.action == "create") {
+        filemanager.createFolder(req, res, contentRootPath + req.body.path);
+
+    }
+    // Action to remove a file
+    if (req.body.action == "delete") {
+        filemanager.deleteFolder(req, res, contentRootPath + req.body.path);
+
+    }
+    // Action to rename a file
+    if (req.body.action === "rename") {
+        filemanager.renameFolder(req, res, contentRootPath + req.body.path);
+
+    }
+
+    // Action to search a file
+    if (req.body.action === 'search') {
+        var fileList = [];
+        filemanager.fromDir(contentRootPath + req.body.path, req.body.searchString.replace(/\*/g, ""), contentRootPath);
+        (async () => {
+            const tes = await FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
+            response = { cwd: tes, files: fileList };
+            response = JSON.stringify(response);
+            res.setHeader('Content-Type', 'application/json');
+            res.json(response);
+        })();
+    }
+
+    // Action to read a file
+    if (req.body.action == "read") {
+        (async () => {
+            const filesList = await GetFiles(req, res);
+            const cwdFiles = await FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
+            var response = {};
+            filemanager.ReadDirectories(filesList).then(data => {
+                response = { cwd: cwdFiles, files: data };
+                response = JSON.stringify(response);
+                res.setHeader('Content-Type', 'application/json');
+                res.json(response);
+            });
+
+        })();
+    }
+
+});
+
 
 // Database
 //**********************
@@ -323,7 +483,7 @@ router.get('/Templates/e/:id', function (req, res) {
 });
 
 router.post('/Templates/e/:id', function (req, res) {
-    DbFunc[globalconfigdata.DB + "_SaveTemplates"](req.params.id, req.body,res);
+    DbFunc[globalconfigdata.DB + "_SaveTemplates"](req.params.id, req.body, res);
 });
 
 // Routersads

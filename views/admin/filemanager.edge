@@ -1,67 +1,29 @@
 @layout('admin')
 @section('content')
-<script lang="javascript">
-    $(document).ready(function () {
-      SetTitle('File Manager'); 
-  });
-  $(function(){
-      var orders = new DevExpress.data.CustomStore({
-          key: "id",
-          load: function (loadOptions) {
-              return ReadData("/admin/FileManager/list",loadOptions);           
-          }
-  
-      });
-      
-      $("#gridContainer").dxDataGrid({
-          dataSource: {
-              store: orders
-          },
-          editing: {
-              mode: "form",
-              allowAdding: false,
-              allowUpdating: false,
-              allowDeleting: false
-          },
-          columnAutoWidth: true,
-          showBorders: true,
-          remoteOperations: {
-              sorting: false,
-              paging: true
-          },
-          paging: {
-              pageSize: 24
-          },
-          searchPanel: {
-              visible: true,
-          },
-          columns: [
-              {
-              dataField: "path",
-              dataType: "string",
-               formItem: { visible:false }
-          },{
-              dataField: "name",
-              dataType: "string",
-              formItem: { visible:false }
-          },{
-              dataField: "size",
-              dataType: "string",
-               formItem: { visible:false }
-          },{
-              dataField: "type",
-              dataType: "string",
-               formItem: { visible:false }
-          },
-                     
-          ],
-          onRowUpdating: function(options) { 
-               options.newData = $.extend({}, options.oldData, options.newData); 
-          }
-      }).dxDataGrid("instance");
-  });
-  </script>
-  
+
+<link href="http://cdn.syncfusion.com/ej2/ej2-base/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-inputs/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-popups/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-buttons/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-splitbuttons/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-layouts/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-navigations/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-grids/styles/material.css" rel="stylesheet" type="text/css"/>
+            <link href="http://cdn.syncfusion.com/ej2/ej2-filemanager/styles/material.css" rel="stylesheet" type="text/css"/>
+            <!-- Essential JS 2 file manager's global script -->
+            <script src="http://cdn.syncfusion.com/ej2/ej2-base/dist/global/ej2-base.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-layouts/dist/global/ej2-layouts.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-buttons/dist/global/ej2-buttons.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-popups/dist/global/ej2-popups.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-data/dist/global/ej2-data.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-inputs/dist/global/ej2-inputs.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-lists/dist/global/ej2-lists.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-dropdowns/dist/global/ej2-dropdowns.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-splitbuttons/dist/global/ej2-splitbuttons.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-navigations/dist/global/ej2-navigations.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-grids/dist/global/ej2-grids.min.js" type="text/javascript"></script>
+            <script src="http://cdn.syncfusion.com/ej2/ej2-filemanager/dist/global/ej2-filemanager.min.js" type="text/javascript"></script>
+
 <div class="boxed">  
   <div id="content-container">
       <div class="pageheader">
@@ -73,8 +35,47 @@
                 <div class="panel">
                     <div class="panel-body">    
                             <div class="demo-container">
-                                    <div id="gridContainer"></div>
-                                </div>                 
+
+                                <div id="filemanager"></div>
+                                <script>
+                                  var hostUrl = 'http://ndg.dev:3004/admin/';
+                                  // inject feature modules of the file manager
+                                  ej.filemanager.FileManager.Inject(ej.filemanager.DetailsView,ej.filemanager.Toolbar,ej.filemanager.NavigationPane);
+                                  // initialize File Manager componentej.filemanager.NavigationPane);
+                                  var filemanagerInstance = new ej.filemanager.FileManager({
+                                      ajaxSettings: {
+                                          url: hostUrl + 'FileManager/list',
+                                          getImageUrl: hostUrl + 'FileManager/GetImage',
+                                          uploadUrl: hostUrl + 'FileManager/Upload',
+                                          downloadUrl: hostUrl + 'FileManager/Download'
+                                      },
+                                      enablePersistence: true,
+                                      // File Manager's onSuccess event
+                                      success: onAjaxSuccess,
+                                      // File Manager's onError event
+                                      failure: onAjaxFailure
+                                 });
+                    
+                                // render initialized File Manager
+                                filemanagerInstance.appendTo('#filemanager');
+                    
+                                // File Manager's file onSuccess function
+                                function onAjaxSuccess(args){
+                                      console.log("Ajax request successful");
+                                }
+                    
+                                // File Manager's file onError function
+                                function onAjaxFailure(args){
+                                      console.log("Ajax request has failed");
+                                }
+                                </script>
+
+
+
+
+
+
+                             </div>                 
                     </div>          
                     <div class="panel-footer text-right">
                     </div>       

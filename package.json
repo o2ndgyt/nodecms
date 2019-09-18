@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@fidm/x509": "^1.2.1",
+    "archiver": "^3.1.1",
     "child_process": "^1.0.2",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
