@@ -38,23 +38,25 @@
 
                                 <div id="filemanager"></div>
                                 <script>
-                                  var hostUrl = 'http://ndg.dev:3004/admin/';
+                                  var hostUrl = window.location.href;
                                   // inject feature modules of the file manager
                                   ej.filemanager.FileManager.Inject(ej.filemanager.DetailsView,ej.filemanager.Toolbar,ej.filemanager.NavigationPane);
                                   // initialize File Manager componentej.filemanager.NavigationPane);
                                   var filemanagerInstance = new ej.filemanager.FileManager({
                                       ajaxSettings: {
-                                          url: hostUrl + 'FileManager/list',
-                                          getImageUrl: hostUrl + 'FileManager/GetImage',
-                                          uploadUrl: hostUrl + 'FileManager/Upload',
-                                          downloadUrl: hostUrl + 'FileManager/Download'
+                                          url: hostUrl + '/list',
+                                          getImageUrl: hostUrl + '/GetImage',
+                                          uploadUrl: hostUrl + '/Upload',
+                                          downloadUrl: hostUrl + '/Download'
+
                                           }
                                       ,
                                       beforeSend: function (args) { 
-                                        console.log(args);
+                                          alert(JSON.stringify(args));
                                         args.ajaxSettings.beforeSend=function (args){
                                             args.httpRequest.setRequestHeader("X-CSRF-TOKEN", "{{ csrfToken }}") ;}},
                                       enablePersistence: true,
+                                      allowDragAndDrop:true,
                                       // File Manager's onSuccess event
                                       success: onAjaxSuccess,
                                       // File Manager's onError event

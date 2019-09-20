@@ -39,7 +39,7 @@ const multerConfig = {
 
 require(`${__base}app/passportlogin.js`);
 
-const contentRootPath = `${__base}public/`;
+const contentRootPath = `${__base}public`;
 
 try {
     db.reload();
@@ -113,13 +113,6 @@ router.get('/FileManager', function (req, res) {
     res.render('admin/filemanager', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken() });
 });
 
-/*
-router.get('/FileManager/list', function (req, res) {
-    var filelist = comfunc.walkSync(`${__base}public/`);
-    res.json({ "totalCount": filelist.length, "items": filelist });
-});
-*/
-
 router.get('/FileManager/GetImage', function (req, res) {
     var image = req.query.path;
     fs.readFile(contentRootPath + image, function (err, content) {
@@ -184,7 +177,7 @@ router.post('/FileManager/Download', function (req, res) {
 
 router.post('/FileManager/list', function (req, res) {
     req.setTimeout(0);
-    // Action for getDetails
+    // Action for getDetails ok
     if (req.body.action == "details") {
         filemanager.getFileDetails(req, res, contentRootPath + req.body.path);
 
@@ -197,17 +190,17 @@ router.post('/FileManager/list', function (req, res) {
     if (req.body.action == "move") {
         filemanager.MoveFiles(req, res, contentRootPath);
     }
-    // Action to create a new folder
+    // Action to create a new folder ok
     if (req.body.action == "create") {
         filemanager.createFolder(req, res, contentRootPath + req.body.path);
 
     }
-    // Action to remove a file
+    // Action to remove a file ok
     if (req.body.action == "delete") {
         filemanager.deleteFolder(req, res, contentRootPath + req.body.path);
 
     }
-    // Action to rename a file
+    // Action to rename a file ok
     if (req.body.action === "rename") {
         filemanager.renameFolder(req, res, contentRootPath + req.body.path);
 
@@ -218,7 +211,7 @@ router.post('/FileManager/list', function (req, res) {
         var fileList = [];
         filemanager.fromDir(contentRootPath + req.body.path, req.body.searchString.replace(/\*/g, ""), contentRootPath);
         (async () => {
-            const tes = await FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
+            const tes = await filemanager.FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
             response = { cwd: tes, files: fileList };
             response = JSON.stringify(response);
             res.setHeader('Content-Type', 'application/json');
@@ -226,7 +219,7 @@ router.post('/FileManager/list', function (req, res) {
         })();
     }
 
-    // Action to read a file
+    // Action to read a file ok
     if (req.body.action == "read") {
         (async () => {
             const filesList = await filemanager.GetFiles(req, res);
