@@ -48,7 +48,12 @@
                                           getImageUrl: hostUrl + 'FileManager/GetImage',
                                           uploadUrl: hostUrl + 'FileManager/Upload',
                                           downloadUrl: hostUrl + 'FileManager/Download'
-                                      },
+                                          }
+                                      ,
+                                      beforeSend: function (args) { 
+                                        console.log(args);
+                                        args.ajaxSettings.beforeSend=function (args){
+                                            args.httpRequest.setRequestHeader("X-CSRF-TOKEN", "{{ csrfToken }}") ;}},
                                       enablePersistence: true,
                                       // File Manager's onSuccess event
                                       success: onAjaxSuccess,
@@ -69,11 +74,6 @@
                                       console.log("Ajax request has failed");
                                 }
                                 </script>
-
-
-
-
-
 
                              </div>                 
                     </div>          

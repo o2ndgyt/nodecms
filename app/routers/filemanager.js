@@ -3,8 +3,10 @@ var path = require('path'),
     multer = require('multer'),
     fs = require('fs-extra');
 
+const contentRootPath = `${__base}public/`;
+
 var filemanager = {
-    ReadDirectories:function (file) {
+    ReadDirectories:function (file,req) {
         var cwd = {};
         var directoryList = [];
         function stats(file) {
@@ -57,7 +59,7 @@ var filemanager = {
             var filename = path.join(startPath, files[i]);
             var stat = fs.lstatSync(filename);
             if (stat.isDirectory()) {
-                this.fromDir(filename, filter, contentRootPath); //recurse
+                filemanager.fromDir(filename, filter, contentRootPath); //recurse
             }
             else if (files[i].indexOf(filter) >= 0) {
                 var cwd = {};
@@ -233,7 +235,7 @@ var filemanager = {
         var filenames = fs.readdirSync(directory);
         for (var i = 0; i < filenames.length; i++) {
             if (fs.lstatSync(directory + "/" + filenames[i]).isDirectory()) {
-                this.getFolderSize(req, res, directory + "/" + filenames[i], size);
+                filemanager.getFolderSize(req, res, directory + "/" + filenames[i], size);
             } else {
                 const stats = fs.statSync(directory + "/" + filenames[i]);
                 size = size + stats.size;
@@ -262,10 +264,10 @@ var filemanager = {
             req.body.names = nameValues;
         }
         if (req.body.names.length == 1) {
-            this.fileDetails(req, res, filterPath + (isNamesAvailable ? req.body.names[0] : "")).then(data => {
+            filemanager.fileDetails(req, res, filterPath + (isNamesAvailable ? req.body.names[0] : "")).then(data => {
                 if (!data.isFile) {
-                    this.getFolderSize(req, res, filterPath + (isNamesAvailable ? req.body.names[0] : ""), 0);
-                    data.size = this.getSize(size);
+                    filemanager.getFolderSize(req, res, filterPath + (isNamesAvailable ? req.body.names[0] : ""), 0);
+                    data.size = filemanager.getSize(size);
                     size = 0;
                 }
                 response = { details: data };
@@ -276,16 +278,16 @@ var filemanager = {
         } else {
             req.body.names.forEach(function (item) {
                 if (fs.lstatSync(filterPath + item).isDirectory()) {
-                    this.getFolderSize(req, res, filterPath + item, size);
+                    filemanager.getFolderSize(req, res, filterPath + item, size);
                 } else {
                     const stats = fs.statSync(filterPath + item);
                     size = size + stats.size;
                 }
             });
-            this.fileDetails(req, res, filterPath + req.body.names[0]).then(data => {
+            filemanager.fileDetails(req, res, filterPath + req.body.names[0]).then(data => {
                 data.name = req.body.names.join(", ");
                 data.multipleFiles = true;
-                data.size = this.getSize(size);
+                data.size = filemanager.getSize(size);
                 size = 0;
                 response = { details: data };
                 response.details.location = filterPath.substr(filterPath.indexOf(":") + 1, filterPath.length - 1);
@@ -304,7 +306,7 @@ var filemanager = {
         files.forEach(function (file) {
             var curSource = path.join(source, file);
             if (fs.lstatSync(curSource).isDirectory()) {
-                this.copyFolder(curSource, path.join(dest, file)); source
+                filemanager.copyFolder(curSource, path.join(dest, file)); source
             } else {
                 fs.copyFileSync(path.join(source, file), path.join(dest, file), (err) => {
                     if (err) throw err;
@@ -415,7 +417,7 @@ var filemanager = {
             var cwd = {};
             fs.stat(filepath, function (err, stats) {
                 cwd.name = path.basename(filepath);
-                cwd.size = this.getSize(stats.size);
+                cwd.size = filemanager.getSize(stats.size);
                 cwd.isFile = stats.isFile();
                 cwd.dateModified = stats.ctime;
                 cwd.dateCreated = stats.mtime;

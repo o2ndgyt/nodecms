@@ -229,10 +229,10 @@ router.post('/FileManager/list', function (req, res) {
     // Action to read a file
     if (req.body.action == "read") {
         (async () => {
-            const filesList = await GetFiles(req, res);
-            const cwdFiles = await FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
+            const filesList = await filemanager.GetFiles(req, res);
+            const cwdFiles = await filemanager.FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
             var response = {};
-            filemanager.ReadDirectories(filesList).then(data => {
+            filemanager.ReadDirectories(filesList,req).then(data => {
                 response = { cwd: cwdFiles, files: data };
                 response = JSON.stringify(response);
                 res.setHeader('Content-Type', 'application/json');

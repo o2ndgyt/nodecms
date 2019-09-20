@@ -1,5 +1,4 @@
 var fs = require('fs-extra'),
- // mime = require('mime'),
   path=require('path'),
   fileBytes = require('file-bytes'),
   prettyBytes = require('pretty-bytes'),
