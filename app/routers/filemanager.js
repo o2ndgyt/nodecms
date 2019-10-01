@@ -3,7 +3,7 @@ var path = require('path'),
     multer = require('multer'),
     fs = require('fs-extra');
 
-const contentRootPath = `${__base}public/`;
+const contentRootPath = `${__base}public`;
 
 var filemanager = {
     ReadDirectories:function (file,req) {
@@ -123,7 +123,7 @@ var filemanager = {
     renameFolder: function (req, res) {
         var oldDirectoryPath = path.join(contentRootPath + req.body.path, req.body.name);
         var newDirectoryPath = path.join(contentRootPath + req.body.path, req.body.newName);
-        if (checkForDuplicates(contentRootPath + req.body.path, req.body.newName, req.body.data[0].isFile)) {
+        if (filemanager.checkForDuplicates(contentRootPath + req.body.path, req.body.newName, req.body.data[0].isFile)) {
             var errorMsg = new Error();
             errorMsg.message = "A file or folder with the name " + req.body.name + " already exists.";
             errorMsg.code = "400";
@@ -135,7 +135,7 @@ var filemanager = {
         } else {
             fs.renameSync(oldDirectoryPath, newDirectoryPath);
             (async () => {
-                await FileManagerDirectoryContent(req, res, newDirectoryPath).then(data => {
+                await filemanager.FileManagerDirectoryContent(req, res, newDirectoryPath).then(data => {
                     response = { files: data };
                     response = JSON.stringify(response);
                     res.setHeader('Content-Type', 'application/json');
@@ -165,7 +165,7 @@ var filemanager = {
         for (var i = 0; i < req.body.names.length; i++) {
             var newDirectoryPath = path.join(contentRootPath + req.body.path, req.body.names[i]);
 
-            promiseList.push(FileManagerDirectoryContent(req, res, newDirectoryPath));
+            promiseList.push(filemanager.FileManagerDirectoryContent(req, res, newDirectoryPath));
         }
         Promise.all(promiseList).then(data => {
             data.forEach(function (files) {
@@ -199,7 +199,7 @@ var filemanager = {
         } else {
             fs.mkdirSync(newDirectoryPath);
             (async () => {
-                await FileManagerDirectoryContent(req, res, newDirectoryPath).then(data => {
+                await filemanager.FileManagerDirectoryContent(req, res, newDirectoryPath).then(data => {
                     response = { files: data };
                     response = JSON.stringify(response);
                     res.setHeader('Content-Type', 'application/json');
@@ -321,12 +321,12 @@ var filemanager = {
         var fileList = [];
         req.body.data.forEach(function (item) {
             if (item.isFile) {
-                fs.copyFileSync(path.join(contentRootPath + req.body.path + req.path + item.name), path.join(contentRootPath + req.body.targetPath + item.name), (err) => {
+                fs.copyFileSync(path.join(contentRootPath + req.body.path +  item.name), path.join(contentRootPath + req.body.targetPath + item.name), (err) => {
                     if (err) throw err;
                 });
             }
             else {
-                var fromPath = contentRootPath + req.body.path + req.path + item.name;
+                var fromPath = contentRootPath + req.body.path  + item.name;
                 var toPath = contentRootPath + req.body.targetPath + item.name;
                 copyFolder(fromPath, toPath)
             }
@@ -367,17 +367,17 @@ var filemanager = {
         var fileList = [];
         req.body.data.forEach(function (item) {
             if (item.isFile) {
-                var source = fs.createReadStream(path.join(contentRootPath + req.body.path + req.path + item.name));
+                var source = fs.createReadStream(path.join(contentRootPath + req.body.path  + item.name));
                 var desti = fs.createWriteStream(path.join(contentRootPath + req.body.targetPath + item.name));
                 source.pipe(desti);
                 source.on('end', function () {
-                    fs.unlinkSync(path.join(contentRootPath + req.body.path + req.path + item.name), function (err) {
+                    fs.unlinkSync(path.join(contentRootPath + req.body.path  + item.name), function (err) {
                         if (err) throw err;
                     });
                 });
             }
             else {
-                var fromPath = contentRootPath + req.body.path + req.path + item.name;
+                var fromPath = contentRootPath + req.body.path  + item.name;
                 var toPath = contentRootPath + req.body.targetPath + item.name;
                 MoveFolder(fromPath, toPath);
                 fs.rmdirSync(fromPath);
@@ -428,10 +428,12 @@ var filemanager = {
                     resolve(cwd);
                 }
             });
+           
             if (fs.lstatSync(filepath).isDirectory()) {
                 fs.readdir(filepath, function (err, stats) {
                     stats.forEach(stat => {
-                        if (fs.lstatSync(filepath + stat).isDirectory()) {
+                        filepathx= filepath[filepath.length-1] == '/' ? filepath:filepath+'/';
+                        if (fs.lstatSync(filepathx + stat).isDirectory()) {
                             cwd.hasChild = true
                         } else {
                             cwd.hasChild = false;

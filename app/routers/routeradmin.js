@@ -40,7 +40,7 @@ const multerConfig = {
 
 require(`${__base}app/passportlogin.js`);
 
-const contentRootPath = `${__base}public/`;
+const contentRootPath = `${__base}public`;
 
 try {
     db.reload();
@@ -114,7 +114,6 @@ router.get('/FileManager', function (req, res) {
     res.render('admin/filemanager', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken() });
 });
 
-
 router.get('/FileManager/GetImage', function (req, res) {
     var image = req.query.path;
     fs.readFile(contentRootPath + image, function (err, content) {
@@ -180,7 +179,6 @@ router.post('/FileManager/Download', function (req, res) {
 
 router.post('/FileManager/list', function (req, res) {
     req.setTimeout(0);
-
     if (req.body.action == "details") {
         filemanager.getFileDetails(req, res, contentRootPath + req.body.path);
     }
@@ -192,15 +190,12 @@ router.post('/FileManager/list', function (req, res) {
     if (req.body.action == "move") {
         filemanager.MoveFiles(req, res, contentRootPath);
     }
-
     if (req.body.action == "create") {
         filemanager.createFolder(req, res, contentRootPath + req.body.path);
     }
-
     if (req.body.action == "delete") {
         filemanager.deleteFolder(req, res, contentRootPath + req.body.path);
     }
-
     if (req.body.action === "rename") {
         filemanager.renameFolder(req, res, contentRootPath + req.body.path);
     }

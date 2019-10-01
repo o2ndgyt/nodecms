@@ -68,6 +68,7 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 var csrfExclusion = ['/admin/FileManager/Download'];
 var conditionalCSRF = function (req, res, next) {
   if (csrfExclusion.indexOf(req.path) !== -1){
@@ -78,7 +79,6 @@ var conditionalCSRF = function (req, res, next) {
 }
 
 app.use(conditionalCSRF);
-//app.use(csrf());
 
 
 //global variables
