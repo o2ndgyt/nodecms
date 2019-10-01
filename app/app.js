@@ -67,7 +67,18 @@ app.use(rateLimit({ windowMs: 10 * 60 * 1000, max: 200 }));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(csrf());
+
+var csrfExclusion = ['/admin/FileManager/Download'];
+var conditionalCSRF = function (req, res, next) {
+  if (csrfExclusion.indexOf(req.path) !== -1){
+    next();  
+  } else {
+    csrf()(req, res, next);
+  }
+}
+
+app.use(conditionalCSRF);
+//app.use(csrf());
 
 
 //global variables

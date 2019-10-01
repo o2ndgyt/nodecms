@@ -1,16 +1,17 @@
 var express = require('express'),
     router = express.Router(),
+    uuidv4 = require('uuid/v4'),
     JsonDB = require('node-json-db'),
     passport = require('passport'),
     path = require('path'),
     archiver = require('archiver'),
     multer = require('multer'),
     fs = require('fs-extra'),
+    findRemoveSync = require('find-remove'),
     comfunc = require(`${__base}app/comfunc.js`),
     filemanager = require(`${__base}app/routers/filemanager.js`),
     DbFunc = require(`${__base}app/routers/dbfunc.js`),
     db = new JsonDB(`${__base}db/config`, true, false);
-
 
 var fileName = [];
 //MULTER CONFIG: to get file photos to temp server storage
@@ -113,12 +114,6 @@ router.get('/FileManager', function (req, res) {
     res.render('admin/filemanager', { filedb: comfunc.GetDbSize(), csrfToken: req.csrfToken() });
 });
 
-/*
-router.get('/FileManager/list', function (req, res) {
-    var filelist = comfunc.walkSync(`${__base}public/`);
-    res.json({ "totalCount": filelist.length, "items": filelist });
-});
-*/
 
 router.get('/FileManager/GetImage', function (req, res) {
     var image = req.query.path;
@@ -127,7 +122,6 @@ router.get('/FileManager/GetImage', function (req, res) {
             res.writeHead(400, { 'Content-type': 'text/html' });
             res.end("No such image");
         } else {
-            //specify the content type in the response will be an image
             res.writeHead(200, { 'Content-type': 'image/jpg' });
             res.end(content);
         }
@@ -146,6 +140,7 @@ router.post('/FileManager/Upload', multer(multerConfig).any('uploadFiles'), func
 });
 
 router.post('/FileManager/Download', function (req, res) {
+    findRemoveSync(`${__base}private/temp`, {age: {seconds: 3600}});
     var downloadObj = JSON.parse(req.body.downloadInput);
     if (downloadObj.names.length === 1 && downloadObj.data[0].isFile) {
         var file = contentRootPath + downloadObj.path + downloadObj.names[0];
@@ -153,9 +148,10 @@ router.post('/FileManager/Download', function (req, res) {
     } else {
         var archive = archiver('zip', {
             gzip: true,
-            zlib: { level: 9 } // Sets the compression level.
+            zlib: { level: 9 } 
         });
-        var output = fs.createWriteStream('./Files.zip');
+        var filename=`${__base}private/temp/Files_${uuidv4()}.zip`
+        var output = fs.createWriteStream(filename);
         downloadObj.data.forEach(function (item) {
             archive.on('error', function (err) {
                 throw err;
@@ -184,41 +180,36 @@ router.post('/FileManager/Download', function (req, res) {
 
 router.post('/FileManager/list', function (req, res) {
     req.setTimeout(0);
-    // Action for getDetails
+
     if (req.body.action == "details") {
         filemanager.getFileDetails(req, res, contentRootPath + req.body.path);
-
     }
-    // Action for copying files
+
     if (req.body.action == "copy") {
         filemanager.CopyFiles(req, res, contentRootPath);
     }
-    // Action for movinh files
+
     if (req.body.action == "move") {
         filemanager.MoveFiles(req, res, contentRootPath);
     }
-    // Action to create a new folder
+
     if (req.body.action == "create") {
         filemanager.createFolder(req, res, contentRootPath + req.body.path);
-
     }
-    // Action to remove a file
+
     if (req.body.action == "delete") {
         filemanager.deleteFolder(req, res, contentRootPath + req.body.path);
-
     }
-    // Action to rename a file
+
     if (req.body.action === "rename") {
         filemanager.renameFolder(req, res, contentRootPath + req.body.path);
-
     }
 
-    // Action to search a file
     if (req.body.action === 'search') {
         var fileList = [];
         filemanager.fromDir(contentRootPath + req.body.path, req.body.searchString.replace(/\*/g, ""), contentRootPath);
         (async () => {
-            const tes = await FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
+            const tes = await  filemanager.FileManagerDirectoryContent(req, res, contentRootPath + req.body.path);
             response = { cwd: tes, files: fileList };
             response = JSON.stringify(response);
             res.setHeader('Content-Type', 'application/json');
@@ -226,7 +217,6 @@ router.post('/FileManager/list', function (req, res) {
         })();
     }
 
-    // Action to read a file
     if (req.body.action == "read") {
         (async () => {
             const filesList = await filemanager.GetFiles(req, res);

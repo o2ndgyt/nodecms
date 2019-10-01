@@ -26,6 +26,7 @@
     "express-useragent": "^1.0.13",
     "express-validator": "^5.3.1",
     "file-bytes": "^2.0.3",
+    "find-remove": "^2.0.0",
     "findhit-proxywrap": "^0.3.12",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",

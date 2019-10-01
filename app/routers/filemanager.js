@@ -20,7 +20,7 @@ var filemanager = {
                     cwd.isFile = cwd.isFile();
                     cwd.dateModified = cwd.ctime;
                     cwd.dateCreated = cwd.mtime;
-                    cwd.filterPath = req.body.data.length > 0 ? getRelativePath(contentRootPath, contentRootPath + req.body.path, req) : "";
+                    cwd.filterPath = req.body.data.length > 0 ? filemanager.getRelativePath(contentRootPath, contentRootPath + req.body.path, req) : "";
                     cwd.type = path.extname(contentRootPath + req.body.path + file);
                     if (fs.lstatSync(file).isDirectory()) {
                         fs.readdirSync(file).forEach(function (items) {
@@ -216,7 +216,7 @@ var filemanager = {
             var cwd = {};
             fs.stat(filepath, function (err, stats) {
                 cwd.name = path.basename(filepath);
-                cwd.size = getSize(stats.size);
+                cwd.size = filemanager.getSize(stats.size);
                 cwd.isFile = stats.isFile();
                 cwd.modified = stats.ctime;
                 cwd.created = stats.mtime;
@@ -422,7 +422,7 @@ var filemanager = {
                 cwd.dateModified = stats.ctime;
                 cwd.dateCreated = stats.mtime;
                 cwd.type = path.extname(filepath);
-                cwd.filterPath = req.body.data.length > 0 ? getRelativePath(contentRootPath, contentRootPath + req.body.path.substring(0, req.body.path.indexOf(req.body.data[0].name))) : "";
+                cwd.filterPath = req.body.data.length > 0 ? filemanager.getRelativePath(contentRootPath, contentRootPath + req.body.path.substring(0, req.body.path.indexOf(req.body.data[0].name))) : "";
                 if (fs.lstatSync(filepath).isFile()) {
                     cwd.hasChild = false;
                     resolve(cwd);

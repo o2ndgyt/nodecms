@@ -20,20 +20,6 @@ try {
 catch (err) { console.log(err); }
 
 var comfunc = {
-  walkSync: function (dir,filelist = []) {
-    fs.readdirSync(dir).forEach(file => {
-      filelist = fs.statSync(path.join(dir, file)).isDirectory()
-        ? comfunc.walkSync(path.join(dir, file), filelist)
-        : filelist.concat({
-          id: uuidv4(),
-          name: file,
-          path: dir.replace(/\\/g,'/').replace(__base.replace(/\\/g,'/'),'').replace('public',''),
-          size: prettyBytes(fs.statSync(path.join(dir, file)).size),
-          //type: mime.getType(file)
-        });
-    });
-    return filelist;
-  },
   GetWebsite: function (Routerid) {
     var result = dbrouters.getData("/").findIndex(item => item.Id === Routerid);
     if (result > -1) {
@@ -44,7 +30,6 @@ var comfunc = {
         var result2 = dbwebsites.getData("/").findIndex(item => item.Id === websiteid);
         if (result2 > -1) {
           return dbwebsites.getData("/" + result2).Website;
-
         }
       }
     }
