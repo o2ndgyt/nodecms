@@ -1,8 +1,7 @@
 global.__base = __dirname + '/';
 var multiserver = require(`${__base}app/multiserver.js`);
-
 multiserver.Init();
-console.log("Node-CMS Ready. Have a nice day ;)");
+console.log("Node-CMS by ndg.yt Ready. Have a nice day ;)");
 
 
 /* 
@@ -11,10 +10,6 @@ var JsonDB = require('node-json-db'),
     vhttps = require('vhttps'),
     app = require((`${__base}app/app.js`),
     dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false));
-
-
-
-
 
 
 var data = dbwebsites.getData("/");
@@ -52,7 +47,6 @@ _.forEach(data, function (element) {
   });
   
 });
-
 
 
 /*

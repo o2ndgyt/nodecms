@@ -142,7 +142,7 @@ function Settings()
 
         var myOptions1 = {
             "C": "CloudFlare",
-            "L": "Let's encrypt",
+            "L": "CertBot (LetsEncrypt)",
             "O": "Own SSL",
             "0": "No SSL"
         };
@@ -159,7 +159,7 @@ function Settings()
             "N": "Nginx",
             "0": "NodeJs"
         };
-    
+     
         var _select2 = $('<select>');
         $.each(myOptions2, function (val, text) {
             _select2.append($('<option></option>').val(val).html(text));
@@ -167,6 +167,19 @@ function Settings()
     
         $("#webs").append(_select2.html());
         
+        var myOptions3 = {
+            "2": "HTTP 2",
+            "1": "HTTP 1.1"
+        };
+     
+        var _select3 = $('<select>');
+        $.each(myOptions3, function (val, text) {
+            _select3.append($('<option></option>').val(val).html(text));
+        });
+    
+        $("#spdy").append(_select3.html());
+        
+
         $('#saveset').click(function () {
 			SendData('Settings', JSON.stringify( {Appport:$('#Appport').val(), compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val() }));
         });

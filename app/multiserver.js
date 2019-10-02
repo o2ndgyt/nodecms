@@ -1,35 +1,88 @@
-var proxy_opts = {strict: false}; 
-var proxyWrap = require('findhit-proxywrap');
-var opts = {
-    port: 80,
-    secure: false,
-    serverModule: proxyWrap.proxy( require('http'), proxy_opts),
-    ssl: {
-        //Do this if you want http2:
-       http2: true,        
-       serverModule: proxyWrap.proxy(require('spdy').server, proxy_opts),
-        //Do this if you only want regular https
-        // serverModule: proxyWrap.proxy( require('http'), proxy_opts), 
-        port: 443,
-        key: `${__base}cert/default.rsa`,
-        cert: `${__base}cert/default.cer`,
-    }
-}
-
-var proxy = require('redbird')(opts),
-    JsonDB = require('node-json-db'),
+var JsonDB = require('node-json-db'),
     spdy = require('spdy'),
     http = require('http'),
+    https = require('https'),
     _ = require('lodash'),
     fs = require('fs-extra'),
-    app = require(`${__base}app/app.js`)
+    app = require(`${__base}app/app.js`),
+    db = new JsonDB(`${__base}db/config`, true, false),
     dbwebsites = new JsonDB(`${__base}/db/cmswebsites`, true, false);
 
 var Servers=[];
 
+var configdata = db.getData("/");
+
 var multiserver = {
   Init: function ()
-  {  
+  {
+    switch (configdata.ssl)
+    {
+        //CloudFlare
+        case "C":
+            switch (configdata.webs)
+            {
+                case "A":
+                    // apache
+                    break;
+                case "N":
+                    // nginx
+                    break;
+                case "0":
+                    // nodejs 
+                break;
+            }
+        
+        break;
+        //certbot
+        case "L": 
+        switch (configdata.webs)
+        {
+            case "A":
+                // apache
+                break;
+            case "N":
+                // nginx
+                break;
+            case "0":
+                // nodejs 
+            break;
+        }
+
+        break;
+        case "O": 
+        //Own SSL
+        switch (configdata.webs)
+        {
+            case "A":
+                // apache
+                break;
+            case "N":
+                // nginx
+                break;
+            case "0":
+                // nodejs 
+            break;
+        }
+
+        break;
+        case "0": 
+        //No SSL
+        switch (configdata.webs)
+        {
+            case "A":
+                // apache
+                break;
+            case "N":
+                // nginx
+                break;
+            case "0":
+                // nodejs 
+            break;
+        }
+        break;
+    }  
+    
+
     var data = dbwebsites.getData("/");
     _.forEach(data, function (element) {
 
@@ -40,32 +93,21 @@ var multiserver = {
             Server: http.createServer(app).listen(element.Port),
             //spdy.createServer(options, app).listen(element.Port),
             // 
-            hostname: element.Website, Port:element.Port}
+            hostname: element.Website, Port:element.Port, IsRunning:true}
         )
 
         fs.writeFile(`${__base}cert/${element.Website}.rsa`, element.RSA);
         fs.writeFile(`${__base}cert/${element.Website}.cer`, element.CER);
 
-        console.log(`https://${element.Website}:${element.Port}`);
-     /*   if (element.Website=="sportonline.dev")
-       // {
-        proxy.register(element.Website, `http://${element.Website}:${element.Port}`,
-        {
-          ssl: {
-            redirect: true,
-            key: `${__base}cert/${element.Website}.rsa`,
-            cert: `${__base}cert/${element.Website}.cer`,
-          }
-
-        });
-      }*/
-        // _.foreach
+        console.log(`http://${element.Website}:${element.Port}`);
       });
-      
-    
   },
-  Restart: function () {
- 
+  RestartAll: function () {
+        multiserver.StopAll();
+        multiserver.Init();
+  },
+  StopAll : function () {
+
   }
 };
 

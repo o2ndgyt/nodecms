@@ -4,9 +4,12 @@
   $(document).ready(function () {
     Settings(); 
     $("#compress").val("{{ config.compress }}").change();
+    $("#ssl").val("{{ config.ssl }}").change();
+    $("#webs").val("{{ config.webs }}").change();
+    $("#spdy").val("{{ config.spdy }}").change();
 });
 </script>
-    
+     
 <div class="boxed">
                
   <div id="content-container">
@@ -33,6 +36,13 @@
                                         <label class="col-sm-3 control-label" for="SSL">SSL:</label>
                                         <div class="col-sm-9">
                                             <select class="form-control selectpicker" id="ssl" name="ssl">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label" for="SSL">Protocol:</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control selectpicker" id="spdy" name="spdy">
                                             </select>
                                         </div>
                                     </div>
