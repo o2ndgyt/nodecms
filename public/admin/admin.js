@@ -155,9 +155,8 @@ function Settings()
         $("#ssl").append(_select1.html());
 
         var myOptions2 = {
-            "A": "Apache",
-            "N": "Nginx",
-            "0": "NodeJs"
+            "A": "Apache/Nginx (web server)",
+            "0": "NodeJs (app server)"
         };
      
         var _select2 = $('<select>');
