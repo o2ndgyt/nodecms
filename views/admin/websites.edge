@@ -86,7 +86,6 @@ $(function(){
             dataType: "string",
             visible:false,
             caption:"RSA private key",
-            validationRules: [{ type: "required" }],
             formItem: {
                     colSpan: 2,
                     editorType: "dxTextArea",
@@ -100,7 +99,19 @@ $(function(){
             dataType: "string",
             visible:false,
             caption:"Certificate",
-            validationRules: [{ type: "required" }],
+            formItem: {
+                    colSpan: 2,
+                    editorType: "dxTextArea",
+                    editorOptions: {
+                        height: 100
+                    }
+                }
+        },
+        {
+            dataField: "CA",
+            dataType: "string",
+            visible:false,
+            caption:"Ca",
             formItem: {
                     colSpan: 2,
                     editorType: "dxTextArea",
