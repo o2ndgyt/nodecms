@@ -153,33 +153,54 @@ var multiserver = {
         _.forEach(lstWebsites, function (element) {
           // Nginx
           deftempnginx += `include ${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf;\n`;
-          var nginxtemp = `server\n{\nlisten 80;\nlisten [::]:80;\nserver_name ${element.Website} www.${element.Website};\nlocation /\n{\nproxy_pass http://localhost:${element.Port};\ninclude ${__base}private/nginx/proxy.nginx.conf;\n}\n}`;
+          var nginxtemp = ``;
           fs.writeFile(`${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf`, nginxtemp);
 
           // apache
           deftempapache += `Include ${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf;\n`;
-          var apachetemp = `<VirtualHost *:80>\nServerName ${element.Website}\nServerAlias www.${element.Website}\nProxyRequests Off\nProxyPreserveHost On\nProxyPass / http://localhost:${element.Port}/\nProxyPassReverse / http://localhost:${element.Port}/\n</VirtualHost>`;
+          var apachetemp = ``;
           fs.writeFile(`${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf`, apachetemp);
 
         });
       }
       else {
-
-
-        https://linuxtechlab.com/simple-guide-to-configure-nginx-reverse-proxy-with-ssl/
-        https://centminmod.com/http2-nginx.html
-
         _.forEach(lstWebsites, function (element) {
+
           // Nginx
           deftempnginx += `include ${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf;\n`;
-          //   var nginxtemp = `server\n{\nlisten 80;\nlisten [::]:80;\nserver_name ${element.Website} www.${element.Website};\nlocation /\n{\nproxy_pass http://localhost:${element.Port};\ninclude ${__base}private/nginx/proxy.nginx.conf;\n}\n}`;
-          // fs.writeFile(`${__base}private/nginx/${element.Website}.nginx.conf`, nginxtemp);
+
+          var nginxtemp = ``;
+          fs.writeFile(`${__base}private/nginx/${element.Website}.nginx.conf`, nginxtemp);
 
           // apache
           deftempapache += `Include ${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf;\n`;
-          //   var apachetemp = `<VirtualHost *:80>\nServerName ${element.Website}\nServerAlias www.${element.Website}\nProxyRequests Off\nProxyPreserveHost On\nProxyPass / http://localhost:${element.Port}/\nProxyPassReverse / http://localhost:${element.Port}/\n</VirtualHost>`;
-          //   fs.writeFile(`${__base}private/apache/${element.Website}.apache.conf`, apachetemp);
+var apachetemp = `
+<VirtualHost *:443>\n
+    SSLEngine on\n
+    SSLCertificateFile ${__base}cert${path.sep}${element.Website}.cer\n
+    SSLCertificateKeyFile ${__base}cert${path.sep}${element.Website}.rsa\n
 
+    ${configdata.spdy == "1" ? "  SSLProtocol all -SSLv2 -SSLv3\n" : " SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1\nProtocols h2 h2c http/1.1"}    
+  
+   
+    
+    SSLHonorCipherOrder on\n
+    SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM\n
+    EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EEDH+aRSA+SHA384\n
+    EECDH+aRSA+SHA256 EECDH+aRSA+RC4\n
+    EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS"\n
+
+    ServerAdmin admin@${element.Website}\n
+    ServerName ${element.Website} www.${element.Website}\n
+    ProxyPassReverse / http://localhost:${element.Port}/\n
+    ProxyPass / http://localhost:${element.Port}/\n
+    ProxyPreserveHost on\n
+    ProxyRequests Off\n
+    Header always append Access-Control-Allow-Origin: "${element.Website}"\n
+</VirtualHost>
+`;
+
+             fs.writeFile(`${__base}private/apache/${element.Website}.apache.conf`, apachetemp);
         });
 
       }

@@ -14,24 +14,18 @@ var express = require('express'),
     db = new JsonDB(`${__base}db/config`, true, false);
 
 var fileName = [];
-//MULTER CONFIG: to get file photos to temp server storage
+
 const multerConfig = {
-    //specify diskStorage (another option is memory)
     storage: multer.diskStorage({
-        //specify destination
         destination: function (req, file, next) {
             next(null, './');
         },
-
-        //specify the filename to be unique
         filename: function (req, file, next) {
             fileName.push(file.originalname);
             next(null, file.originalname);
-
         }
     }),
 
-    // filter out and prevent non-image files.
     fileFilter: function (req, file, next) {
         next(null, true);
     }
