@@ -1,4 +1,5 @@
-var uuidv4 = require('uuid/v4'),
+var fs = require('fs-extra'),
+  uuidv4 = require('uuid/v4'),
   comfunc = require(`${__base}app/comfunc.js`),
   { Certificate } = require('@fidm/x509'),
   _ = require('lodash'),
@@ -15,7 +16,7 @@ var uuidv4 = require('uuid/v4'),
   dbmoduls = new JsonDB(`${__base}db/cmsmoduls`, true, false),
   dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false);
 
-var _strDefaultWebsite = "<html><title>@!Title</title><meta name=\"Description\" content=\"@!Desc\">\n<head>\n@!section('HeaderScript')\n</head>\n<body>\n@!section('BodyScript')\n<h1>\n@!section('ad#first')\n</h1>\n<h2>\n@!section('mod#first')\n</h2>\n@!section('FooterScript')\n</body>\n</html>";
+var _strDefaultWebsite =fs.readFileSync(`${__base}db/defaultwebsite.txt`);
 
 
 var dbfunc = {
@@ -129,6 +130,7 @@ var dbfunc = {
   File_UpdateUrl: function (id, data) {
     try {
       dburls.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var result = dburls.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         data.Id = id;
@@ -148,6 +150,7 @@ var dbfunc = {
   File_PostUrl: function (data) {
     try {
       dburls.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dburls.getData("/");
       data.Id = uuidv4();
       data.Website = comfunc.GetWebsite(data.RouterId);
@@ -193,6 +196,7 @@ var dbfunc = {
   File_UpdateRouter: function (id, data) {
     try {
       dbrouters.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var addata = dbrouters.getData("/");
       var result = addata.findIndex(item => item.Id === id);
       if (result > -1) {
@@ -231,6 +235,7 @@ var dbfunc = {
   File_PostRouter: function (data) {
     try {
       dbrouters.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbrouters.getData("/");
       data.Id = uuidv4();
       dbrouters.push("/" + adsdata.length, data, false);
@@ -331,9 +336,11 @@ var dbfunc = {
     catch (err) { console.log(err); }
     return { "totalCount": 0, "items": [] };
   },
-  File_SaveTemplates: function (id, data) {
+  File_SaveTemplates: function (id, data,res) {
+
     try {
       dbtemplates.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var result = dbtemplates.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         var element = dbtemplates.getData("/" + result)
@@ -345,10 +352,12 @@ var dbfunc = {
     res.redirect('/admin/Templates');
   },
   File_ReadTemplates: function (id, res, req) {
+
     try {
       dbtemplates.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var addata = dbtemplates.getData("/");
-      var result = addata.findIndex(item => item.Id === req.id);
+      var result = addata.findIndex(item => item.Id === id);
       if (result > -1) {
         var element = dbtemplates.getData("/" + result)
         res.render('admin/templateEdit', {
@@ -407,6 +416,7 @@ var dbfunc = {
   File_PostTemplates: function (data) {
     try {
       dbtemplates.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbtemplates.getData("/");
       data.Id = uuidv4();
       data.HTML = comfunc.A2B(_strDefaultWebsite);
@@ -446,6 +456,7 @@ var dbfunc = {
   File_UpdateAds: function (id, data) {
     try {
       dbads.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var result = dbads.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         data.Id = id;
@@ -465,6 +476,7 @@ var dbfunc = {
   File_PostAds: function (data) {
     try {
       dbads.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbads.getData("/");
       data.Id = uuidv4();
       data.AdvertJS = comfunc.A2B(data.AdvertJS);
@@ -505,6 +517,7 @@ var dbfunc = {
   File_UpdateHeaders: function (id, data) {
     try {
       dbheaders.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var result = dbheaders.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         data.Id = id;
@@ -528,6 +541,7 @@ var dbfunc = {
   File_PostHeaders: function (data) {
     try {
       dbheaders.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbheaders.getData("/");
       data.Id = uuidv4();
       data.HeaderScript = comfunc.A2B(data.HeaderScript);
@@ -571,6 +585,7 @@ var dbfunc = {
   File_UpdateWebsites: function (id, data) {
     try {
       dbwebsites.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var result = dbwebsites.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         data.Id = id;
@@ -719,6 +734,7 @@ var dbfunc = {
   File_GetHtml: function (TemplateId) {
     try {
       dbtemplates.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var result = dbtemplates.getData("/").findIndex(item => item.Id == TemplateId);
       if (result > -1)
         return comfunc.B2A(dbtemplates.getData("/" + result).HTML);
@@ -730,6 +746,7 @@ var dbfunc = {
   File_GetHeader: function (HeadId, strHtml) {
     try {
       ddbheaders.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var result = dbheaders.getData("/").findIndex(item => item.Id == HeadId);
       if (result > -1) {
         var objHeader = dbheaders.getData("/" + result);
@@ -745,6 +762,7 @@ var dbfunc = {
     try {
       dbroutersad.reload();
       dbads.reload();
+      var  comfunc = require(`${__base}app/comfunc.js`);
       var filteredCAd = dbroutersad.getData("/").filter(function (value) { return value.HeadId === strHeadId && value.Mode === "A"; });
       filteredCAd.forEach(function (item) {
         var adHtml = "";

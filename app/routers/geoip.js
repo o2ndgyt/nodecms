@@ -28,7 +28,6 @@ module.exports = function (options, accessDenied) {
 			throw new Error("options.geolite2 is not set");
 		}
 		
-		// Check that geolite2 exists (fs.exists is deprecated)
 		var geo2 = fs.openSync(options.geolite2, "r");
 		fs.close(geo2);
 		

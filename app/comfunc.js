@@ -1,5 +1,4 @@
 var fs = require('fs-extra'),
-  path=require('path'),
   fileBytes = require('file-bytes'),
   prettyBytes = require('pretty-bytes'),
   uuidv4 = require('uuid/v4'),

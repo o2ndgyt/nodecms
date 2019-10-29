@@ -1,0 +1,17 @@
+<html>
+<title>@!Title</title>
+<meta name="Description" content="@!Desc">
+<head>
+@!section('HeaderScript')
+</head>
+<body>
+@!section('BodyScript')
+<h1>
+@!section('ad#first')
+</h1>
+<h2>
+@!section('mod#first')
+</h2>
+@!section('FooterScript')
+</body>
+</html>
