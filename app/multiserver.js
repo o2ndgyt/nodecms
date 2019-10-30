@@ -7,7 +7,9 @@ var JsonDB = require('node-json-db'),
   https = require('https'),
   _ = require('lodash'),
   fs = require('fs-extra'),
+  ip = require('ip'),
   app = require(`${__base}app/app.js`),
+  edge = require('edge.js'),
   db = new JsonDB(`${__base}db/config`, true, false),
   DbFunc = require(`${__base}app/routers/dbfunc.js`);
 
@@ -88,7 +90,7 @@ var multiserver = {
             });
 
           console.log("INFO-05-Proxy server is listening on port 443".green)
-          server.listen(443);
+          server.listen(443,'::1');
         }
         break;
       //CloudFlare
@@ -132,7 +134,7 @@ var multiserver = {
 
 
             console.log("INFO-05-Nodejs is listening on port 80".green)
-            server.listen(80);
+            server.listen(80,'::1');
           }
         }
         else {
@@ -151,55 +153,42 @@ var multiserver = {
     if (configdata.webs == "A") {
       if (!withSSL) {
         _.forEach(lstWebsites, function (element) {
+          //TODO IPV6
+          const data={ element:element, path:_base, pathsep:path.sep,spdy:configdata.spdy,localipv4:ip.address(),localipv6:ip.address()};
+                
           // Nginx
           deftempnginx += `include ${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf;\n`;
-          var nginxtemp = ``;
+          
+          const template=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.http.conf`);
+          var nginxtemp = edge.renderString(template, data);
           fs.writeFile(`${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf`, nginxtemp);
 
           // apache
           deftempapache += `Include ${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf;\n`;
-          var apachetemp = ``;
+          template=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.http.conf`);
+          
+          var apachetemp = edge.renderString(template, data);
           fs.writeFile(`${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf`, apachetemp);
 
         });
       }
       else {
         _.forEach(lstWebsites, function (element) {
-
+              //TODO IPV6
+          const data={ element:element, path:_base, pathsep:path.sep,spdy:configdata.spdy,localipv4:ip.address(),localipv6:ip.address()};
+      
           // Nginx
           deftempnginx += `include ${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf;\n`;
-
-          var nginxtemp = ``;
+          const template=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.https.conf`);
+       
+          var nginxtemp = edge.renderString(template, data);
           fs.writeFile(`${__base}private/nginx/${element.Website}.nginx.conf`, nginxtemp);
 
           // apache
           deftempapache += `Include ${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf;\n`;
-var apachetemp = `
-<VirtualHost *:443>\n
-    SSLEngine on\n
-    SSLCertificateFile ${__base}cert${path.sep}${element.Website}.cer\n
-    SSLCertificateKeyFile ${__base}cert${path.sep}${element.Website}.rsa\n
-
-    ${configdata.spdy == "1" ? "  SSLProtocol all -SSLv2 -SSLv3\n" : " SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1\nProtocols h2 h2c http/1.1"}    
-  
-   
-    
-    SSLHonorCipherOrder on\n
-    SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM\n
-    EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EEDH+aRSA+SHA384\n
-    EECDH+aRSA+SHA256 EECDH+aRSA+RC4\n
-    EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS"\n
-
-    ServerAdmin admin@${element.Website}\n
-    ServerName ${element.Website} www.${element.Website}\n
-    ProxyPassReverse / http://localhost:${element.Port}/\n
-    ProxyPass / http://localhost:${element.Port}/\n
-    ProxyPreserveHost on\n
-    ProxyRequests Off\n
-    Header always append Access-Control-Allow-Origin: "${element.Website}"\n
-</VirtualHost>
-`;
-
+          template=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.https.conf`);
+      
+          var apachetemp =  edge.renderString(template, data);
              fs.writeFile(`${__base}private/apache/${element.Website}.apache.conf`, apachetemp);
         });
 
