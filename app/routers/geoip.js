@@ -50,7 +50,7 @@ module.exports = function (options, accessDenied) {
 		};
 				
 		//check that IP address is local
-		if (ip.indexOf("192.168")>-1 || ip.indexOf("10.")>1 || ip.indexOf("127.")>1)
+		if (ip.indexOf("192.168")>-1 || ip.indexOf("10.")>-1 || ip.indexOf("127.")>-1)
 			return false;
 
 		// 1. Check that IP address is blocked

@@ -731,27 +731,35 @@ var dbfunc = {
 
     return "*";
   },
-  File_GetHtml: function (TemplateId) {
+  File_GetHtml: function (RouterId) {
     try {
+      dbrouters.reload();
+      var result = dbrouters.getData("/").findIndex(item => item.Id == RouterId);
+      if (result > -1)
+      {
       dbtemplates.reload();
       var  comfunc = require(`${__base}app/comfunc.js`);
-      var result = dbtemplates.getData("/").findIndex(item => item.Id == TemplateId);
+      var result = dbtemplates.getData("/").findIndex(item => item.Id == dbrouters.getData("/" + result).TemplateId);
       if (result > -1)
         return comfunc.B2A(dbtemplates.getData("/" + result).HTML);
-    }
+      }
+      }
     catch (err) { console.log(err); }
 
     return "*";
   },
-  File_GetHeader: function (HeadId, strHtml) {
-    try {
-      ddbheaders.reload();
+  File_GetHeader: function (RouterId, strHtml) {
+    try { dbrouters.reload();
+      var result = dbrouters.getData("/").findIndex(item => item.Id == RouterId);
+      if (result > -1)
+      {
+      dbheaders.reload();
       var  comfunc = require(`${__base}app/comfunc.js`);
-      var result = dbheaders.getData("/").findIndex(item => item.Id == HeadId);
+      var result = dbheaders.getData("/").findIndex(item => item.Id == dbrouters.getData("/" + result).HeadId);
       if (result > -1) {
         var objHeader = dbheaders.getData("/" + result);
         strHtml = strHtml.replace("@!Title", objHeader.Title).replace("@!Desc", objHeader.MetaDesc).replace("@!section('HeaderScript')", comfunc.B2A(objHeader.HeaderScript)).replace("@!section('BodyScript')", comfunc.B2A(objHeader.BodyScript)).replace("@!section('FooterScript')", comfunc.B2A(objHeader.FooterScript));
-      }
+      }}
     }
     catch (err) { console.log(err); }
 
@@ -766,7 +774,8 @@ var dbfunc = {
       var filteredCAd = dbroutersad.getData("/").filter(function (value) { return value.HeadId === strHeadId && value.Mode === "A"; });
       filteredCAd.forEach(function (item) {
         var adHtml = "";
-        var filterads = dbads.getData("/").filter(function (value) { return value.GroupID === item.GroupId && value.WebsiteId == strWebsiteId && item.Access.find(element => element == strFireWall || element == "*"); });
+        var Filters=[strFireWall,"*"];
+        var filterads = dbads.getData("/").filter(function (value) { return value.Access.some(g=> Filters.includes(g)) && value.GroupID === item.GroupId && value.WebsiteId == strWebsiteId; });
         if (filterads.length > 0) {
           var adelement = 0;
           if (filterads.length > 1)
@@ -788,7 +797,8 @@ var dbfunc = {
       var filteredCAd = dbroutersad.getData("/").filter(function (value) { return value.HeadId === strHeadId && value.Mode === "M"; });
       filteredCAd.forEach(function (item) {
         var adHtml = "";
-        var filterads = dbmoduls.getData("/").filter(function (value) { return value.GroupID === item.GroupId && item.Access.find(element => element == strFireWall || element == "*"); });
+        var Filters=[strFireWall,"*"];
+        var filterads = dbmoduls.getData("/").filter(function (value) { return value.GroupID === item.GroupId && value.Access.some(g=> Filters.includes(g)); });
         if (filterads.length > 0) {
           var adelement = 0;
           if (filterads.length > 1)

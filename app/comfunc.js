@@ -60,10 +60,10 @@ var comfunc = {
   },
   UrlEngine: function (objRouter, strWebsiteId, strFireWall) {
     var strHtml = DbFunc[configdata.DB + "_GetHtml"](objRouter.RouterId);
-    if (strHtml != "*") {
-      strHtml = DbFunc[configdata.DB + "_GetHeader"](objRouter.HeadId, strHtml);
-      strHtml = DbFunc[configdata.DB + "_GetAds"](objRouter.Id, strHtml, strWebsiteId, strFireWall);
-      strHtml = DbFunc[configdata.DB + "_GetModuls"](objRouter.Id, strHtml, strFireWall);
+    if (strHtml != "*") { 
+      strHtml = DbFunc[configdata.DB + "_GetHeader"](objRouter.RouterId, strHtml);
+      strHtml = DbFunc[configdata.DB + "_GetAds"](objRouter.RouterId, strHtml, strWebsiteId, strFireWall);
+      strHtml = DbFunc[configdata.DB + "_GetModuls"](objRouter.RouterId, strHtml, strFireWall);
     }
     else {
       strHtml = `E003-UrlEngine Router error Alias:${objRouter.Alias}`
