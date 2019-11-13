@@ -25,6 +25,64 @@
                 <div class="panel">
                     
                                 <div class="panel-body">
+
+                                        <div class="tab">
+                                            <button class="tablinks" onclick="openTab(event, 'httpApache')">Apache http template</button>
+                                             <button class="tablinks" onclick="openTab(event, 'httpsApache')">Apache https template</button>
+                                             <button class="tablinks" onclick="openTab(event, 'httpNginx')">Nginx http template</button>
+                                             <button class="tablinks" onclick="openTab(event, 'httpsNginx')">Nginx https template</button>
+                                             <button class="tablinks" onclick="openTab(event, 'help')">Help for setup</button>
+                                        
+                                            </div>
+                                        
+                                            <div id="httpApache" class="tabcontent">
+                                                    <div class="panel-body">
+                                                         <textarea id="httpApache" style="height: 280px; width: 100%;" name="httpApache">{{{httpApache}}}</textarea>    
+                                                    </div>
+                                            </div>
+                                            
+                                            <div id="httpsApache" class="tabcontent">
+                                                    <div class="panel-body">
+                                                         <textarea id="httpsApache" style="height: 280px; width: 100%;" name="httpsApache">{{{httpsApache}}}</textarea>    
+                                                    </div>
+                                            </div>
+
+                                            <div id="httpNginx" class="tabcontent">
+                                                    <div class="panel-body">
+                                                         <textarea id="httpNginx" style="height: 280px; width: 100%;" name="httpNginx">{{{httpNginx}}}</textarea>    
+                                                    </div>
+                                            </div>
+
+                                            <div id="httpsNginx" class="tabcontent">
+                                                    <div class="panel-body">
+                                                         <textarea id="httpsNginx" style="height: 280px; width: 100%;" name="httpsNginx">{{{httpsNginx}}}</textarea>    
+                                                    </div>
+                                            </div>
+                                            <div id="help" class="tabcontent">
+                                                    <div class="panel-body">
+                                                            To install certbot, copy-paste those lines in a terminal :
+                                                            $ sudo add-apt-repository ppa:certbot/certbot
+                                                            $ sudo apt-get update
+                                                            $ sudo apt-get install certbot
+                                                            $ certbot certonly --manual
+                                                            Type your domain name(s) without the protocol part. For instance: yourdomain.com or even muchdomain.verysite.
+                                                            Type Y then ENTER.
+                                                            Note two things :
+                                                            a-string : The name of the file you have to create, right now. Just create it, we’ll take care of the directories later.
+                                                            a-challenge: Open the file you just created and put this challenge string into it. Nothing else, just this challenge string.
+                                                            Now, don’t continue. You need to run a web server with Node & Express.
+                                                            In the directory (file-manager) : .well-known\acme-challenge place the file you created before : a-string
+                                                            Important: Actually the filename isn’t a-string, it is a long alphanumeric string. For security purposes I can’t show you mine. Same goes for a-challenge…
+                                                            To verify that everything is fine, open up your browser and navigate to : http://yourdomain.com/.well-known/acme-challenge/a-string
+                        Your browser should download your challenge file. If it’s not the case, take everything back from the start. Don’t touch your shell, restart from directory & file creation.
+                        If everything is okay, go back to your shell and type ENTER.
+                        Copy-paste all certificate to here and restart server
+                                                       <a href="https://itnext.io/node-express-letsencrypt-generate-a-free-ssl-certificate-and-run-an-https-server-in-5-minutes-a730fbe528ca"> More info here</a>
+                                                    <a href="https://tools.keycdn.com/http2-test">Http2 test</a>
+                                                        </div>
+                                                    </div>
+                                                  
+
                                     <div class="form-group">
                                             <label class="col-sm-3 control-label" for="Webs">Webserver:</label>
                                             <div class="col-sm-9">
@@ -65,25 +123,7 @@
                                 <div class="panel-footer text-right">
                                     <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o" id="saveset" ></a>
                                
-                                    To install certbot, copy-paste those lines in a terminal :
-                                    $ sudo add-apt-repository ppa:certbot/certbot
-                                    $ sudo apt-get update
-                                    $ sudo apt-get install certbot
-                                    $ certbot certonly --manual
-                                    Type your domain name(s) without the protocol part. For instance: yourdomain.com or even muchdomain.verysite.
-                                    Type Y then ENTER.
-                                    Note two things :
-                                    a-string : The name of the file you have to create, right now. Just create it, we’ll take care of the directories later.
-                                    a-challenge: Open the file you just created and put this challenge string into it. Nothing else, just this challenge string.
-                                    Now, don’t continue. You need to run a web server with Node & Express.
-                                    In the directory (file-manager) : .well-known\acme-challenge place the file you created before : a-string
-                                    Important: Actually the filename isn’t a-string, it is a long alphanumeric string. For security purposes I can’t show you mine. Same goes for a-challenge…
-                                    To verify that everything is fine, open up your browser and navigate to : http://yourdomain.com/.well-known/acme-challenge/a-string
-Your browser should download your challenge file. If it’s not the case, take everything back from the start. Don’t touch your shell, restart from directory & file creation.
-If everything is okay, go back to your shell and type ENTER.
-Copy-paste all certificate to here and restart server
-                               <a href="https://itnext.io/node-express-letsencrypt-generate-a-free-ssl-certificate-and-run-an-https-server-in-5-minutes-a730fbe528ca"> More info here</a>
-                            <a href="https://tools.keycdn.com/http2-test">Http2 test</a>
+                                 
                             </div>
                            
                 </div>

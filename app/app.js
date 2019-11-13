@@ -15,6 +15,7 @@ var logger = require('morgan'),
   ipgeoblock = require(`${__base}app/routers/geoip.js`),
   flash = require('connect-flash'),
   csrf = require('csurf'),
+  comfunc = require(`${__base}app/comfunc.js`),
   RouterAdmin = require(`${__base}app/routers/routeradmin.js`),
   DbFunc = require(`${__base}app/routers/dbfunc.js`),
   db = new JsonDB(`${__base}db/config`, true, false);
@@ -150,7 +151,7 @@ app.use(function (req, res, next) {
       }
       else {
         res.json({
-          msg: `Website:${req.hostname} Langid:${strLangId} Url:${req.originalUrl} not registered.`,
+          msg: `E001-Website:${req.hostname} Langid:${strLangId} Url:${req.originalUrl} Error Page not registered.`,
           status: 404
         });
       }
@@ -160,7 +161,7 @@ app.use(function (req, res, next) {
     res.status(404);
 
     res.json({
-      msg: `Website:${req.hostname} not registered.`,
+      msg: `E002-Website:${req.hostname} not registered.`,
       status: 404
     });
 

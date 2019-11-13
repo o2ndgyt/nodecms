@@ -154,18 +154,18 @@ var multiserver = {
       if (!withSSL) {
         _.forEach(lstWebsites, function (element) {
           //TODO IPV6
-          const data={ element:element, path:_base, pathsep:path.sep,spdy:configdata.spdy,localipv4:ip.address(),localipv6:ip.address()};
+          const data={ element:element, path:__base, pathsep:path.sep,spdy:configdata.spdy,localipv4:ip.address(),localipv6:ip.address()};
                 
           // Nginx
           deftempnginx += `include ${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf;\n`;
           
-          const template=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.http.conf`);
+          var template=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.http.conf`,"utf8");
           var nginxtemp = edge.renderString(template, data);
           fs.writeFile(`${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf`, nginxtemp);
 
           // apache
           deftempapache += `Include ${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf;\n`;
-          template=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.http.conf`);
+          template=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.http.conf`,"utf8");
           
           var apachetemp = edge.renderString(template, data);
           fs.writeFile(`${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf`, apachetemp);
@@ -175,18 +175,18 @@ var multiserver = {
       else {
         _.forEach(lstWebsites, function (element) {
               //TODO IPV6
-          const data={ element:element, path:_base, pathsep:path.sep,spdy:configdata.spdy,localipv4:ip.address(),localipv6:ip.address()};
+          const data={ element:element, path:__base, pathsep:path.sep,spdy:configdata.spdy,localipv4:ip.address(),localipv6:ip.address()};
       
           // Nginx
           deftempnginx += `include ${__base}private${path.sep}nginx${path.sep}${element.Website}.nginx.conf;\n`;
-          const template=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.https.conf`);
+          const template=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.https.conf`,"utf8");
        
           var nginxtemp = edge.renderString(template, data);
           fs.writeFile(`${__base}private/nginx/${element.Website}.nginx.conf`, nginxtemp);
 
           // apache
           deftempapache += `Include ${__base}private${path.sep}apache${path.sep}${element.Website}.apache.conf;\n`;
-          template=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.https.conf`);
+          template=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.https.conf`,"utf8");
       
           var apachetemp =  edge.renderString(template, data);
              fs.writeFile(`${__base}private/apache/${element.Website}.apache.conf`, apachetemp);

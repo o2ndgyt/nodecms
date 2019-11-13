@@ -289,7 +289,12 @@ router.post('/Firewall', function (req, res) {
 //**********************
 router.get('/Settings', function (req, res) {
     db.reload();
-    res.render('admin/settings', { config: db.getData("/"), csrfToken: req.csrfToken() });
+    var httpApache=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.http.conf`,"utf8");
+    var httpsApache=fs.readFileSync(`${__base}private${path.sep}apache${path.sep}template.https.conf`,"utf8");
+    var httpNginx=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.http.conf`,"utf8");
+    var httpsNginx=fs.readFileSync(`${__base}private${path.sep}nginx${path.sep}template.https.conf`,"utf8");
+
+    res.render('admin/settings', {httpApache:httpApache, httpsApache: httpsApache, httpNginx: httpNginx,httpsNginx:httpsNginx, config: db.getData("/"), csrfToken: req.csrfToken() });
 });
 
 router.post('/Settings', function (req, res) {
@@ -298,6 +303,12 @@ router.post('/Settings', function (req, res) {
         configdata.compress = req.body.compress;
         configdata.XPowerBy = req.body.XPowerBy;
         db.push("/", configdata);
+
+        fs.writeFile(`${__base}private${path.sep}apache${path.sep}template.http.conf`, req.body.httpApache);
+        fs.writeFile(`${__base}private${path.sep}apache${path.sep}template.https.conf`, req.body.httpsApache);
+        fs.writeFile(`${__base}private${path.sep}nginx${path.sep}template.http.conf`, req.body.httpNginx);
+        fs.writeFile(`${__base}private${path.sep}nginx${path.sep}template.https.conf`, req.body.httpsNginx);
+
         res.json({
             success: "Settings saved",
             status: 200

@@ -16,7 +16,7 @@ var fs = require('fs-extra'),
   dbmoduls = new JsonDB(`${__base}db/cmsmoduls`, true, false),
   dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false);
 
-var _strDefaultWebsite =fs.readFileSync(`${__base}db/defaultwebsite.txt`);
+var _strDefaultWebsite =fs.readFileSync(`${__base}db/defaultwebsite.txt`,"utf8");
 
 
 var dbfunc = {
@@ -723,7 +723,7 @@ var dbfunc = {
     try {
       dburls.reload();
       var strType = strUrl == "/" ? "H" : strUrl != "404" ? "P" : "404";
-      var result = dburls.getData("/").findIndex(item => item.Type == strType && item.PageFullUrl == strUrl && item.LangId == strLangId && item.Website == strHostname);
+      var result = dburls.getData("/").findIndex(item => item.Type == strType && item.PageFullUrl == strUrl && item.Website == strHostname && (item.LangId == strLangId || item.LangId=="*" ));
       if (result > -1)
         return dburls.getData("/" + result);
     }

@@ -16,7 +16,7 @@ function SendData(url,data) {
         });  
 }
 
-function openTab(evt, cityName) {
+function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
   
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -29,7 +29,7 @@ function openTab(evt, cityName) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
   
-    document.getElementById(cityName).style.display = "block";
+    document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
   }
 
@@ -155,7 +155,7 @@ function Settings()
         $("#ssl").append(_select1.html());
 
         var myOptions2 = {
-            "A": "Apache/Nginx (web server)",
+            "A": "Apache/Nginx (proxy server)",
             "0": "NodeJs (app server)"
         };
      

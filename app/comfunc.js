@@ -59,14 +59,14 @@ var comfunc = {
     return "";
   },
   UrlEngine: function (objRouter, strWebsiteId, strFireWall) {
-    var strHtml = DbFunc[configdata.DB + "_GetHtml"](objRouter.TemplateId);
+    var strHtml = DbFunc[configdata.DB + "_GetHtml"](objRouter.RouterId);
     if (strHtml != "*") {
       strHtml = DbFunc[configdata.DB + "_GetHeader"](objRouter.HeadId, strHtml);
       strHtml = DbFunc[configdata.DB + "_GetAds"](objRouter.Id, strHtml, strWebsiteId, strFireWall);
       strHtml = DbFunc[configdata.DB + "_GetModuls"](objRouter.Id, strHtml, strFireWall);
     }
     else {
-      strHtml = `UrlEngine Router error Alias:${objRouter.Alias}`
+      strHtml = `E003-UrlEngine Router error Alias:${objRouter.Alias}`
     }
 
     return strHtml;
