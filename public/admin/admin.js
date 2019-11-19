@@ -178,9 +178,8 @@ function Settings()
     
         $("#spdy").append(_select3.html());
         
-
-        $('#saveset').click(function () {
-			SendData('Settings', JSON.stringify( {Appport:$('#Appport').val(), compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val() }));
+        $('#saveset').click(function () { 
+			SendData('Settings', JSON.stringify( {compress:$('#compress').val(),XPowerBy:$('#XPowerBy').val(),httpApache:$('#httpApache').val(),httpsApache:$('#httpsApache').val(),httpNginx:$('#httpNginx').val(),httpsNginx:$('#httpsNginx').val(),webs:$('#webs').val(),ssl:$('#ssl').val(),spdy:$('#spdy').val() }));
         });
 
 }

@@ -302,6 +302,10 @@ router.post('/Settings', function (req, res) {
         var configdata = db.getData("/");
         configdata.compress = req.body.compress;
         configdata.XPowerBy = req.body.XPowerBy;
+        configdata.webs=req.body.webs;
+        configdata.ssl=req.body.ssl;
+        configdata.spdy=req.body.spdy;
+        
         db.push("/", configdata);
 
         fs.writeFile(`${__base}private${path.sep}apache${path.sep}template.http.conf`, req.body.httpApache);
@@ -490,7 +494,7 @@ router.post('/Routersad/:id', function (req, res) {
     res.json(DbFunc[globalconfigdata.DB + "_UpdateRoutersAds"](req.params.id, req.body));
 });
 
-// Routers 
+// Routers  
 //**********************
 router.get('/Routers', function (req, res) {
     res.render('admin/routers', { csrfToken: req.csrfToken() });

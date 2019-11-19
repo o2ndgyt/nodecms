@@ -300,8 +300,20 @@ var dbfunc = {
   },
   File_ListExtHeaders: function () {
     try {
+      dbwebsites.reload();
+      var dbweb = dbwebsites.getData("/");
       dbheaders.reload();
-      return dbheaders.getData("/");
+      var data = dbheaders.getData("/");
+      var indices = [];
+      data.forEach(function (element) {
+        var result = dbweb.findIndex(item => item.Id === element.WebsiteId);
+        var website = "";
+        if (result > -1) {
+          website = " (" + dbwebsites.getData("/" + result).Website + ")";
+        }
+        indices.push({ "Id": element.Id, "Alias": element.Alias + website });
+      });
+      return indices;
     }
     catch (err) { console.log(err); }
     return [];
@@ -762,7 +774,7 @@ var dbfunc = {
       }}
     }
     catch (err) { console.log(err); }
-
+ 
     return strHtml;
   },
   File_GetAds: function (strHeadId, strHtml, strWebsiteId, strFireWall) {
