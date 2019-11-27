@@ -18,7 +18,8 @@ var logger = require('morgan'),
   comfunc = require(`${__base}app/comfunc.js`),
   RouterAdmin = require(`${__base}app/routers/routeradmin.js`),
   DbFunc = require(`${__base}app/routers/dbfunc.js`),
-  db = new JsonDB(`${__base}db/config`, true, false);
+  db = new JsonDB(`${__base}db/config`, true, false),
+  requestIp = require('request-ip');
 
 var configdata = db.getData("/");
 
@@ -35,6 +36,9 @@ app.use(helmet());
 
 // Compress
 app.use(compression({ level: configdata.GZip }));
+
+// real client ip
+app.use(requestIp.mw())
 
 // Template engine
 app.use(expressedge);

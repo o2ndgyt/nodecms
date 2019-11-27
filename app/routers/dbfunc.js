@@ -685,7 +685,7 @@ var dbfunc = {
       }
     }
     catch (err) { console.log(err); }
-    return [];
+    
   },
   File_ListLangs: function (id) {
     try {

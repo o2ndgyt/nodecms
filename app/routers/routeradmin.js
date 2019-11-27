@@ -254,7 +254,7 @@ router.post('/DB', function (req, res) {
 //**********************
 router.get('/Firewall', function (req, res) {
     db.reload();
-    res.render('admin/firewall', { config: db.getData("/"), csrfToken: req.csrfToken(), ip: req.location.ip });
+    res.render('admin/firewall', { config: db.getData("/"), csrfToken: req.csrfToken(), ip: req.clientIp });
 });
 
 router.get('/Firewall/countries/:id', function (req, res) {

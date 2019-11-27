@@ -8,8 +8,7 @@ Then download the latest version of [MaxMind GeoLite2 Country Database](
 "use strict";
 
 var fs = require("fs-extra"),
-MMDBReader = require("mmdb-reader"),
-ip = require('ip');
+MMDBReader = require("mmdb-reader");
 
 module.exports = function (options, accessDenied) {
 	
@@ -53,14 +52,14 @@ module.exports = function (options, accessDenied) {
 		if (ip.indexOf("192.168")>-1 || ip.indexOf("10.")>-1 || ip.indexOf("127.")>-1)
 			return false;
 
-		// 1. Check that IP address is blocked
-		if (options.blocked.indexOf(ip) > -1) 
-			return true;
-		
-		
+		// Check that IP address is allowed
 		if (options.allowed.indexOf(ip) > -1) 
 			return false;
-		
+	
+		// Check that IP address is blocked
+		if (options.blocked.indexOf(ip) > -1) 
+		return true;
+
 
 		var blocked = false;
 		var query = mmdb.lookup(ip);
@@ -88,7 +87,7 @@ module.exports = function (options, accessDenied) {
 	
 	return function (req, res, next) {
 	
-		if (isBlocked( ip.address(), req, res)) {
+		if (isBlocked( req.clientIp, req, res)) {
 			accessDenied(req, res);
 			return;	
 		}
