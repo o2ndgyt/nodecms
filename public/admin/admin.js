@@ -16,6 +16,8 @@ function SendData(url,data) {
         });  
 }
 
+
+
 function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
   
@@ -56,8 +58,7 @@ $.ajax({
     },
     error: function() {
         deferred.reject("Data Loading Error");
-    },
-    timeout: 5000
+    }
 });
 
 return deferred.promise();  
@@ -73,12 +74,26 @@ function SendDataTable(url, data,key){
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            cache: false  
-            }).done(function(result) {
+            cache: false,
+            success: function(result) {
+                if (result.status == 500)
+                { d.reject(result.Message);}
+                else
+                { d.resolve(result);}
+            },
+            error: function(xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            }});
+        /*    }).done(function(result) {
                d.resolve(result);
             }).fail(function(xhr) {
                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
-            });
+            }).error(function(xhr)
+                {
+                    console.log(xhr);
+                    console.log(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                });*/
     return d.promise();
 }
 
@@ -189,7 +204,7 @@ function ChangePwd()
         SetTitle('Change Password');
     
        $('#saveset').click(function () {
-			SendData('ChangePwd', JSON.stringify( {AdminUser:$('#AdminUser').val(),AdminPWD:$('#AdminPWD').val() }));
+        SendData('ChangePwd', JSON.stringify( {AdminUser:$('#AdminUser').val(),AdminPWD:$('#AdminPWD').val() }));
         });
 
 }

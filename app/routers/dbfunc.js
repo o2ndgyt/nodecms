@@ -62,11 +62,7 @@ var dbfunc = {
         dbmoduls.push("/", addata);
         return { values: id };
       } else {
-        return {
-          //todo
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -80,11 +76,7 @@ var dbfunc = {
         dbmoduls.push("/" + result, data);
         return { values: data };
       } else {
-        //todo
-        return {
-          success: "Update Error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -118,11 +110,7 @@ var dbfunc = {
         dburls.push("/", addata);
         return { values: id };
       } else {
-        return {
-          //todo
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -138,11 +126,7 @@ var dbfunc = {
         dburls.push("/" + result, data);
         return { values: data };
       } else {
-        //todo
-        return {
-          success: "Update Error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -456,11 +440,7 @@ var dbfunc = {
         dbads.push("/", addata);
         return { values: id };
       } else {
-        return {
-          //todo
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -476,11 +456,7 @@ var dbfunc = {
         dbads.push("/" + result, data);
         return { values: data };
       } else {
-        //todo
-        return {
-          success: "Update Error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -517,11 +493,7 @@ var dbfunc = {
         dbheaders.push("/", addata);
         return { values: id };
       } else {
-        return {
-          //todo
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -540,11 +512,7 @@ var dbfunc = {
         dbheaders.push("/" + result, data);
         return { values: data };
       } else {
-        //todo
-        return {
-          success: "Update Error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
 
     }
@@ -585,11 +553,7 @@ var dbfunc = {
         dbwebsites.push("/", addata);
         return { values: id };
       } else {
-        return {
-          //todo
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -614,11 +578,7 @@ var dbfunc = {
         dbwebsites.push("/" + result, data);
         return { values: data };
       } else {
-        //todo
-        return {
-          success: "Update Error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -658,11 +618,7 @@ var dbfunc = {
         dblangs.push("/", addata);
         return { values: id };
       } else {
-        return {
-          //todo
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -677,11 +633,7 @@ var dbfunc = {
         dblangs.push("/" + result, data);
         return { values: data };
       } else {
-        //todo
-        return {
-          success: "Update Error. Refresh page",
-          status: 500
-        };
+        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
