@@ -20,6 +20,9 @@ catch (err) { console.log(err); }
 
 var comfunc = {
   GetWebsite: function (Routerid) {
+    dbrouters.reload();
+    dbtemplates.reload();
+    dbwebsites.reload();
     var result = dbrouters.getData("/").findIndex(item => item.Id === Routerid);
     if (result > -1) {
       var templateid = dbrouters.getData("/" + result).TemplateId;
@@ -32,7 +35,7 @@ var comfunc = {
         }
       }
     }
-    return "";
+    return "Website not found";
   },
   CerExpired: function (stime, endtime) {
     var date = new Date();
@@ -60,7 +63,7 @@ var comfunc = {
   },
   UrlEngine: function (objRouter, strWebsiteId, strFireWall) {
     var strHtml = DbFunc[configdata.DB + "_GetHtml"](objRouter.RouterId);
-    if (strHtml != "*") { 
+    if (strHtml != "*") {
       strHtml = DbFunc[configdata.DB + "_GetHeader"](objRouter.RouterId, strHtml);
       strHtml = DbFunc[configdata.DB + "_GetAds"](objRouter.RouterId, strHtml, strWebsiteId, strFireWall);
       strHtml = DbFunc[configdata.DB + "_GetModuls"](objRouter.RouterId, strHtml, strFireWall);
@@ -99,32 +102,36 @@ var comfunc = {
     }
   },
   GetSections: function (templateid, HeadId) {
-    var searchintext = "@!section('";
-    var data = this.SearchTextinFile(searchintext, templateid, false);
     var indices = [];
+    try {
+      var searchintext = "@!section('";
+      var data = this.SearchTextinFile(searchintext, templateid, false);
 
-    dbtemplates.reload();
-    var result = dbtemplates.getData("/").findIndex(item => item.Id === templateid);
-    if (result > -1) {
-      var str = this.B2A(dbtemplates.getData("/" + result).HTML);
 
-      if (data.length == 0) { return indices; }
+      dbtemplates.reload();
+      var result = dbtemplates.getData("/").findIndex(item => item.Id === templateid);
+      if (result > -1) {
+        var str = this.B2A(dbtemplates.getData("/" + result).HTML);
 
-      data.forEach(function (element) {
-        var str1 = str.substring(element);
-        var str2 = str1.indexOf(')');
-        var str3 = str.substring(element + searchintext.length, element + str2 - 1);
+        if (data.length == 0) { return indices; }
 
-        //except head,body,footer js script
-        if (str3 != "HeaderScript" && str3 != "BodyScript" && str3 != "FooterScript") {
-          var id = uuidv4();
-          if (str3.substr(0, 3).toLowerCase() == "ad#")
-            indices.push({ "Id": id, "HeadId": HeadId, "Mode": "A", "Section": str3, "GroupId": "---" });
-          if (str3.substr(0, 4).toLowerCase() == "mod#")
-            indices.push({ "Id": id, "HeadId": HeadId, "Mode": "M", "Section": str3, "GroupId": "---" });
-        }
-      });
+        data.forEach(function (element) {
+          var str1 = str.substring(element);
+          var str2 = str1.indexOf(')');
+          var str3 = str.substring(element + searchintext.length, element + str2 - 1);
+
+          //except head,body,footer js script
+          if (str3 != "HeaderScript" && str3 != "BodyScript" && str3 != "FooterScript") {
+            var id = uuidv4();
+            if (str3.substr(0, 3).toLowerCase() == "ad#")
+              indices.push({ "Id": id, "HeadId": HeadId, "Mode": "A", "Section": str3, "GroupId": "---" });
+            if (str3.substr(0, 4).toLowerCase() == "mod#")
+              indices.push({ "Id": id, "HeadId": HeadId, "Mode": "M", "Section": str3, "GroupId": "---" });
+          }
+        });
+      }
     }
+    catch (e) { console.log(e); }
     return indices;
   },
   GetDbSize: function () {

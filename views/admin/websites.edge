@@ -50,21 +50,24 @@ $(function(){
             dataType: "string",
             visible:false, formItem: { visible:false }
         },
-        {
-            dataField: "Active",
-            dataType: "string",
-            formItem: { visible:false }
-        },
+       
         {
             dataField: "Website",
             dataType: "string",
                 validationRules: [{ type: "required" }],
-                caption:"Hostname (ndg.yt)"
+                caption:"Domain"
         },
         {
             dataField: "Note",
             dataType: "string",
-            caption:"Note"
+            caption:"Note",
+            formItem: {
+                    colSpan: 2,
+                    editorType: "dxTextArea",
+                    editorOptions: {
+                        height: 100
+                    }
+                }
         },
         {
             dataField: "Port",
@@ -121,14 +124,6 @@ $(function(){
                 }
         }
         ],
-        onRowPrepared: function(e) {
-            if (e.rowType == 'data') {
-            if (e.values[1] == "Not started")
-                e.rowElement.css('backgroundColor', 'yellow');
-            else if  (e.values[1] == "Expired")
-                e.rowElement.css('backgroundColor', 'red');
-            }
-        },
         onRowUpdating: function(options) { 
              options.newData = $.extend({}, options.oldData, options.newData); 
         }

@@ -16,7 +16,7 @@ var fs = require('fs-extra'),
   dbmoduls = new JsonDB(`${__base}db/cmsmoduls`, true, false),
   dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false);
 
-var _strDefaultWebsite =fs.readFileSync(`${__base}db/defaultwebsite.txt`,"utf8");
+var _strDefaultWebsite = fs.readFileSync(`${__base}db/defaultwebsite.txt`, "utf8");
 
 
 var dbfunc = {
@@ -62,7 +62,7 @@ var dbfunc = {
         dbmoduls.push("/", addata);
         return { values: id };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -76,7 +76,7 @@ var dbfunc = {
         dbmoduls.push("/" + result, data);
         return { values: data };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -110,7 +110,7 @@ var dbfunc = {
         dburls.push("/", addata);
         return { values: id };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -118,7 +118,7 @@ var dbfunc = {
   File_UpdateUrl: function (id, data) {
     try {
       dburls.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var result = dburls.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         data.Id = id;
@@ -126,7 +126,7 @@ var dbfunc = {
         dburls.push("/" + result, data);
         return { values: data };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -134,7 +134,7 @@ var dbfunc = {
   File_PostUrl: function (data) {
     try {
       dburls.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dburls.getData("/");
       data.Id = uuidv4();
       data.Website = comfunc.GetWebsite(data.RouterId);
@@ -168,11 +168,7 @@ var dbfunc = {
 
         return { values: id };
       } else {
-        // todo
-        return {
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -180,7 +176,8 @@ var dbfunc = {
   File_UpdateRouter: function (id, data) {
     try {
       dbrouters.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      dbroutersad.reload();
+      var comfunc = require(`${__base}app/comfunc.js`);
       var addata = dbrouters.getData("/");
       var result = addata.findIndex(item => item.Id === id);
       if (result > -1) {
@@ -207,11 +204,7 @@ var dbfunc = {
 
         return { values: data };
       } else {
-        // todo
-        return {
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -219,7 +212,7 @@ var dbfunc = {
   File_PostRouter: function (data) {
     try {
       dbrouters.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbrouters.getData("/");
       data.Id = uuidv4();
       dbrouters.push("/" + adsdata.length, data, false);
@@ -332,11 +325,11 @@ var dbfunc = {
     catch (err) { console.log(err); }
     return { "totalCount": 0, "items": [] };
   },
-  File_SaveTemplates: function (id, data,res) {
+  File_SaveTemplates: function (id, data, res) {
 
     try {
       dbtemplates.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var result = dbtemplates.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         var element = dbtemplates.getData("/" + result)
@@ -351,7 +344,7 @@ var dbfunc = {
 
     try {
       dbtemplates.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var addata = dbtemplates.getData("/");
       var result = addata.findIndex(item => item.Id === id);
       if (result > -1) {
@@ -380,11 +373,7 @@ var dbfunc = {
         return { values: req.params.id };
         // todo delete all from other db
       } else {
-        // todo
-        return {
-          success: "Delete error. Refresh page",
-          status: 500
-        };
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -399,11 +388,7 @@ var dbfunc = {
         dbtemplates.push("/" + result, element);
         return { values: element };
       } else {
-        return {
-          // todo
-          success: "Update Error. Refresh page",
-          status: 500
-        };
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -412,7 +397,7 @@ var dbfunc = {
   File_PostTemplates: function (data) {
     try {
       dbtemplates.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbtemplates.getData("/");
       data.Id = uuidv4();
       data.HTML = comfunc.A2B(_strDefaultWebsite);
@@ -440,7 +425,7 @@ var dbfunc = {
         dbads.push("/", addata);
         return { values: id };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -448,7 +433,7 @@ var dbfunc = {
   File_UpdateAds: function (id, data) {
     try {
       dbads.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var result = dbads.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         data.Id = id;
@@ -456,7 +441,7 @@ var dbfunc = {
         dbads.push("/" + result, data);
         return { values: data };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -464,7 +449,7 @@ var dbfunc = {
   File_PostAds: function (data) {
     try {
       dbads.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbads.getData("/");
       data.Id = uuidv4();
       data.AdvertJS = comfunc.A2B(data.AdvertJS);
@@ -493,7 +478,7 @@ var dbfunc = {
         dbheaders.push("/", addata);
         return { values: id };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -501,7 +486,7 @@ var dbfunc = {
   File_UpdateHeaders: function (id, data) {
     try {
       dbheaders.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var result = dbheaders.getData("/").findIndex(item => item.Id === id);
       if (result > -1) {
         data.Id = id;
@@ -512,7 +497,7 @@ var dbfunc = {
         dbheaders.push("/" + result, data);
         return { values: data };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
 
     }
@@ -521,7 +506,7 @@ var dbfunc = {
   File_PostHeaders: function (data) {
     try {
       dbheaders.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var adsdata = dbheaders.getData("/");
       data.Id = uuidv4();
       data.HeaderScript = comfunc.A2B(data.HeaderScript);
@@ -546,14 +531,14 @@ var dbfunc = {
   File_DeleteWebsites: function (id) {
     try {
       dbwebsites.reload();
-      var addata = dblangs.getData("/");
+      var addata = dbwebsites.getData("/");
       var result = addata.findIndex(item => item.Id === id);
       if (result > -1) {
         addata.splice(result, 1);
         dbwebsites.push("/", addata);
         return { values: id };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -561,24 +546,34 @@ var dbfunc = {
   File_UpdateWebsites: function (id, data) {
     try {
       dbwebsites.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
-      var result = dbwebsites.getData("/").findIndex(item => item.Id === id);
+      var comfunc = require(`${__base}app/comfunc.js`);
+      var addata = dbwebsites.getData("/");
+      // Is same port than others ?
+      var result = addata.findIndex(item => item.Port === data.Port);
       if (result > -1) {
-        data.Id = id;
-        if (data.CER) {
-          data.ValidFrom = Certificate.fromPEM(data.CER).validFrom;
-          data.ValidTo = Certificate.fromPEM(data.CER).validTo;
-          data.Active = comfunc.CerExpired(data.ValidFrom, data.ValidTo);
+        return { Message: "This port already used. Use other port", status: 500 };
+      }
+      else {
+
+
+        var result = addata.findIndex(item => item.Id === id);
+        if (result > -1) {
+          data.Id = id;
+          if (data.CER) {
+            data.ValidFrom = Certificate.fromPEM(data.CER).validFrom;
+            data.ValidTo = Certificate.fromPEM(data.CER).validTo;
+            data.Active = comfunc.CerExpired(data.ValidFrom, data.ValidTo);
+          }
+          else {
+            data.ValidFrom = "";
+            data.ValidTo = "";
+            data.Active = "";
+          }
+          dbwebsites.push("/" + result, data);
+          return { values: data };
+        } else {
+          return { Message: "Data does not exist. Refresh page", status: 500 };
         }
-        else {
-          data.ValidFrom = "";
-          data.ValidTo = "";
-          data.Active = "";
-        }
-        dbwebsites.push("/" + result, data);
-        return { values: data };
-      } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
       }
     }
     catch (err) { console.log(err); }
@@ -595,16 +590,24 @@ var dbfunc = {
   File_PostWebsites: function (data) {
     try {
       dbwebsites.reload();
-      var adsdata = dbwebsites.getData("/");
-      data.Id = uuidv4();
-      if (data.CER) {
-        data.ValidFrom = Certificate.fromPEM(req.body.CER).validFrom;
-        data.ValidTo = Certificate.fromPEM(req.body.CER).validTo;
-        data.Active = comfunc.CerExpired(req.body.ValidFrom, req.body.ValidTo);
-      }
+      var addata = dbwebsites.getData("/");
 
-      dbwebsites.push("/" + adsdata.length, data, false);
-      return { values: data };
+      // Is same port than others ?
+      var result = addata.findIndex(item => item.Port === data.Port);
+      if (result > -1) {
+        return { Message: "This port already used. Use other port", status: 500 };
+      }
+      else {
+        data.Id = uuidv4();
+        if (data.CER) {
+          data.ValidFrom = Certificate.fromPEM(req.body.CER).validFrom;
+          data.ValidTo = Certificate.fromPEM(req.body.CER).validTo;
+          data.Active = comfunc.CerExpired(req.body.ValidFrom, req.body.ValidTo);
+        }
+
+        dbwebsites.push("/" + adsdata.length, data, false);
+        return { values: data };
+      }
     }
     catch (err) { console.log(err); }
   },
@@ -618,7 +621,7 @@ var dbfunc = {
         dblangs.push("/", addata);
         return { values: id };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -633,11 +636,11 @@ var dbfunc = {
         dblangs.push("/" + result, data);
         return { values: data };
       } else {
-        return {Message:"Data does not exist. Refresh page", status: 500};
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
-    
+
   },
   File_ListLangs: function (id) {
     try {
@@ -687,7 +690,7 @@ var dbfunc = {
     try {
       dburls.reload();
       var strType = strUrl == "/" ? "H" : strUrl != "404" ? "P" : "404";
-      var result = dburls.getData("/").findIndex(item => item.Type == strType && item.PageFullUrl == strUrl && item.Website == strHostname && (item.LangId == strLangId || item.LangId=="*" ));
+      var result = dburls.getData("/").findIndex(item => item.Type == strType && item.PageFullUrl == strUrl && item.Website == strHostname && (item.LangId == strLangId || item.LangId == "*"));
       if (result > -1)
         return dburls.getData("/" + result);
     }
@@ -699,34 +702,34 @@ var dbfunc = {
     try {
       dbrouters.reload();
       var result = dbrouters.getData("/").findIndex(item => item.Id == RouterId);
-      if (result > -1)
-      {
-      dbtemplates.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
-      var result = dbtemplates.getData("/").findIndex(item => item.Id == dbrouters.getData("/" + result).TemplateId);
-      if (result > -1)
-        return comfunc.B2A(dbtemplates.getData("/" + result).HTML);
+      if (result > -1) {
+        dbtemplates.reload();
+        var comfunc = require(`${__base}app/comfunc.js`);
+        var result = dbtemplates.getData("/").findIndex(item => item.Id == dbrouters.getData("/" + result).TemplateId);
+        if (result > -1)
+          return comfunc.B2A(dbtemplates.getData("/" + result).HTML);
       }
-      }
+    }
     catch (err) { console.log(err); }
 
     return "*";
   },
   File_GetHeader: function (RouterId, strHtml) {
-    try { dbrouters.reload();
+    try {
+      dbrouters.reload();
       var result = dbrouters.getData("/").findIndex(item => item.Id == RouterId);
-      if (result > -1)
-      {
-      dbheaders.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
-      var result = dbheaders.getData("/").findIndex(item => item.Id == dbrouters.getData("/" + result).HeadId);
       if (result > -1) {
-        var objHeader = dbheaders.getData("/" + result);
-        strHtml = strHtml.replace("@!Title", objHeader.Title).replace("@!Desc", objHeader.MetaDesc).replace("@!section('HeaderScript')", comfunc.B2A(objHeader.HeaderScript)).replace("@!section('BodyScript')", comfunc.B2A(objHeader.BodyScript)).replace("@!section('FooterScript')", comfunc.B2A(objHeader.FooterScript));
-      }}
+        dbheaders.reload();
+        var comfunc = require(`${__base}app/comfunc.js`);
+        var result = dbheaders.getData("/").findIndex(item => item.Id == dbrouters.getData("/" + result).HeadId);
+        if (result > -1) {
+          var objHeader = dbheaders.getData("/" + result);
+          strHtml = strHtml.replace("@!Title", objHeader.Title).replace("@!Desc", objHeader.MetaDesc).replace("@!section('HeaderScript')", comfunc.B2A(objHeader.HeaderScript)).replace("@!section('BodyScript')", comfunc.B2A(objHeader.BodyScript)).replace("@!section('FooterScript')", comfunc.B2A(objHeader.FooterScript));
+        }
+      }
     }
     catch (err) { console.log(err); }
- 
+
     return strHtml;
   },
   File_GetAds: function (strHeadId, strHtml, strWebsiteId, strFireWall) {
@@ -734,12 +737,12 @@ var dbfunc = {
     try {
       dbroutersad.reload();
       dbads.reload();
-      var  comfunc = require(`${__base}app/comfunc.js`);
+      var comfunc = require(`${__base}app/comfunc.js`);
       var filteredCAd = dbroutersad.getData("/").filter(function (value) { return value.HeadId === strHeadId && value.Mode === "A"; });
       filteredCAd.forEach(function (item) {
         var adHtml = "";
-        var Filters=[strFireWall,"*"];
-        var filterads = dbads.getData("/").filter(function (value) { return value.Access.some(g=> Filters.includes(g)) && value.GroupID === item.GroupId && value.WebsiteId == strWebsiteId; });
+        var Filters = [strFireWall, "*"];
+        var filterads = dbads.getData("/").filter(function (value) { return value.Access.some(g => Filters.includes(g)) && value.GroupID === item.GroupId && value.WebsiteId == strWebsiteId; });
         if (filterads.length > 0) {
           var adelement = 0;
           if (filterads.length > 1)
@@ -761,8 +764,8 @@ var dbfunc = {
       var filteredCAd = dbroutersad.getData("/").filter(function (value) { return value.HeadId === strHeadId && value.Mode === "M"; });
       filteredCAd.forEach(function (item) {
         var adHtml = "";
-        var Filters=[strFireWall,"*"];
-        var filterads = dbmoduls.getData("/").filter(function (value) { return value.GroupID === item.GroupId && value.Access.some(g=> Filters.includes(g)); });
+        var Filters = [strFireWall, "*"];
+        var filterads = dbmoduls.getData("/").filter(function (value) { return value.GroupID === item.GroupId && value.Access.some(g => Filters.includes(g)); });
         if (filterads.length > 0) {
           var adelement = 0;
           if (filterads.length > 1)
