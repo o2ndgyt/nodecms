@@ -38,7 +38,7 @@ app.use(helmet());
 app.use(compression({ level: configdata.GZip }));
 
 // real client ip
-app.use(requestIp.mw())
+app.use(requestIp.mw());
 
 // Template engine
 app.use(expressedge);
@@ -46,8 +46,8 @@ app.set('views', `${__base}views`);
 
 // Change X-Powered-By
 app.use(function (req, res, next) {
-  res.setHeader('X-Powered-By', configdata.XPowerBy)
-  next()
+  res.setHeader('X-Powered-By', configdata.XPowerBy);
+  next();
 })
 
 // Set public folder

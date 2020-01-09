@@ -10,6 +10,7 @@ var express = require('express'),
     findRemoveSync = require('find-remove'),
     comfunc = require(`${__base}app/comfunc.js`),
     filemanager = require(`${__base}app/routers/filemanager.js`),
+    rssConverter = require('rss-converter'),
     DbFunc = require(`${__base}app/routers/dbfunc.js`),
     db = new JsonDB(`${__base}db/config`, true, false);
 
@@ -56,6 +57,16 @@ function notLoggedIn(req, res, next) {
     res.redirect('/admin/Login');
 }
 
+async function Getrss(req, res, next) 
+{
+    let feed = await rssConverter.toJson('https://www.goal.com/feeds/en/news');
+    res.json(feed);
+}
+
+router.get('/NewsAPI', notLoggedIn,function (req, res, next) {
+     Getrss(req, res, next);
+   
+});
 
 router.get('/Login', function (req, res, next) {
     if (!req.isAuthenticated()) {
@@ -122,7 +133,6 @@ router.get('/FileManager/GetImage', function (req, res) {
 });
 
 router.post('/FileManager/Upload', multer(multerConfig).any('uploadFiles'), function (req, res) {
-    var obj;
     for (var i = 0; i < fileName.length; i++) {
         fs.rename('./' + fileName[i], path.join(contentRootPath, req.body.path + fileName[i]), function (err) {
             if (err) throw err;
