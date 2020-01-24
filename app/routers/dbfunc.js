@@ -549,31 +549,30 @@ var dbfunc = {
       var comfunc = require(`${__base}app/comfunc.js`);
       var addata = dbwebsites.getData("/");
       // Is same port than others ?
-      var result = addata.findIndex(item => item.Port === data.Port);
-      if (result > -1) {
-        return { Message: "This port already used. Use other port", status: 500 };
-      }
-      else {
-
-
-        var result = addata.findIndex(item => item.Id === id);
+      if (data.Port > 0) {
+        var result = addata.findIndex(item => item.Port === data.Port);
         if (result > -1) {
-          data.Id = id;
-          if (data.CER) {
-            data.ValidFrom = Certificate.fromPEM(data.CER).validFrom;
-            data.ValidTo = Certificate.fromPEM(data.CER).validTo;
-            data.Active = comfunc.CerExpired(data.ValidFrom, data.ValidTo);
-          }
-          else {
-            data.ValidFrom = "";
-            data.ValidTo = "";
-            data.Active = "";
-          }
-          dbwebsites.push("/" + result, data);
-          return { values: data };
-        } else {
-          return { Message: "Data does not exist. Refresh page", status: 500 };
+          return { Message: "This port already used. Use other port", status: 500 };
         }
+      }
+
+      var result = addata.findIndex(item => item.Id === id);
+      if (result > -1) {
+        data.Id = id;
+        if (data.CER) {
+          data.ValidFrom = Certificate.fromPEM(data.CER).validFrom;
+          data.ValidTo = Certificate.fromPEM(data.CER).validTo;
+          data.Active = comfunc.CerExpired(data.ValidFrom, data.ValidTo);
+        }
+        else {
+          data.ValidFrom = "";
+          data.ValidTo = "";
+          data.Active = "";
+        }
+        dbwebsites.push("/" + result, data);
+        return { values: data };
+      } else {
+        return { Message: "Data does not exist. Refresh page", status: 500 };
       }
     }
     catch (err) { console.log(err); }
@@ -593,21 +592,23 @@ var dbfunc = {
       var addata = dbwebsites.getData("/");
 
       // Is same port than others ?
-      var result = addata.findIndex(item => item.Port === data.Port);
-      if (result > -1) {
-        return { Message: "This port already used. Use other port", status: 500 };
-      }
-      else {
-        data.Id = uuidv4();
-        if (data.CER) {
-          data.ValidFrom = Certificate.fromPEM(req.body.CER).validFrom;
-          data.ValidTo = Certificate.fromPEM(req.body.CER).validTo;
-          data.Active = comfunc.CerExpired(req.body.ValidFrom, req.body.ValidTo);
+      if (data.Port > 0) {
+        var result = addata.findIndex(item => item.Port === data.Port);
+        if (result > -1) {
+          return { Message: "This port already used. Use other port", status: 500 };
         }
-
-        dbwebsites.push("/" + adsdata.length, data, false);
-        return { values: data };
       }
+
+      data.Id = uuidv4();
+      if (data.CER) {
+        data.ValidFrom = Certificate.fromPEM(req.body.CER).validFrom;
+        data.ValidTo = Certificate.fromPEM(req.body.CER).validTo;
+        data.Active = comfunc.CerExpired(req.body.ValidFrom, req.body.ValidTo);
+      }
+
+      dbwebsites.push("/" + adsdata.length, data, false);
+      return { values: data };
+
     }
     catch (err) { console.log(err); }
   },

@@ -103,11 +103,11 @@ var multiserver = {
 
             Servers.push(
               {
-                Server: http.createServer(app).listen(element.Port).withShutdown(),
-                hostname: element.Website, Port: element.Port, IsRunning: true
+                Server: http.createServer(app).listen(element.Port == 0 ? element.Port : element.Socket).withShutdown(),
+                hostname: element.Website, Port: element.Port, IsRunning: true, Socket:element.Socket
               }
             )
-            console.log(`INFO-01- ${configdata.ssl == "0" ? "No SSL" : "Cloudflare"} - HTTP 1.1 -  http://${element.Website} --> http://127.0.0.1:${element.Port}`.yellow);
+            console.log(`INFO-01- ${configdata.ssl == "0" ? "No SSL" : "Cloudflare"} - HTTP 1.1 -  http://${element.Website} --> ${element.Port == 0 ? "http://127.0.0.1:"+element.Port : element.Socket }`.yellow);
           });
 
           if (configdata.webs == "A") {
