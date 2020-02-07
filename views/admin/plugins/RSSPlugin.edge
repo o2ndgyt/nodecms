@@ -47,7 +47,7 @@ $(function(){
         columns: [{
             dataField: "Id",
             dataType: "string",
-            visible:false, formItem: { visible:false }
+            formItem: { visible:false }
         },{
             dataField: "LastRefresh",
             dataType: "datetime",
@@ -59,6 +59,11 @@ $(function(){
             dataType: "string",
             caption:"Alias",
             validationRules: [{ type: "required" }]
+        },
+        {
+            dataField: "AddID",
+            dataType: "string",
+            caption:"Add to ID"
         },
         {
             dataField: "RSSurl",
