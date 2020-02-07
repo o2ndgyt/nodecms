@@ -606,4 +606,30 @@ router.post('/Moduls/m/:id/:modul', function (req, res) {
     DbFunc[globalconfigdata.DB + "_SaveModul"](req, res);
 });
 
+// Plugins
+//**********************
+
+
+router.get('/Plugins/RSS', function (req, res) {
+    res.render('admin/plugins/RSSPlugin', { csrfToken: req.csrfToken() });
+});
+
+router.get('/Plugins/RSS/list', function (req, res) {
+    res.json(DbFunc[globalconfigdata.DB + "_ListRSS"]());
+});
+
+router.post('/Plugins/RSS', function (req, res) {
+    res.json(DbFunc[globalconfigdata.DB + "_PostRSS"](req.body));
+});
+
+router.post('/Plugins/RSS/:id', function (req, res) {
+    res.json(DbFunc[globalconfigdata.DB + "_UpdateRSS"](req.params.id, req.body));
+});
+
+router.post('/Plugins/RSS/d/:id', function (req, res) {
+    res.json(DbFunc[globalconfigdata.DB + "_DeleteRSS"](req.params.id));
+});
+
+
+
 module.exports = router;

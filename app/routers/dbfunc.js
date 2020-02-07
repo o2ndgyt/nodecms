@@ -3,6 +3,7 @@ var fs = require('fs-extra'),
   comfunc = require(`${__base}app/comfunc.js`),
   { Certificate } = require('@fidm/x509'),
   _ = require('lodash'),
+  moment = require('moment'),
   cmsmodulread = require(`${__base}/app/modules/cmsmodul.read.js`),
   cmsmodulupdate = require(`${__base}app/modules/cmsmodul.update.js`),
   JsonDB = require('node-json-db'),
@@ -15,6 +16,7 @@ var fs = require('fs-extra'),
   dburls = new JsonDB(`${__base}db/cmsurls`, true, false),
   dbmoduls = new JsonDB(`${__base}db/cmsmoduls`, true, false),
   dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false);
+  dbrss = new JsonDB(`${__base}db/plugindb/cmsrss`, true, false);
 
 var _strDefaultWebsite = fs.readFileSync(`${__base}db/defaultwebsite.txt`, "utf8");
 
@@ -115,6 +117,21 @@ var dbfunc = {
     }
     catch (err) { console.log(err); }
   },
+  File_DeleteRSS: function (id) {
+    try {
+      dbrss.reload();
+      var addata = dbrss.getData("/");
+      var result = addata.findIndex(item => item.Id === id);
+      if (result > -1) {
+        addata.splice(result, 1);
+        dbrss.push("/", addata);
+        return { values: id };
+      } else {
+        return { Message: "Data does not exist. Refresh page", status: 500 };
+      }
+    }
+    catch (err) { console.log(err); }
+  },
   File_UpdateUrl: function (id, data) {
     try {
       dburls.reload();
@@ -124,6 +141,20 @@ var dbfunc = {
         data.Id = id;
         data.Website = comfunc.GetWebsite(data.RouterId);
         dburls.push("/" + result, data);
+        return { values: data };
+      } else {
+        return { Message: "Data does not exist. Refresh page", status: 500 };
+      }
+    }
+    catch (err) { console.log(err); }
+  },
+  File_UpdateRSS: function (id, data) {
+    try {
+      dbrss.reload();
+      var result = dbrss.getData("/").findIndex(item => item.Id === id);
+      if (result > -1) {
+        data.Id = id;
+        dbrss.push("/" + result, data);
         return { values: data };
       } else {
         return { Message: "Data does not exist. Refresh page", status: 500 };
@@ -143,10 +174,30 @@ var dbfunc = {
     }
     catch (err) { console.log(err); }
   },
+  File_PostRSS: function (data) {
+    try {
+      dbrss.reload();
+      var adsdata = dbrss.getData("/");
+      data.Id = uuidv4();
+      data.LastRefresh=moment();
+      dbrss.push("/" + adsdata.length, data, false);
+      return { values: data };
+    }
+    catch (err) { console.log(err); }
+  },
   File_ListUrls: function () {
     try {
       dburls.reload();
       var adsdata = dburls.getData("/");
+      return { "totalCount": adsdata.length, "items": adsdata };
+    }
+    catch (err) { console.log(err); }
+    return { "totalCount": 0, "items": [] };
+  },
+  File_ListRSS: function () {
+    try {
+      dbrss.reload();
+      var adsdata = dbrss.getData("/");
       return { "totalCount": adsdata.length, "items": adsdata };
     }
     catch (err) { console.log(err); }

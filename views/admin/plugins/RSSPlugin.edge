@@ -2,31 +2,26 @@
 @section('content')
 <script lang="javascript">
  $(document).ready(function () {
-    SetTitle('Headers'); 
+    SetTitle('Plugin - RSS'); 
 });
 $(function(){
     var orders = new DevExpress.data.CustomStore({
         key: "Id",
         load: function (loadOptions) {
-            return ReadData("/admin/Headers/list",loadOptions);           
+            return ReadData("/admin/Plugins/RSS/list",loadOptions);           
         },
         insert: function(values) {
-            return SendDataTable( "/admin/Headers/", JSON.stringify(values),null);
+            return SendDataTable( "/admin/Plugins/RSS/", JSON.stringify(values),null);
         },
         update: function(key, values) {
-            return SendDataTable( "/admin/Headers/", JSON.stringify(values),key);
+            return SendDataTable( "/admin/Plugins/RSS/", JSON.stringify(values),key);
         },
         remove: function(key) {
-            return SendDataTable( "/admin/Headers/d/", JSON.stringify({key:key}),key);
+            return SendDataTable( "/admin/Plugins/RSS/d/", JSON.stringify({key:key}),key);
         }
+
     });
     
-    var websiteslookup = new DevExpress.data.CustomStore({
-        key: "Id",
-        loadMode: "raw",
-        load: function() { return $.getJSON("/admin/Websites/list/2")}            
-    });
-
     $("#gridContainer").dxDataGrid({
         dataSource: {
             store: orders
@@ -37,14 +32,14 @@ $(function(){
             allowUpdating: true,
             allowDeleting: true
         },
+        searchPanel: {
+            visible: true,
+        },
         columnAutoWidth: true,
         showBorders: true,
         remoteOperations: {
             sorting: false,
             paging: true
-        },
-        searchPanel: {
-            visible: true,
         },
         paging: {
             pageSize: 24
@@ -53,69 +48,39 @@ $(function(){
             dataField: "Id",
             dataType: "string",
             visible:false, formItem: { visible:false }
-        }, 
+        },{
+            dataField: "LastRefresh",
+            dataType: "datetime",
+            caption:"Last Refresh"
+            formItem: { visible:false }
+        },
         {
-            dataField: "WebsiteId",
+            dataField: "rssurl",
             dataType: "string",
+            caption:"RSS url",
+            validationRules: [{ type: "required" }]
+        },
+        {
+            dataField: "Hour",
+            dataType: "number",
+            caption:"Refresh every hour",
             validationRules: [{ type: "required" }],
-            caption:"Website",
-             lookup: {
-                    dataSource: websiteslookup,
-                    displayExpr: "Website",
-                    valueExpr: "Id"
+            editCellTemplate: function (container, options) {
+                $('<div>').dxNumberBox({
+                value:  options.value,
+                showSpinButtons: true,
+                onValueChanged: function(e) {
+                options.setValue(e.value);
                 }
+                }).appendTo(container);
+            }
         },
         {
-            dataField: "Alias",
-            dataType: "string",
-            validationRules: [{ type: "required" }],
-            caption:"Alias"
-        },
-        {
-            dataField: "Title",
-            dataType: "string",
-            validationRules: [{ type: "required" }],
-            caption:"Page title"
-        },
-        {
-            dataField: "MetaDesc",
+            dataField: "StyleHTML",
             dataType: "string",
             visible:false,
-            caption:"Page Description"
-        },
-        {
-            dataField: "HeaderScript",
-            dataType: "string",
-            visible:false,
-            caption:"Script in Head",
+            caption:"Style in HTML`",
             formItem: {
-                    colSpan: 2,
-                    editorType: "dxTextArea",
-                    editorOptions: {
-                        height: 100
-                    }
-                }
-        },
-        {
-            dataField: "BodyScript",
-            dataType: "string",
-            visible:false,
-            caption:"Script in Body",
-            formItem: {
-                    colSpan: 2,
-                    editorType: "dxTextArea",
-                    editorOptions: {
-                        height: 100
-                    }
-                }
-        }, 
-        {
-            dataField: "FooterScript",
-            dataType: "string",
-            visible:false,
-            caption:"Script in Footer",
-            formItem: {
-                    colSpan: 2,
                     editorType: "dxTextArea",
                     editorOptions: {
                         height: 100
@@ -123,13 +88,12 @@ $(function(){
                 }
         }
         ],
+        
         onEditorPrepared: function(e) {
             if (e.value != null || e.value != "")
-
-            if (e.dataField == "HeaderScript" || e.dataField == "BodyScript" || e.dataField == "FooterScript" ) {     
-            
+            if (e.dataField == "StyleHTML" )                 
                 $(e.editorElement).dxTextArea("instance").option('value',window.atob(e.value));
-            }
+            
         },
         onRowUpdating: function(options) { 
              options.newData = $.extend({}, options.oldData, options.newData); 
@@ -143,7 +107,7 @@ $(function(){
   <div id="content-container">
      
       <div class="pageheader">
-          <h3> <i class="fa fa-header"></i> Headers </h3>
+          <h3> <i class="fa fa-rss" aria-hidden="true"></i> Ads </h3>
           
       </div>
     

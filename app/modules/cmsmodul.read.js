@@ -8,8 +8,12 @@ var cmsmodulread = {
   TodayTime:function(data)
   {
       return moment().format('LL');
+  },
+  RSSModul:function(data)
+  { 
+    
   }
-
+  
 };
 
 module.exports = cmsmodulread;

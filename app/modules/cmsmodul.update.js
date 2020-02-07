@@ -6,6 +6,11 @@ var cmsmodulupdate = {
   TodayTime:function(data)
   {
     return "";
+  }, 
+  RSSModul:function(data)
+  { 
+    
+    return data;
   }
 
 };

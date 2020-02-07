@@ -1,0 +1,42 @@
+@layout('admin')
+@section('content')
+<script language="Javascript" type="text/javascript">
+  $(document).ready(function () {
+    SetTitle('Modul - {{{alias}}}'); 
+});
+</script>
+
+ <div class="boxed">
+               
+    <div id="content-container">
+       
+        <div class="pageheader">
+            <h3> <i class="fa  fa-cubes" aria-hidden="true"></i> Edit {{{alias}}} </h3>          
+        </div>
+      
+        <div id="page-content">
+          <div class="row">
+              <div class="col-lg-12">
+                  <div class="panel">
+
+                        <form id="formid" method="POST" action="/admin/Moduls/m/{{{id}}}/{{{modul}}}">
+                                 <input type="hidden" name="_csrf" value="{{{csrfToken}}}" />
+                                  <div class="panel-body">
+                                      <label class="col-sm-3 control-label" for="xpowerby">RSS Id</label>  
+                                    <INPUT class="form-control" value="{{{data}}}"  id="filecon" type="text" name="filecon"/>
+                           </div>                
+                                  <div class="panel-footer text-right">
+                                    <a class="btn btn-primary btn-icon btn-circle icon-lg fa fa-ban" href="/admin/Moduls" ></a>  
+                                    <button type="submit" class="btn btn-primary btn-icon btn-circle icon-lg fa fa-floppy-o"></button>
+                                      
+                                  </div>
+                        </form>
+
+                  </div>
+              </div>
+          </div>
+        </div> 
+    </div>
+  </div>
+  
+  @endsection
