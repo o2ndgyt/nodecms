@@ -55,7 +55,13 @@ $(function(){
             formItem: { visible:false }
         },
         {
-            dataField: "rssurl",
+            dataField: "Alias",
+            dataType: "string",
+            caption:"Alias",
+            validationRules: [{ type: "required" }]
+        },
+        {
+            dataField: "RSSurl",
             dataType: "string",
             caption:"RSS url",
             validationRules: [{ type: "required" }]
@@ -64,6 +70,21 @@ $(function(){
             dataField: "Hour",
             dataType: "number",
             caption:"Refresh every hour",
+            validationRules: [{ type: "required" }],
+            editCellTemplate: function (container, options) {
+                $('<div>').dxNumberBox({
+                value:  options.value,
+                showSpinButtons: true,
+                onValueChanged: function(e) {
+                options.setValue(e.value);
+                }
+                }).appendTo(container);
+            }
+        },
+        {
+            dataField: "DelPost",
+            dataType: "number",
+            caption:"Delete old past after x days",
             validationRules: [{ type: "required" }],
             editCellTemplate: function (container, options) {
                 $('<div>').dxNumberBox({

@@ -15,7 +15,7 @@ var fs = require('fs-extra'),
   dbroutersad = new JsonDB(`${__base}db/cmsroutersad`, true, false),
   dburls = new JsonDB(`${__base}db/cmsurls`, true, false),
   dbmoduls = new JsonDB(`${__base}db/cmsmoduls`, true, false),
-  dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false);
+  dbwebsites = new JsonDB(`${__base}db/cmswebsites`, true, false),
   dbrss = new JsonDB(`${__base}db/plugindb/cmsrss`, true, false);
 
 var _strDefaultWebsite = fs.readFileSync(`${__base}db/defaultwebsite.txt`, "utf8");
@@ -179,7 +179,7 @@ var dbfunc = {
       dbrss.reload();
       var adsdata = dbrss.getData("/");
       data.Id = uuidv4();
-      data.LastRefresh=moment();
+      data.LastRefresh=moment.utc();
       dbrss.push("/" + adsdata.length, data, false);
       return { values: data };
     }
